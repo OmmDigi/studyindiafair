@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import type { GalleryItem } from '@/types/gallery'
+import type { GalleryItem, GalleryMediaType } from '@/types/gallery'
 
 export type GalleryListParams = {
   category_id: number
@@ -9,12 +9,17 @@ export type GalleryListParams = {
 export type GalleryCreatePayload = {
   category_id: number
   is_active: boolean
-  items: { image_path: string; alt_text: string | null }[]
+  items: (
+    | { media_type: 'image'; image_path: string; alt_text: string | null }
+    | { media_type: 'youtube'; youtube_url: string; alt_text: string | null }
+  )[]
 }
 
 export type GalleryUpdatePayload = {
   category_id: number
+  media_type: GalleryMediaType
   image_path: string
+  youtube_url: string
   alt_text: string | null
   is_active: boolean
 }

@@ -1,3 +1,5 @@
+export type GalleryMediaType = 'image' | 'youtube'
+
 export type GalleryCategory = {
   id: number
   name: string
@@ -13,7 +15,9 @@ export type GalleryCategory = {
 export type GalleryItem = {
   id: number
   category_id: number
-  image_path: string
+  media_type: GalleryMediaType
+  image_path: string | null
+  youtube_id: string | null
   alt_text: string | null
   position: number
   is_active: boolean

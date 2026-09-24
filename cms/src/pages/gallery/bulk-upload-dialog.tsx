@@ -1,4 +1,4 @@
-import { ImagePlus, Loader2, X } from 'lucide-react'
+import { CirclePlay, ImagePlus, Loader2, Plus, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { getErrorMessage } from '@/lib/api'
 import { deleteFile, uploadFile } from '@/lib/upload'
-import { galleryService } from '@/services/gallery.service'
+import { youtubeId, youtubeThumb, youtubeWatchUrl } from '@/lib/youtube'
+import { galleryService, type GalleryCreatePayload } from '@/services/gallery.service'
 import type { GalleryCategory } from '@/types/gallery'
 
 export const UPLOAD_FOLDER = 'gallery'
@@ -17,12 +18,10 @@ const CONCURRENCY = 3
 
 type Entry = {
   key: string
-  file: File
-  preview: string
   alt: string
   progress: number
   error?: string
-}
+} & ({ kind: 'image'; file: File; preview: string } | { kind: 'youtube'; videoId: string })
 
 type Props = {
   open: boolean
@@ -36,6 +35,7 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
   const [entries, setEntries] = useState<Entry[]>([])
   const [busy, setBusy] = useState(false)
   const [dragOver, setDragOver] = useState(false)
+  const [videoUrl, setVideoUrl] = useState('')
   const previews = useRef(new Set<string>())
 
   useEffect(() => {
@@ -44,7 +44,14 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
   }, [])
 
   const patch = (key: string, data: Partial<Entry>) =>
-    setEntries((list) => list.map((e) => (e.key === key ? { ...e, ...data } : e)))
+    setEntries((list) => list.map((e) => (e.key === key ? ({ ...e, ...data } as Entry) : e)))
+
+  const append = (next: Entry[]) =>
+    setEntries((list) => {
+      const room = MAX_FILES - list.length
+      if (next.length > room) toast.error(`Only ${MAX_FILES} items per upload`)
+      return [...list, ...next.slice(0, Math.max(room, 0))]
+    })
 
   const add = (files: FileList | File[]) => {
     const rejected: string[] = []
@@ -55,31 +62,54 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
       else {
         const preview = URL.createObjectURL(file)
         previews.current.add(preview)
-        next.push({ key: `${file.name}-${file.size}-${crypto.randomUUID()}`, file, preview, alt: '', progress: 0 })
+        next.push({
+          kind: 'image',
+          key: `${file.name}-${file.size}-${crypto.randomUUID()}`,
+          file,
+          preview,
+          alt: '',
+          progress: 0,
+        })
       }
     }
     if (rejected.length) toast.error(rejected.join('\n'))
-    setEntries((list) => {
-      const room = MAX_FILES - list.length
-      if (next.length > room) toast.error(`Only ${MAX_FILES} images per upload`)
-      return [...list, ...next.slice(0, Math.max(room, 0))]
-    })
+    append(next)
     if (inputRef.current) inputRef.current.value = ''
+  }
+
+  const addVideo = () => {
+    const id = youtubeId(videoUrl)
+    if (!id) {
+      toast.error('Enter a valid YouTube URL')
+      return
+    }
+    append([{ kind: 'youtube', key: `yt-${id}-${crypto.randomUUID()}`, videoId: id, alt: '', progress: 0 }])
+    setVideoUrl('')
   }
 
   const removeEntry = (key: string) => setEntries((list) => list.filter((e) => e.key !== key))
 
   const submit = async () => {
     setBusy(true)
-    const queue = [...entries]
-    const uploaded: { key: string; image_path: string; alt_text: string | null }[] = []
+    const queue = entries.filter((e) => e.kind === 'image')
+    const ready: { key: string; item: GalleryCreatePayload['items'][number] }[] = entries
+      .filter((e) => e.kind === 'youtube')
+      .map((e) => ({
+        key: e.key,
+        item: { media_type: 'youtube', youtube_url: youtubeWatchUrl(e.videoId), alt_text: e.alt.trim() || null },
+      }))
+    const uploaded: string[] = []
     const worker = async () => {
       for (let entry = queue.shift(); entry; entry = queue.shift()) {
         const current = entry
         patch(current.key, { error: undefined, progress: 0 })
         try {
           const result = await uploadFile(current.file, UPLOAD_FOLDER, (progress) => patch(current.key, { progress }))
-          uploaded.push({ key: current.key, image_path: result.url, alt_text: current.alt.trim() || null })
+          uploaded.push(result.url)
+          ready.push({
+            key: current.key,
+            item: { media_type: 'image', image_path: result.url, alt_text: current.alt.trim() || null },
+          })
         } catch (error) {
           patch(current.key, { error: getErrorMessage(error) })
         }
@@ -87,22 +117,22 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
     }
     await Promise.all(Array.from({ length: CONCURRENCY }, worker))
 
-    if (uploaded.length) {
+    if (ready.length) {
       const order = new Map(entries.map((e, i) => [e.key, i]))
-      uploaded.sort((a, b) => order.get(a.key)! - order.get(b.key)!)
+      ready.sort((a, b) => order.get(a.key)! - order.get(b.key)!)
       try {
         await galleryService.create({
           category_id: category.id,
           is_active: true,
-          items: uploaded.map(({ image_path, alt_text }) => ({ image_path, alt_text })),
+          items: ready.map((r) => r.item),
         })
-        const done = new Set(uploaded.map((u) => u.key))
+        const done = new Set(ready.map((r) => r.key))
         setEntries((list) => list.filter((e) => !done.has(e.key)))
-        toast.success(`${uploaded.length} image${uploaded.length === 1 ? '' : 's'} added to ${category.name}`)
+        toast.success(`${ready.length} item${ready.length === 1 ? '' : 's'} added to ${category.name}`)
         onSaved()
-        if (uploaded.length === entries.length) onOpenChange(false)
+        if (ready.length === entries.length) onOpenChange(false)
       } catch (error) {
-        uploaded.forEach((u) => deleteFile(u.image_path))
+        uploaded.forEach((url) => deleteFile(url))
         toast.error(getErrorMessage(error))
       }
     }
@@ -113,8 +143,8 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
     <Dialog open={open} onOpenChange={(next) => !busy && onOpenChange(next)}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Upload Images</DialogTitle>
-          <DialogDescription>Add images to {category.name}.</DialogDescription>
+          <DialogTitle>Add Media</DialogTitle>
+          <DialogDescription>Add images or YouTube videos to {category.name}.</DialogDescription>
         </DialogHeader>
 
         <button
@@ -149,13 +179,38 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
           onChange={(e) => e.target.files && add(e.target.files)}
         />
 
+        <form
+          className="flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault()
+            addVideo()
+          }}
+        >
+          <Input
+            placeholder="Paste YouTube URL, e.g. https://www.youtube.com/watch?v=..."
+            value={videoUrl}
+            disabled={busy}
+            onChange={(e) => setVideoUrl(e.target.value)}
+          />
+          <Button type="submit" variant="outline" disabled={busy || !videoUrl.trim()}>
+            <Plus /> Add Video
+          </Button>
+        </form>
+
         {!!entries.length && (
           <div className="grid gap-3 sm:grid-cols-2">
             {entries.map((e) => (
               <div key={e.key} className="flex gap-3 rounded-md border p-2">
                 <div className="relative size-20 shrink-0">
-                  <img src={e.preview} alt="" className="size-full rounded object-cover" />
-                  {busy && !e.error && (
+                  <img
+                    src={e.kind === 'image' ? e.preview : youtubeThumb(e.videoId, 'default')}
+                    alt=""
+                    className="size-full rounded object-cover"
+                  />
+                  {e.kind === 'youtube' && (
+                    <CirclePlay className="absolute right-1 bottom-1 size-5 rounded bg-background/80 p-0.5 text-red-600" />
+                  )}
+                  {busy && e.kind === 'image' && !e.error && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center rounded bg-background/80 text-xs">
                       <Loader2 className="size-4 animate-spin" />
                       {e.progress}%
@@ -164,8 +219,11 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
                 </div>
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex items-start justify-between gap-1">
-                    <p className="truncate text-xs text-muted-foreground" title={e.file.name}>
-                      {e.file.name}
+                    <p
+                      className="truncate text-xs text-muted-foreground"
+                      title={e.kind === 'image' ? e.file.name : youtubeWatchUrl(e.videoId)}
+                    >
+                      {e.kind === 'image' ? e.file.name : `YouTube: ${e.videoId}`}
                     </p>
                     <Button
                       type="button"
@@ -179,7 +237,7 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
                     </Button>
                   </div>
                   <Input
-                    placeholder="Alt text"
+                    placeholder={e.kind === 'image' ? 'Alt text' : 'Title'}
                     maxLength={250}
                     value={e.alt}
                     disabled={busy}
@@ -194,7 +252,7 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
 
         <DialogFooter>
           <Button type="button" disabled={busy || !entries.length} onClick={submit}>
-            {busy ? 'Uploading...' : `Upload ${entries.length || ''} image${entries.length === 1 ? '' : 's'}`}
+            {busy ? 'Uploading...' : `Add ${entries.length || ''} item${entries.length === 1 ? '' : 's'}`}
           </Button>
         </DialogFooter>
       </DialogContent>

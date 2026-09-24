@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { extractYoutubeId } from "../testimonials/constant.js";
 
 export const UPLOAD_FOLDER = "gallery";
 
@@ -13,7 +14,24 @@ const altText = z.preprocess(
   z.string().trim().max(250).nullable()
 );
 
+const youtubeUrl = z
+  .string()
+  .trim()
+  .max(500)
+  .transform((v, ctx) => {
+    const id = extractYoutubeId(v);
+    if (!id) ctx.addIssue({ code: "custom", message: "Invalid YouTube URL" });
+    return id ?? "";
+  });
+
 const categoryId = z.number().int().positive();
+
+export const MEDIA_TYPES = ["image", "youtube"] as const;
+
+const item = z.discriminatedUnion("media_type", [
+  z.object({ media_type: z.literal("image"), image_path: imagePath, alt_text: altText.default(null) }),
+  z.object({ media_type: z.literal("youtube"), youtube_url: youtubeUrl, alt_text: altText.default(null) }),
+]);
 
 export const idParamSchema = z.object({ id: z.coerce.number().int().positive() });
 
@@ -41,7 +59,7 @@ export const createGallerySchema = z.object({
   category_id: categoryId,
   is_active: z.boolean().default(true),
   items: z
-    .array(z.object({ image_path: imagePath, alt_text: altText.default(null) }))
+    .array(item)
     .min(1)
     .max(50),
 });
@@ -49,7 +67,9 @@ export const createGallerySchema = z.object({
 export const updateGallerySchema = z
   .object({
     category_id: categoryId,
+    media_type: z.enum(MEDIA_TYPES),
     image_path: imagePath,
+    youtube_url: youtubeUrl,
     alt_text: altText,
     is_active: z.boolean(),
   })

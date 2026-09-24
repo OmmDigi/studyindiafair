@@ -16,7 +16,7 @@ type Row = {
   updated_at: Date;
 };
 
-const COVER = `(SELECT i.image_path FROM gallery_items i WHERE i.category_id = c.id AND i.is_active = TRUE
+const COVER = `(SELECT i.image_path FROM gallery_items i WHERE i.category_id = c.id AND i.is_active = TRUE AND i.image_path IS NOT NULL
   ORDER BY i.position ASC, i.id ASC LIMIT 1) AS cover_image`;
 
 const SELECT = `SELECT c.id, c.name, c.slug, c.position, c.is_active, c.created_at, c.updated_at, ${COVER},

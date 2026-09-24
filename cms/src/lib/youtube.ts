@@ -16,3 +16,8 @@ export function youtubeId(input: string) {
     return null
   }
 }
+
+export const youtubeThumb = (id: string, size: 'default' | 'hqdefault' = 'hqdefault') =>
+  `https://img.youtube.com/vi/${id}/${size}.jpg`
+
+export const youtubeWatchUrl = (id: string) => `https://www.youtube.com/watch?v=${id}`

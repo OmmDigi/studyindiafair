@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { ImageUpload } from '@/components/image-upload'
@@ -12,16 +12,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch'
 import { usePendingUploads } from '@/hooks/use-upload'
 import { getErrorMessage } from '@/lib/api'
+import { youtubeId, youtubeThumb, youtubeWatchUrl } from '@/lib/youtube'
 import { galleryService } from '@/services/gallery.service'
 import type { GalleryCategory, GalleryItem } from '@/types/gallery'
 import { UPLOAD_FOLDER } from './bulk-upload-dialog'
 
-const schema = z.object({
-  image_path: z.string({ error: 'Image is required' }).min(1, 'Image is required'),
-  alt_text: z.string().trim().max(250),
-  category_id: z.number(),
-  is_active: z.boolean(),
-})
+const schema = z
+  .object({
+    media_type: z.enum(['image', 'youtube']),
+    image_path: z.string(),
+    youtube_url: z.string().trim(),
+    alt_text: z.string().trim().max(250),
+    category_id: z.number(),
+    is_active: z.boolean(),
+  })
+  .superRefine((v, ctx) => {
+    if (v.media_type === 'image' && !v.image_path) {
+      ctx.addIssue({ code: 'custom', path: ['image_path'], message: 'Image is required' })
+    }
+    if (v.media_type === 'youtube' && !youtubeId(v.youtube_url)) {
+      ctx.addIssue({ code: 'custom', path: ['youtube_url'], message: 'Enter a valid YouTube URL' })
+    }
+  })
 
 type FormValues = z.infer<typeof schema>
 
@@ -45,12 +57,17 @@ export function GalleryItemFormDialog({ open, item, categories, onOpenChange, on
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     values: {
-      image_path: item.image_path,
+      media_type: item.media_type,
+      image_path: item.image_path ?? '',
+      youtube_url: item.youtube_id ? youtubeWatchUrl(item.youtube_id) : '',
       alt_text: item.alt_text ?? '',
       category_id: item.category_id,
       is_active: item.is_active,
     },
   })
+
+  const mediaType = useWatch({ control, name: 'media_type' })
+  const videoId = youtubeId(useWatch({ control, name: 'youtube_url' }) ?? '')
 
   const handleOpenChange = (next: boolean) => {
     if (!next) pending.discard()
@@ -59,9 +76,14 @@ export function GalleryItemFormDialog({ open, item, categories, onOpenChange, on
 
   const onSubmit = async (values: FormValues) => {
     try {
-      const saved = await galleryService.update(item.id, { ...values, alt_text: values.alt_text || null })
+      const { image_path, youtube_url, ...rest } = values
+      const saved = await galleryService.update(item.id, {
+        ...rest,
+        ...(values.media_type === 'image' ? { image_path } : { youtube_url }),
+        alt_text: values.alt_text || null,
+      })
       pending.commit(saved.image_path)
-      toast.success('Image updated')
+      toast.success('Gallery item updated')
       onSaved()
       onOpenChange(false)
     } catch (error) {
@@ -73,33 +95,65 @@ export function GalleryItemFormDialog({ open, item, categories, onOpenChange, on
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit Image</DialogTitle>
+          <DialogTitle>Edit Gallery Item</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label>
-              Image <span className="text-destructive">*</span>
-            </Label>
+            <Label>Type</Label>
             <Controller
               control={control}
-              name="image_path"
+              name="media_type"
               render={({ field }) => (
-                <ImageUpload
-                  folder={UPLOAD_FOLDER}
-                  value={field.value || null}
-                  onChange={(path) => {
-                    pending.track(path)
-                    field.onChange(path ?? '')
-                  }}
-                  onUploadingChange={setUploading}
-                />
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="image">Image</SelectItem>
+                    <SelectItem value="youtube">YouTube Video</SelectItem>
+                  </SelectContent>
+                </Select>
               )}
             />
-            {errors.image_path && <p className="text-sm text-destructive">{errors.image_path.message}</p>}
           </div>
 
+          {mediaType === 'youtube' ? (
+            <div className="space-y-2">
+              <Label htmlFor="youtube_url">
+                YouTube URL <span className="text-destructive">*</span>
+              </Label>
+              <Input id="youtube_url" placeholder="https://www.youtube.com/watch?v=..." {...register('youtube_url')} />
+              {errors.youtube_url && <p className="text-sm text-destructive">{errors.youtube_url.message}</p>}
+              {videoId && (
+                <img src={youtubeThumb(videoId)} alt="" className="aspect-video w-full rounded-md border object-cover" />
+              )}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label>
+                Image <span className="text-destructive">*</span>
+              </Label>
+              <Controller
+                control={control}
+                name="image_path"
+                render={({ field }) => (
+                  <ImageUpload
+                    folder={UPLOAD_FOLDER}
+                    value={field.value || null}
+                    onChange={(path) => {
+                      pending.track(path)
+                      field.onChange(path ?? '')
+                    }}
+                    onUploadingChange={setUploading}
+                  />
+                )}
+              />
+              {errors.image_path && <p className="text-sm text-destructive">{errors.image_path.message}</p>}
+            </div>
+          )}
+
           <div className="space-y-2">
-            <Label htmlFor="alt_text">Alt Text</Label>
+            <Label htmlFor="alt_text">{mediaType === 'youtube' ? 'Title' : 'Alt Text'}</Label>
             <Input id="alt_text" maxLength={250} {...register('alt_text')} />
             {errors.alt_text && <p className="text-sm text-destructive">{errors.alt_text.message}</p>}
           </div>

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { FolderCog, GripVertical, ImageIcon, Pencil, Trash2, Upload } from 'lucide-react'
+import { CirclePlay, FolderCog, GripVertical, ImageIcon, Pencil, Trash2, Upload } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { cn } from 'cn'
@@ -19,11 +19,15 @@ import { useDragSort } from '@/hooks/use-drag-sort'
 import { useGalleryCategories, useRefreshGallery } from '@/hooks/use-gallery-categories'
 import { getErrorMessage } from '@/lib/api'
 import { fileUrl } from '@/lib/upload'
+import { youtubeThumb, youtubeWatchUrl } from '@/lib/youtube'
 import { ManageCategoriesDialog } from '@/pages/gallery-categories/manage-categories-dialog'
 import { galleryService } from '@/services/gallery.service'
 import type { GalleryItem } from '@/types/gallery'
 import { BulkUploadDialog } from './bulk-upload-dialog'
 import { GalleryItemFormDialog } from './gallery-item-form-dialog'
+
+const itemSrc = (item: GalleryItem) =>
+  item.media_type === 'youtube' ? youtubeThumb(item.youtube_id!) : fileUrl(item.image_path)!
 
 export function GalleryPage() {
   const refresh = useRefreshGallery()
@@ -60,7 +64,7 @@ export function GalleryPage() {
   const remove = useMutation({
     mutationFn: (id: number) => galleryService.remove(id),
     onSuccess: () => {
-      toast.success('Image deleted')
+      toast.success('Gallery item deleted')
       setDeleting(null)
       refresh()
     },
@@ -133,18 +137,18 @@ export function GalleryPage() {
                   </SelectContent>
                 </Select>
                 <Button onClick={openUpload}>
-                  <Upload /> Upload Images
+                  <Upload /> Add Media
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">Drag images to reorder.</p>
+            <p className="text-xs text-muted-foreground">Drag items to reorder.</p>
 
             {isLoading ? (
               <p className="text-muted-foreground">Loading...</p>
             ) : !list.length ? (
               <div className="flex flex-col items-center gap-2 rounded-md border border-dashed p-10 text-muted-foreground">
                 <ImageIcon className="size-6" />
-                No images found
+                No media found
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -156,12 +160,23 @@ export function GalleryPage() {
                   >
                     <div className="relative aspect-square cursor-grab bg-muted">
                       <img
-                        src={fileUrl(item.image_path)!}
+                        src={itemSrc(item)}
                         alt={item.alt_text ?? ''}
                         draggable={false}
                         className={cn('size-full object-cover', !item.is_active && 'opacity-50')}
                       />
                       <GripVertical className="absolute top-2 left-2 size-5 rounded bg-background/80 p-0.5 text-muted-foreground" />
+                      {item.media_type === 'youtube' && (
+                        <a
+                          href={youtubeWatchUrl(item.youtube_id!)}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="Open on YouTube"
+                          className="absolute top-2 right-2 rounded bg-background/80 p-0.5 text-red-600"
+                        >
+                          <CirclePlay className="size-5" />
+                        </a>
+                      )}
                     </div>
                     <div className="space-y-2 p-2">
                       <p
@@ -222,12 +237,12 @@ export function GalleryPage() {
       <Dialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Image</DialogTitle>
-            <DialogDescription>Permanently delete this image? This cannot be undone.</DialogDescription>
+            <DialogTitle>Delete Gallery Item</DialogTitle>
+            <DialogDescription>Permanently delete this item? This cannot be undone.</DialogDescription>
           </DialogHeader>
           {deleting && (
             <img
-              src={fileUrl(deleting.image_path)!}
+              src={itemSrc(deleting)}
               alt={deleting.alt_text ?? ''}
               className="max-h-48 rounded-md border object-contain"
             />
