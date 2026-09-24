@@ -14,3 +14,4 @@
 ## Rules you need to follow
 - Do not waste your output tokens by giving me too much text just give me nesery text only on output
 - And do not use any unnesery hugh comments. totally avoid the comments inside codes
+- Ask me for any clarification

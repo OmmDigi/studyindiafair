@@ -20,6 +20,7 @@ const schema = z.object({
   SMTP_PASS: z.string().default(""),
   MAIL_FROM: z.string().default("Study India Fair <no-reply@studyindiafair.com>"),
   OTP_EXPIRES_MIN: z.coerce.number().default(10),
+  UPLOAD_URL: z.string().default("http://localhost:4001"),
 });
 
 export const env = schema.parse(process.env);

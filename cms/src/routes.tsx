@@ -6,6 +6,7 @@ import { ForgotPasswordPage } from '@/pages/auth/forgot-password-page'
 import { LoginPage } from '@/pages/auth/login-page'
 import { DashboardPage } from '@/pages/dashboard/dashboard-page'
 import { ProfilePage } from '@/pages/profile/profile-page'
+import { TestimonialsPage } from '@/pages/testimonials/testimonials-page'
 import { UsersPage } from '@/pages/users/users-page'
 
 export const router = createBrowserRouter([
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <DashboardPage /> },
           { path: 'profile', element: <ProfilePage /> },
+          { path: 'testimonials', element: <TestimonialsPage /> },
           {
             element: <AdminRoute />,
             children: [{ path: 'users', element: <UsersPage /> }],
