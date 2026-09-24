@@ -15,6 +15,7 @@ type Props = {
   maxSizeMb?: number
   disabled?: boolean
   className?: string
+  previewClassName?: string
   onUploadingChange?: (uploading: boolean) => void
 }
 
@@ -26,6 +27,7 @@ export function ImageUpload({
   maxSizeMb = 5,
   disabled,
   className,
+  previewClassName,
   onUploadingChange,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -46,9 +48,9 @@ export function ImageUpload({
 
   return (
     <div className={cn('space-y-2', className)}>
-      <div className="relative size-32">
+      <div className={cn('relative size-32', previewClassName)}>
         {src ? (
-          <img src={src} alt="Uploaded" className="size-full rounded-md border object-cover" />
+          <img src={src} alt="Uploaded" className={cn('size-full rounded-md border', previewClassName ? 'object-contain p-1' : 'object-cover')} />
         ) : (
           <button
             type="button"
@@ -92,7 +94,7 @@ export function ImageUpload({
         onChange={(e) => pick(e.target.files?.[0])}
       />
       <p className="text-xs text-muted-foreground">
-        {accept.map((t) => t.split('/')[1].toUpperCase()).join(', ')}, max {maxSizeMb}MB
+        {accept.map((t) => t.split('/')[1].split('+')[0].replace('x-icon', 'ico').toUpperCase()).join(', ')}, max {maxSizeMb}MB
       </p>
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>

@@ -10,7 +10,7 @@ import { IImageVariant, IImageVariantResult } from "../types";
 
 // Animated images and vectors are passed through untouched: resizing them here
 // would either drop the animation or rasterise the vector.
-const SKIPPED_MIME_TYPES = ["image/gif", "image/svg+xml", "image/avif"];
+const SKIPPED_MIME_TYPES = ["image/gif", "image/svg+xml", "image/avif", "image/x-icon", "image/vnd.microsoft.icon"];
 
 export const isResizableImage = (mimetype: string) =>
   mimetype.startsWith("image/") && !SKIPPED_MIME_TYPES.includes(mimetype);

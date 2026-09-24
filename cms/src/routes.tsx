@@ -9,6 +9,7 @@ import { FaqsPage } from '@/pages/faqs/faqs-page'
 import { GalleryPage } from '@/pages/gallery/gallery-page'
 import { GalleryCategoriesPage } from '@/pages/gallery-categories/gallery-categories-page'
 import { ProfilePage } from '@/pages/profile/profile-page'
+import { SiteSettingsPage } from '@/pages/site-settings/site-settings-page'
 import { TeamMembersPage } from '@/pages/team-members/team-members-page'
 import { TestimonialCategoriesPage } from '@/pages/testimonial-categories/testimonial-categories-page'
 import { TestimonialsPage } from '@/pages/testimonials/testimonials-page'
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
           { path: 'team-members', element: <TeamMembersPage /> },
           { path: 'gallery', element: <GalleryPage /> },
           { path: 'gallery-categories', element: <GalleryCategoriesPage /> },
+          { path: 'site-settings', element: <SiteSettingsPage /> },
           {
             element: <AdminRoute />,
             children: [{ path: 'users', element: <UsersPage /> }],

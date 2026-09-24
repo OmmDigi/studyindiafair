@@ -23,7 +23,7 @@ import {
   PUBLIC_FOLDER_NAME,
 } from "../constant";
 
-const SKIPPED_EXTENSIONS = [".gif", ".svg", ".avif"];
+const SKIPPED_EXTENSIONS = [".gif", ".svg", ".avif", ".ico"];
 
 // A variant is itself an image in the same folder; without this the script
 // would generate variants of variants on every run.

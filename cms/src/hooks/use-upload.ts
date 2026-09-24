@@ -35,8 +35,9 @@ export function usePendingUploads() {
     pending.current.clear()
   }, [])
 
-  const commit = useCallback((keep?: string | null) => {
-    pending.current.forEach((path) => path !== keep && deleteFile(path))
+  const commit = useCallback((keep?: string | null | (string | null)[]) => {
+    const kept = new Set(Array.isArray(keep) ? keep : [keep])
+    pending.current.forEach((path) => !kept.has(path) && deleteFile(path))
     pending.current.clear()
   }, [])
 
