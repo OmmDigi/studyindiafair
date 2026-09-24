@@ -1,4 +1,4 @@
-import { LayoutDashboard, LogOut } from 'lucide-react'
+import { LayoutDashboard, LogOut, UserCircle, Users } from 'lucide-react'
 import { NavLink, useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth-context'
 import {
@@ -13,10 +13,14 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 
-const navItems = [{ title: 'Dashboard', url: '/', icon: LayoutDashboard }]
+const navItems = [
+  { title: 'Dashboard', url: '/', icon: LayoutDashboard },
+  { title: 'Users', url: '/users', icon: Users, adminOnly: true },
+  { title: 'Profile', url: '/profile', icon: UserCircle },
+]
 
 export function AppSidebar() {
-  const { user, logout } = useAuth()
+  const { user, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = async () => {
@@ -31,7 +35,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
+              {navItems.filter((item) => !item.adminOnly || isAdmin).map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <NavLink to={item.url} end>
                     {({ isActive }) => (
