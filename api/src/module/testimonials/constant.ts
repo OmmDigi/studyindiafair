@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { editorContent } from "../../utils/editorContent.js";
+
+export type { EditorContent } from "../../utils/editorContent.js";
 
 export const TESTIMONIAL_TYPES = ["text", "text_image", "video"] as const;
 export type TestimonialType = (typeof TESTIMONIAL_TYPES)[number];
@@ -25,27 +28,6 @@ export function extractYoutubeId(input: string) {
 }
 
 const optionalText = z.preprocess((v) => (v === "" ? null : v), z.string().trim().max(5000).nullable());
-
-const editorContent = z
-  .object({
-    time: z.number().optional(),
-    version: z.string().max(20).optional(),
-    blocks: z
-      .array(
-        z.object({
-          id: z.string().max(50).optional(),
-          type: z.string().min(1).max(50),
-          data: z.record(z.string(), z.unknown()),
-          tunes: z.record(z.string(), z.unknown()).optional(),
-        })
-      )
-      .max(500),
-  })
-  .nullable()
-  .transform((v) => (v && v.blocks.length ? v : null))
-  .refine((v) => !v || JSON.stringify(v).length <= 200_000, "Content is too large");
-
-export type EditorContent = z.infer<typeof editorContent>;
 
 const imagePath = z
   .string()

@@ -5,6 +5,7 @@ import { AdminLayout } from '@/layouts/admin-layout'
 import { ForgotPasswordPage } from '@/pages/auth/forgot-password-page'
 import { LoginPage } from '@/pages/auth/login-page'
 import { DashboardPage } from '@/pages/dashboard/dashboard-page'
+import { FaqsPage } from '@/pages/faqs/faqs-page'
 import { ProfilePage } from '@/pages/profile/profile-page'
 import { TestimonialCategoriesPage } from '@/pages/testimonial-categories/testimonial-categories-page'
 import { TestimonialsPage } from '@/pages/testimonials/testimonials-page'
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
           { path: 'profile', element: <ProfilePage /> },
           { path: 'testimonials', element: <TestimonialsPage /> },
           { path: 'testimonial-categories', element: <TestimonialCategoriesPage /> },
+          { path: 'faqs', element: <FaqsPage /> },
           {
             element: <AdminRoute />,
             children: [{ path: 'users', element: <UsersPage /> }],
