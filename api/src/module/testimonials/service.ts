@@ -14,6 +14,9 @@ import {
 type Row = {
   id: number;
   type: TestimonialType;
+  category_id: number;
+  category_name: string;
+  category_slug: string;
   name: string;
   designation: string | null;
   content: EditorContent;
@@ -25,9 +28,16 @@ type Row = {
   updated_at: Date;
 };
 
-type Fields = Pick<Row, "type" | "name" | "designation" | "content" | "image_path" | "youtube_id" | "sort_order" | "is_active">;
+type Fields = Pick<Row, "type" | "category_id" | "name" | "designation" | "content" | "image_path" | "youtube_id" | "sort_order" | "is_active">;
 
-const COLUMNS = "id, type, name, designation, content, image_path, youtube_id, sort_order, is_active, created_at, updated_at";
+const SELECT = `SELECT t.id, t.type, t.category_id, c.name AS category_name, c.slug AS category_slug, t.name, t.designation,
+  t.content, t.image_path, t.youtube_id, t.sort_order, t.is_active, t.created_at, t.updated_at
+  FROM testimonials t JOIN testimonial_categories c ON c.id = t.category_id`;
+
+async function assertCategory(id: number) {
+  const { rows } = await query("SELECT 1 FROM testimonial_categories WHERE id = $1", [id]);
+  if (!rows[0]) throw new AppError(422, "Selected category does not exist");
+}
 
 const serialize = (row: Row) => ({
   ...row,
@@ -55,41 +65,49 @@ function resolveYoutubeId(url: string | null | undefined, fallback: string | nul
   return id;
 }
 
-export async function list({ search, type, is_active, page, limit }: ListTestimonialsQuery) {
+export async function list({ search, type, category_id, is_active, page, limit }: ListTestimonialsQuery) {
   const where: string[] = [];
   const params: unknown[] = [];
   if (search) {
     params.push(`%${search}%`);
-    where.push(`(name ILIKE $${params.length} OR designation ILIKE $${params.length} OR content::text ILIKE $${params.length})`);
+    where.push(`(t.name ILIKE $${params.length} OR t.designation ILIKE $${params.length} OR t.content::text ILIKE $${params.length})`);
   }
   if (type) {
     params.push(type);
-    where.push(`type = $${params.length}`);
+    where.push(`t.type = $${params.length}`);
+  }
+  if (category_id) {
+    params.push(category_id);
+    where.push(`t.category_id = $${params.length}`);
   }
   if (is_active !== undefined) {
     params.push(is_active);
-    where.push(`is_active = $${params.length}`);
+    where.push(`t.is_active = $${params.length}`);
   }
   const clause = where.length ? `WHERE ${where.join(" AND ")}` : "";
   const [{ rows }, count] = await Promise.all([
     query<Row>(
-      `SELECT ${COLUMNS} FROM testimonials ${clause} ORDER BY sort_order ASC, id DESC LIMIT ${limit} OFFSET ${(page - 1) * limit}`,
+      `${SELECT} ${clause} ORDER BY t.sort_order ASC, t.id DESC LIMIT ${limit} OFFSET ${(page - 1) * limit}`,
       params
     ),
-    query<{ total: number }>(`SELECT COUNT(*)::int AS total FROM testimonials ${clause}`, params),
+    query<{ total: number }>(`SELECT COUNT(*)::int AS total FROM testimonials t ${clause}`, params),
   ]);
   return { data: rows.map(serialize), page, limit, total: count.rows[0].total };
 }
 
-export async function listPublic({ type, limit }: PublicListQuery) {
+export async function listPublic({ type, category, limit }: PublicListQuery) {
   const params: unknown[] = [];
-  let clause = "WHERE is_active = TRUE";
+  let clause = "WHERE t.is_active = TRUE AND c.is_active = TRUE";
   if (type) {
     params.push(type);
-    clause += ` AND type = $${params.length}`;
+    clause += ` AND t.type = $${params.length}`;
+  }
+  if (category) {
+    params.push(category);
+    clause += ` AND c.slug = $${params.length}`;
   }
   const { rows } = await query<Row>(
-    `SELECT ${COLUMNS} FROM testimonials ${clause} ORDER BY sort_order ASC, id DESC LIMIT ${limit}`,
+    `${SELECT} ${clause} ORDER BY t.sort_order ASC, t.id DESC LIMIT ${limit}`,
     params
   );
   return rows.map((row) => {
@@ -99,7 +117,7 @@ export async function listPublic({ type, limit }: PublicListQuery) {
 }
 
 async function findRow(id: number) {
-  const { rows } = await query<Row>(`SELECT ${COLUMNS} FROM testimonials WHERE id = $1`, [id]);
+  const { rows } = await query<Row>(`${SELECT} WHERE t.id = $1`, [id]);
   if (!rows[0]) throw new AppError(404, "Testimonial not found");
   return rows[0];
 }
@@ -109,6 +127,7 @@ export const getById = async (id: number) => serialize(await findRow(id));
 export async function create(input: CreateTestimonialInput, actorId: number) {
   const record = normalize({
     type: input.type,
+    category_id: input.category_id,
     name: input.name,
     designation: input.designation,
     content: input.content,
@@ -117,18 +136,20 @@ export async function create(input: CreateTestimonialInput, actorId: number) {
     sort_order: input.sort_order,
     is_active: input.is_active,
   });
-  const { rows } = await query<Row>(
-    `INSERT INTO testimonials (type, name, designation, content, image_path, youtube_id, sort_order, is_active, created_by, updated_by)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9) RETURNING ${COLUMNS}`,
-    [record.type, record.name, record.designation, record.content && JSON.stringify(record.content), record.image_path, record.youtube_id, record.sort_order, record.is_active, actorId]
+  await assertCategory(record.category_id);
+  const { rows } = await query<{ id: number }>(
+    `INSERT INTO testimonials (type, category_id, name, designation, content, image_path, youtube_id, sort_order, is_active, created_by, updated_by)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10) RETURNING id`,
+    [record.type, record.category_id, record.name, record.designation, record.content && JSON.stringify(record.content), record.image_path, record.youtube_id, record.sort_order, record.is_active, actorId]
   );
-  return serialize(rows[0]);
+  return getById(rows[0].id);
 }
 
 export async function update(id: number, input: UpdateTestimonialInput, actorId: number) {
   const current = await findRow(id);
   const record = normalize({
     type: input.type ?? current.type,
+    category_id: input.category_id ?? current.category_id,
     name: input.name ?? current.name,
     designation: input.designation !== undefined ? input.designation : current.designation,
     content: input.content !== undefined ? input.content : current.content,
@@ -137,13 +158,14 @@ export async function update(id: number, input: UpdateTestimonialInput, actorId:
     sort_order: input.sort_order ?? current.sort_order,
     is_active: input.is_active ?? current.is_active,
   });
-  const { rows } = await query<Row>(
-    `UPDATE testimonials SET type = $2, name = $3, designation = $4, content = $5, image_path = $6, youtube_id = $7,
-     sort_order = $8, is_active = $9, updated_by = $10, updated_at = NOW() WHERE id = $1 RETURNING ${COLUMNS}`,
-    [id, record.type, record.name, record.designation, record.content && JSON.stringify(record.content), record.image_path, record.youtube_id, record.sort_order, record.is_active, actorId]
+  if (record.category_id !== current.category_id) await assertCategory(record.category_id);
+  await query(
+    `UPDATE testimonials SET type = $2, category_id = $3, name = $4, designation = $5, content = $6, image_path = $7, youtube_id = $8,
+     sort_order = $9, is_active = $10, updated_by = $11, updated_at = NOW() WHERE id = $1`,
+    [id, record.type, record.category_id, record.name, record.designation, record.content && JSON.stringify(record.content), record.image_path, record.youtube_id, record.sort_order, record.is_active, actorId]
   );
   if (current.image_path && current.image_path !== record.image_path) await deleteUpload(current.image_path);
-  return serialize(rows[0]);
+  return getById(id);
 }
 
 export async function remove(id: number) {

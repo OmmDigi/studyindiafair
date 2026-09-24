@@ -6,6 +6,7 @@ import { ForgotPasswordPage } from '@/pages/auth/forgot-password-page'
 import { LoginPage } from '@/pages/auth/login-page'
 import { DashboardPage } from '@/pages/dashboard/dashboard-page'
 import { ProfilePage } from '@/pages/profile/profile-page'
+import { TestimonialCategoriesPage } from '@/pages/testimonial-categories/testimonial-categories-page'
 import { TestimonialsPage } from '@/pages/testimonials/testimonials-page'
 import { UsersPage } from '@/pages/users/users-page'
 
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
           { index: true, element: <DashboardPage /> },
           { path: 'profile', element: <ProfilePage /> },
           { path: 'testimonials', element: <TestimonialsPage /> },
+          { path: 'testimonial-categories', element: <TestimonialCategoriesPage /> },
           {
             element: <AdminRoute />,
             children: [{ path: 'users', element: <UsersPage /> }],

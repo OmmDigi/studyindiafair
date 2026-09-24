@@ -1,4 +1,4 @@
-import { LayoutDashboard, LogOut, MessageSquareQuote, UserCircle, Users } from 'lucide-react'
+import { LayoutDashboard, LogOut, MessageSquareQuote, Tags, UserCircle, Users } from 'lucide-react'
 import { NavLink, useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth-context'
 import {
@@ -16,6 +16,7 @@ import {
 const navItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Testimonials', url: '/testimonials', icon: MessageSquareQuote },
+  { title: 'Testimonial Categories', url: '/testimonial-categories', icon: Tags },
   { title: 'Users', url: '/users', icon: Users, adminOnly: true },
   { title: 'Profile', url: '/profile', icon: UserCircle },
 ]

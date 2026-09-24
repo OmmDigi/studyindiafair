@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Pencil, Plus, Quote, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Quote, Tags, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -16,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useTestimonialCategories } from '@/hooks/use-testimonial-categories'
 import { getErrorMessage } from '@/lib/api'
 import { fileUrl } from '@/lib/upload'
 import { testimonialService } from '@/services/testimonial.service'
@@ -47,6 +49,8 @@ export function TestimonialsPage() {
   const qc = useQueryClient()
   const [search, setSearch] = useState('')
   const [type, setType] = useState<TestimonialType | 'all'>('all')
+  const [categoryId, setCategoryId] = useState('all')
+  const { data: categories = [] } = useTestimonialCategories()
   const [status, setStatus] = useState<'all' | 'active' | 'inactive'>('all')
   const [page, setPage] = useState(1)
   const [formOpen, setFormOpen] = useState(false)
@@ -57,6 +61,7 @@ export function TestimonialsPage() {
   const params = {
     search: search || undefined,
     type: type === 'all' ? undefined : type,
+    category_id: categoryId === 'all' ? undefined : Number(categoryId),
     is_active: status === 'all' ? undefined : status === 'active',
     page,
     limit: LIMIT,
@@ -97,9 +102,16 @@ export function TestimonialsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Testimonials</h1>
-        <Button onClick={() => openForm(null)}>
-          <Plus /> New Testimonial
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link to="/testimonial-categories">
+              <Tags /> Categories
+            </Link>
+          </Button>
+          <Button onClick={() => openForm(null)}>
+            <Plus /> New Testimonial
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -132,6 +144,25 @@ export function TestimonialsPage() {
           </SelectContent>
         </Select>
         <Select
+          value={categoryId}
+          onValueChange={(v) => {
+            setCategoryId(v)
+            setPage(1)
+          }}
+        >
+          <SelectTrigger className="w-44">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All categories</SelectItem>
+            {categories.map((c) => (
+              <SelectItem key={c.id} value={String(c.id)}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
           value={status}
           onValueChange={(v) => {
             setStatus(v as typeof status)
@@ -155,6 +186,7 @@ export function TestimonialsPage() {
             <TableRow>
               <TableHead className="w-16">Preview</TableHead>
               <TableHead>Name</TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Content</TableHead>
               <TableHead>Order</TableHead>
@@ -165,13 +197,13 @@ export function TestimonialsPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground">
+                <TableCell colSpan={8} className="text-center text-muted-foreground">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !data?.data.length ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground">
+                <TableCell colSpan={8} className="text-center text-muted-foreground">
                   No testimonials found
                 </TableCell>
               </TableRow>
@@ -184,6 +216,9 @@ export function TestimonialsPage() {
                   <TableCell>
                     <div className="font-medium">{t.name}</div>
                     {t.designation && <div className="text-xs text-muted-foreground">{t.designation}</div>}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{t.category_name}</Badge>
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary">{TESTIMONIAL_TYPE_LABELS[t.type]}</Badge>

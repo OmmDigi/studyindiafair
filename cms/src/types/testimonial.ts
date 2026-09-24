@@ -12,6 +12,9 @@ export const TESTIMONIAL_TYPE_LABELS: Record<TestimonialType, string> = {
 export type Testimonial = {
   id: number
   type: TestimonialType
+  category_id: number
+  category_name: string
+  category_slug: string
   name: string
   designation: string | null
   content: OutputData | null

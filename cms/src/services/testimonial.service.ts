@@ -6,6 +6,7 @@ import type { Testimonial, TestimonialType } from '@/types/testimonial'
 export type TestimonialListParams = {
   search?: string
   type?: TestimonialType
+  category_id?: number
   is_active?: boolean
   page?: number
   limit?: number
@@ -13,6 +14,7 @@ export type TestimonialListParams = {
 
 export type TestimonialPayload = {
   type: TestimonialType
+  category_id: number
   name: string
   designation: string
   content: OutputData | null

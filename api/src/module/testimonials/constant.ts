@@ -59,6 +59,7 @@ export const idParamSchema = z.object({ id: z.coerce.number().int().positive() }
 export const listTestimonialsSchema = z.object({
   search: z.string().trim().optional(),
   type: z.enum(TESTIMONIAL_TYPES).optional(),
+  category_id: z.coerce.number().int().positive().optional(),
   is_active: z.enum(["true", "false"]).transform((v) => v === "true").optional(),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
@@ -66,11 +67,13 @@ export const listTestimonialsSchema = z.object({
 
 export const publicListSchema = z.object({
   type: z.enum(TESTIMONIAL_TYPES).optional(),
+  category: z.string().trim().toLowerCase().max(120).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
 const fields = {
   type: z.enum(TESTIMONIAL_TYPES),
+  category_id: z.number({ error: "Category is required" }).int().positive(),
   name: z.string().trim().min(2).max(120),
   designation: optionalText,
   content: editorContent,

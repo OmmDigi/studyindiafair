@@ -1,5 +1,6 @@
 import type { OutputData } from '@editorjs/editorjs'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Settings2 } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -12,10 +13,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { useTestimonialCategories } from '@/hooks/use-testimonial-categories'
 import { usePendingUploads } from '@/hooks/use-upload'
 import { getErrorMessage } from '@/lib/api'
 import { youtubeId } from '@/lib/youtube'
 import { testimonialService } from '@/services/testimonial.service'
+import { ManageCategoriesDialog } from '@/pages/testimonial-categories/manage-categories-dialog'
 import { toEditorData, TESTIMONIAL_TYPE_LABELS, TESTIMONIAL_TYPES, type Testimonial } from '@/types/testimonial'
 
 const UPLOAD_FOLDER = 'testimonials'
@@ -23,6 +26,7 @@ const UPLOAD_FOLDER = 'testimonials'
 const schema = z
   .object({
     type: z.enum(TESTIMONIAL_TYPES),
+    category_id: z.number({ error: 'Select a category' }).int().positive('Select a category'),
     name: z.string().trim().min(2, 'Name must be at least 2 characters').max(120),
     designation: z.string().trim().max(5000),
     content: z.custom<OutputData>().nullable(),
@@ -53,17 +57,21 @@ type Props = {
 export function TestimonialFormDialog({ open, testimonial, onOpenChange, onSaved }: Props) {
   const [uploading, setUploading] = useState(false)
   const pending = usePendingUploads()
+  const [manageOpen, setManageOpen] = useState(false)
+  const { data: categories = [], error: categoriesError } = useTestimonialCategories()
 
   const {
     register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     values: testimonial
       ? {
           type: testimonial.type,
+          category_id: testimonial.category_id,
           name: testimonial.name,
           designation: testimonial.designation ?? '',
           content: toEditorData(testimonial.content),
@@ -74,6 +82,7 @@ export function TestimonialFormDialog({ open, testimonial, onOpenChange, onSaved
         }
       : {
           type: 'text',
+          category_id: categories.find((c) => c.is_active)?.id ?? 0,
           name: '',
           designation: '',
           content: null,
@@ -118,6 +127,40 @@ export function TestimonialFormDialog({ open, testimonial, onOpenChange, onSaved
           <DialogTitle>{testimonial ? 'Edit Testimonial' : 'New Testimonial'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>
+                Category <span className="text-destructive">*</span>
+              </Label>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setManageOpen(true)}>
+                <Settings2 /> Manage categories
+              </Button>
+            </div>
+            <Controller
+              control={control}
+              name="category_id"
+              render={({ field }) => (
+                <Select
+                  value={field.value ? String(field.value) : ''}
+                  onValueChange={(v) => field.onChange(Number(v))}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={categories.length ? 'Select a category' : 'No categories yet, add one'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={String(c.id)}>
+                        {c.name}
+                        {!c.is_active && ' (inactive)'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {categoriesError && <p className="text-sm text-destructive">Could not load categories. {getErrorMessage(categoriesError)}</p>}
+            {errors.category_id && <p className="text-sm text-destructive">{errors.category_id.message}</p>}
+          </div>
           <div className="space-y-2">
             <Label>Type</Label>
             <Controller
@@ -226,6 +269,11 @@ export function TestimonialFormDialog({ open, testimonial, onOpenChange, onSaved
             </Button>
           </DialogFooter>
         </form>
+        <ManageCategoriesDialog
+          open={manageOpen}
+          onOpenChange={setManageOpen}
+          onCreated={(c) => setValue('category_id', c.id, { shouldValidate: true })}
+        />
       </DialogContent>
     </Dialog>
   )
