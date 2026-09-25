@@ -1,5 +1,6 @@
 import { query } from "../../db/pool.js";
 import { AppError } from "../../utils/AppError.js";
+import { deleteUpload } from "../../utils/uploadServer.js";
 import { isUniqueViolation } from "../auth/service.js";
 import { slugify, type CreatePageInput, type ListPagesQuery, type UpdatePageInput } from "./constant.js";
 
@@ -85,6 +86,7 @@ export async function remove(id: number) {
       `Page has ${current.faq_count} FAQ${current.faq_count === 1 ? "" : "s"}, move or delete them first`
     );
   }
+  const seo = await query<{ og_image_path: string | null }>("SELECT og_image_path FROM page_seo WHERE page_id = $1", [id]);
   try {
     await query("DELETE FROM pages WHERE id = $1", [id]);
   } catch (err) {
@@ -93,4 +95,5 @@ export async function remove(id: number) {
     }
     throw err;
   }
+  await deleteUpload(seo.rows[0]?.og_image_path);
 }

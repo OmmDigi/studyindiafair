@@ -10,6 +10,7 @@ import { GalleryPage } from '@/pages/gallery/gallery-page'
 import { GalleryCategoriesPage } from '@/pages/gallery-categories/gallery-categories-page'
 import { PagesPage } from '@/pages/pages/pages-page'
 import { ProfilePage } from '@/pages/profile/profile-page'
+import { SeoPage } from '@/pages/seo/seo-page'
 import { SiteSettingsPage } from '@/pages/site-settings/site-settings-page'
 import { TeamMembersPage } from '@/pages/team-members/team-members-page'
 import { TestimonialCategoriesPage } from '@/pages/testimonial-categories/testimonial-categories-page'
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
           { path: 'testimonials', element: <TestimonialsPage /> },
           { path: 'testimonial-categories', element: <TestimonialCategoriesPage /> },
           { path: 'pages', element: <PagesPage /> },
+          { path: 'seo', element: <SeoPage /> },
           { path: 'faqs', element: <FaqsPage /> },
           { path: 'team-members', element: <TeamMembersPage /> },
           { path: 'gallery', element: <GalleryPage /> },

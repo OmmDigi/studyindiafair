@@ -15,5 +15,6 @@ export function useRefreshPages() {
   return () => {
     qc.invalidateQueries({ queryKey: PAGES_KEY })
     qc.invalidateQueries({ queryKey: ['faqs'] })
+    qc.invalidateQueries({ queryKey: ['seo'] })
   }
 }
