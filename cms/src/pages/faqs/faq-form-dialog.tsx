@@ -10,9 +10,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { usePages } from '@/hooks/use-pages'
 import { getErrorMessage } from '@/lib/api'
 import { toEditorData } from '@/lib/editor'
-import { PAGES } from '@/lib/pages'
 import { faqService } from '@/services/faq.service'
 import type { Faq } from '@/types/faq'
 
@@ -38,6 +38,7 @@ type Props = {
 }
 
 export function FaqFormDialog({ open, faq, defaultPage, onOpenChange, onSaved }: Props) {
+  const { data: pages = [] } = usePages()
   const {
     register,
     control,
@@ -54,7 +55,7 @@ export function FaqFormDialog({ open, faq, defaultPage, onOpenChange, onSaved }:
           is_active: faq.is_active,
         }
       : {
-          page_slug: defaultPage ?? PAGES[0].slug,
+          page_slug: defaultPage ?? '',
           question: '',
           answer: null,
           sort_order: 0,
@@ -94,7 +95,7 @@ export function FaqFormDialog({ open, faq, defaultPage, onOpenChange, onSaved }:
                     <SelectValue placeholder="Select a page" />
                   </SelectTrigger>
                   <SelectContent>
-                    {PAGES.map((p) => (
+                    {pages.map((p) => (
                       <SelectItem key={p.slug} value={p.slug}>
                         {p.name}
                       </SelectItem>

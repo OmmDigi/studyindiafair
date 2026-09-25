@@ -16,9 +16,9 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { usePages } from '@/hooks/use-pages'
 import { getErrorMessage } from '@/lib/api'
 import { editorPlainText } from '@/lib/editor'
-import { pageName, PAGES } from '@/lib/pages'
 import { faqService } from '@/services/faq.service'
 import type { Faq } from '@/types/faq'
 import { FaqFormDialog } from './faq-form-dialog'
@@ -28,7 +28,8 @@ const LIMIT = 20
 export function FaqsPage() {
   const qc = useQueryClient()
   const [search, setSearch] = useState('')
-  const [pageSlug, setPageSlug] = useState<string>(PAGES[0].slug)
+  const { data: pages = [] } = usePages()
+  const [pageSlug, setPageSlug] = useState('all')
   const [status, setStatus] = useState<'all' | 'active' | 'inactive'>('all')
   const [page, setPage] = useState(1)
   const [formOpen, setFormOpen] = useState(false)
@@ -106,7 +107,7 @@ export function FaqsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All pages</SelectItem>
-            {PAGES.map((p) => (
+            {pages.map((p) => (
               <SelectItem key={p.slug} value={p.slug}>
                 {p.name}
               </SelectItem>
@@ -166,7 +167,7 @@ export function FaqsPage() {
                     <p className="line-clamp-2 whitespace-normal text-muted-foreground">{editorPlainText(f.answer) || '—'}</p>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">{pageName(f.page_slug)}</Badge>
+                    <Badge variant="outline">{pages.find((p) => p.slug === f.page_slug)?.name ?? f.page_slug}</Badge>
                   </TableCell>
                   <TableCell>{f.sort_order}</TableCell>
                   <TableCell>

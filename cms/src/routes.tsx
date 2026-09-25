@@ -8,6 +8,7 @@ import { DashboardPage } from '@/pages/dashboard/dashboard-page'
 import { FaqsPage } from '@/pages/faqs/faqs-page'
 import { GalleryPage } from '@/pages/gallery/gallery-page'
 import { GalleryCategoriesPage } from '@/pages/gallery-categories/gallery-categories-page'
+import { PagesPage } from '@/pages/pages/pages-page'
 import { ProfilePage } from '@/pages/profile/profile-page'
 import { SiteSettingsPage } from '@/pages/site-settings/site-settings-page'
 import { TeamMembersPage } from '@/pages/team-members/team-members-page'
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
           { path: 'profile', element: <ProfilePage /> },
           { path: 'testimonials', element: <TestimonialsPage /> },
           { path: 'testimonial-categories', element: <TestimonialCategoriesPage /> },
+          { path: 'pages', element: <PagesPage /> },
           { path: 'faqs', element: <FaqsPage /> },
           { path: 'team-members', element: <TeamMembersPage /> },
           { path: 'gallery', element: <GalleryPage /> },

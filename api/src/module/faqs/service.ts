@@ -13,6 +13,15 @@ type Row = {
   updated_at: Date;
 };
 
+async function run<T>(fn: () => Promise<T>) {
+  try {
+    return await fn();
+  } catch (err) {
+    if ((err as { code?: string })?.code === "23503") throw new AppError(422, "Selected page does not exist");
+    throw err;
+  }
+}
+
 const SELECT = "SELECT id, page_slug, question, answer, sort_order, is_active, created_at, updated_at FROM faqs";
 
 export async function list({ search, page_slug, is_active, page, limit }: ListFaqsQuery) {
@@ -54,28 +63,32 @@ export async function getById(id: number) {
 }
 
 export async function create(input: CreateFaqInput, actorId: number) {
-  const { rows } = await query<{ id: number }>(
-    `INSERT INTO faqs (page_slug, question, answer, sort_order, is_active, created_by, updated_by)
-     VALUES ($1, $2, $3, $4, $5, $6, $6) RETURNING id`,
-    [input.page_slug, input.question, JSON.stringify(input.answer), input.sort_order, input.is_active, actorId]
+  const { rows } = await run(() =>
+    query<{ id: number }>(
+      `INSERT INTO faqs (page_slug, question, answer, sort_order, is_active, created_by, updated_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $6) RETURNING id`,
+      [input.page_slug, input.question, JSON.stringify(input.answer), input.sort_order, input.is_active, actorId]
+    )
   );
   return getById(rows[0].id);
 }
 
 export async function update(id: number, input: UpdateFaqInput, actorId: number) {
   const current = await getById(id);
-  await query(
-    `UPDATE faqs SET page_slug = $2, question = $3, answer = $4, sort_order = $5, is_active = $6, updated_by = $7, updated_at = NOW()
-     WHERE id = $1`,
-    [
-      id,
-      input.page_slug ?? current.page_slug,
-      input.question ?? current.question,
-      JSON.stringify(input.answer ?? current.answer),
-      input.sort_order ?? current.sort_order,
-      input.is_active ?? current.is_active,
-      actorId,
-    ]
+  await run(() =>
+    query(
+      `UPDATE faqs SET page_slug = $2, question = $3, answer = $4, sort_order = $5, is_active = $6, updated_by = $7, updated_at = NOW()
+       WHERE id = $1`,
+      [
+        id,
+        input.page_slug ?? current.page_slug,
+        input.question ?? current.question,
+        JSON.stringify(input.answer ?? current.answer),
+        input.sort_order ?? current.sort_order,
+        input.is_active ?? current.is_active,
+        actorId,
+      ]
+    )
   );
   return getById(id);
 }
