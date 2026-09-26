@@ -1,4 +1,4 @@
-import { CircleHelp, FileText, FolderTree, Images, LayoutDashboard, LogOut, MessageSquareQuote, SearchCheck, Settings, Tags, UserCircle, Users, UsersRound } from 'lucide-react'
+import { CircleHelp, ClipboardList, FileText, FolderTree, Images, LayoutDashboard, LogOut, MessageSquareQuote, SearchCheck, Settings, Tags, UserCircle, Users, UsersRound } from 'lucide-react'
 import { NavLink, useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth-context'
 import {
@@ -20,6 +20,7 @@ const navItems = [
   { title: 'Pages', url: '/pages', icon: FileText },
   { title: 'SEO', url: '/seo', icon: SearchCheck },
   { title: 'FAQs', url: '/faqs', icon: CircleHelp },
+  { title: 'Forms', url: '/forms', icon: ClipboardList },
   { title: 'Team Members', url: '/team-members', icon: UsersRound },
   { title: 'Gallery', url: '/gallery', icon: Images },
   { title: 'Gallery Categories', url: '/gallery-categories', icon: FolderTree },

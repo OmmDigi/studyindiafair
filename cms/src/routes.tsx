@@ -6,6 +6,8 @@ import { ForgotPasswordPage } from '@/pages/auth/forgot-password-page'
 import { LoginPage } from '@/pages/auth/login-page'
 import { DashboardPage } from '@/pages/dashboard/dashboard-page'
 import { FaqsPage } from '@/pages/faqs/faqs-page'
+import { EnquiriesPage } from '@/pages/forms/enquiries-page'
+import { FormsPage } from '@/pages/forms/forms-page'
 import { GalleryPage } from '@/pages/gallery/gallery-page'
 import { GalleryCategoriesPage } from '@/pages/gallery-categories/gallery-categories-page'
 import { PagesPage } from '@/pages/pages/pages-page'
@@ -33,6 +35,8 @@ export const router = createBrowserRouter([
           { path: 'pages', element: <PagesPage /> },
           { path: 'seo', element: <SeoPage /> },
           { path: 'faqs', element: <FaqsPage /> },
+          { path: 'forms', element: <FormsPage /> },
+          { path: 'forms/:id', element: <EnquiriesPage /> },
           { path: 'team-members', element: <TeamMembersPage /> },
           { path: 'gallery', element: <GalleryPage /> },
           { path: 'gallery-categories', element: <GalleryCategoriesPage /> },
