@@ -18,6 +18,7 @@ import { useAuth } from '@/context/auth-context'
 import { getErrorMessage } from '@/lib/api'
 import { formService } from '@/services/form.service'
 import type { Form } from '@/types/form'
+import { SetupEmailButton } from '../email-templates/setup-email-button'
 import { FormFormDialog } from './form-form-dialog'
 
 export function FormsPage() {
@@ -104,6 +105,7 @@ export function FormsPage() {
                         <Eye />
                       </Link>
                     </Button>
+                    <SetupEmailButton form={f} />
                     <Button size="icon-sm" variant="ghost" title="Edit" onClick={() => openForm(f)}>
                       <Pencil />
                     </Button>

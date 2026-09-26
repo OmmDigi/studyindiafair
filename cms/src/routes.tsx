@@ -5,6 +5,8 @@ import { AdminLayout } from '@/layouts/admin-layout'
 import { ForgotPasswordPage } from '@/pages/auth/forgot-password-page'
 import { LoginPage } from '@/pages/auth/login-page'
 import { DashboardPage } from '@/pages/dashboard/dashboard-page'
+import { EmailTemplateSetupPage } from '@/pages/email-templates/email-template-setup-page'
+import { EmailTemplatesPage } from '@/pages/email-templates/email-templates-page'
 import { FaqsPage } from '@/pages/faqs/faqs-page'
 import { EnquiriesPage } from '@/pages/forms/enquiries-page'
 import { FormsPage } from '@/pages/forms/forms-page'
@@ -37,6 +39,8 @@ export const router = createBrowserRouter([
           { path: 'faqs', element: <FaqsPage /> },
           { path: 'forms', element: <FormsPage /> },
           { path: 'forms/:id', element: <EnquiriesPage /> },
+          { path: 'email-templates', element: <EmailTemplatesPage /> },
+          { path: 'email-templates/:id', element: <EmailTemplateSetupPage /> },
           { path: 'team-members', element: <TeamMembersPage /> },
           { path: 'gallery', element: <GalleryPage /> },
           { path: 'gallery-categories', element: <GalleryCategoriesPage /> },

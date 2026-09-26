@@ -1,6 +1,7 @@
 import { query } from "../../db/pool.js";
 import { AppError } from "../../utils/AppError.js";
 import { isUniqueViolation } from "../auth/service.js";
+import { dispatchEnquiryEmails } from "../form-emails/service.js";
 import {
   slugify,
   type CreateFormInput,
@@ -27,6 +28,11 @@ type EnquiryRow = {
   details: Record<string, unknown>;
   created_at: Date;
 };
+
+const ENQUIRY_EMAILS = `(SELECT COALESCE(json_agg(json_build_object(
+    'id', m.id, 'type', m.type, 'recipients', m.recipients, 'subject', m.subject,
+    'status', m.status, 'error', m.error, 'created_at', m.created_at) ORDER BY m.id), '[]')
+  FROM form_enquiry_emails m WHERE m.enquiry_id = form_enquiries.id) AS emails`;
 
 const SELECT = `SELECT f.id, f.name, f.form_id, f.created_at, f.updated_at,
   (SELECT COUNT(*)::int FROM form_enquiries e WHERE e.form_id = f.form_id) AS enquiry_count
@@ -129,7 +135,9 @@ export async function submit(formId: string, input: SubmitEnquiryInput, ip: stri
     "INSERT INTO form_enquiries (form_id, name, phone, details, ip_address) VALUES ($1, $2, $3, $4, $5) RETURNING id",
     [formId, input.name, input.phone, JSON.stringify(input.details), ip ?? null]
   );
-  return { id: result.rows[0].id };
+  const id = result.rows[0].id;
+  dispatchEnquiryEmails(id).catch((err) => console.error("[form-emails]", err));
+  return { id };
 }
 
 export async function listEnquiries(id: number, { page, limit, ...filter }: ListEnquiriesQuery) {
@@ -137,7 +145,7 @@ export async function listEnquiries(id: number, { page, limit, ...filter }: List
   const { clause, params } = enquiryWhere(form.form_id, filter);
   const [{ rows }, count] = await Promise.all([
     query<EnquiryRow>(
-      `SELECT id, name, phone, details, created_at FROM form_enquiries ${clause}
+      `SELECT id, name, phone, details, created_at, ${ENQUIRY_EMAILS} FROM form_enquiries ${clause}
        ORDER BY created_at DESC, id DESC LIMIT ${limit} OFFSET ${(page - 1) * limit}`,
       params
     ),

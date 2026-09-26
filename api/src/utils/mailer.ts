@@ -8,10 +8,12 @@ const transporter = nodemailer.createTransport({
   auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined,
 });
 
-export async function sendMail(to: string, subject: string, html: string) {
+type MailExtra = { cc?: string[]; bcc?: string[]; replyTo?: string };
+
+export async function sendMail(to: string | string[], subject: string, html: string, extra: MailExtra = {}) {
   if (!env.SMTP_USER && env.NODE_ENV !== "production") {
-    console.log(`[mail] to=${to} subject=${subject}\n${html}`);
+    console.log(`[mail] to=${to} cc=${extra.cc ?? ""} bcc=${extra.bcc ?? ""} subject=${subject}\n${html}`);
     return;
   }
-  await transporter.sendMail({ from: env.MAIL_FROM, to, subject, html });
+  await transporter.sendMail({ from: env.MAIL_FROM, to, subject, html, ...extra });
 }

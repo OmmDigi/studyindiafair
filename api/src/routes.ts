@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authRoutes } from "./module/auth/routes.js";
 import { faqRoutes } from "./module/faqs/routes.js";
+import { formEmailRoutes } from "./module/form-emails/routes.js";
 import { formRoutes } from "./module/forms/routes.js";
 import { galleryCategoryRoutes } from "./module/gallery-categories/routes.js";
 import { galleryRoutes } from "./module/gallery/routes.js";
@@ -26,3 +27,4 @@ routes.use("/site-settings", siteSettingsRoutes);
 routes.use("/pages", pageRoutes);
 routes.use("/seo", seoRoutes);
 routes.use("/forms", formRoutes);
+routes.use("/form-email-templates", formEmailRoutes);

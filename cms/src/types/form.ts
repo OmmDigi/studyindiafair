@@ -1,3 +1,5 @@
+import type { EnquiryEmailLog } from './form-email'
+
 export type Form = {
   id: number
   name: string
@@ -13,4 +15,5 @@ export type Enquiry = {
   phone: string
   details: Record<string, unknown>
   created_at: string
+  emails: EnquiryEmailLog[]
 }

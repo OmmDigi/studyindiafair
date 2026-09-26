@@ -3,6 +3,7 @@ import { ArrowLeft, Download, Eye, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { toast } from 'sonner'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -18,6 +19,7 @@ import { useAuth } from '@/context/auth-context'
 import { getErrorMessage } from '@/lib/api'
 import { formService } from '@/services/form.service'
 import type { Enquiry } from '@/types/form'
+import { TEMPLATE_TYPE_LABELS } from '@/types/form-email'
 
 const LIMIT = 20
 
@@ -213,6 +215,25 @@ export function EnquiriesPage() {
                 </div>
               ))}
             </dl>
+          )}
+          {viewing && viewing.emails.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Emails</p>
+              <ul className="divide-y rounded-md border text-sm">
+                {viewing.emails.map((m) => (
+                  <li key={m.id} className="space-y-0.5 px-3 py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-medium">{TEMPLATE_TYPE_LABELS[m.type]}</span>
+                      <Badge variant={m.status === 'sent' ? 'default' : m.status === 'failed' ? 'destructive' : 'secondary'} className="capitalize">
+                        {m.status}
+                      </Badge>
+                    </div>
+                    {m.recipients && <p className="break-all text-muted-foreground">To: {m.recipients}</p>}
+                    {m.error && <p className="break-words text-destructive">{m.error}</p>}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setViewing(null)}>
