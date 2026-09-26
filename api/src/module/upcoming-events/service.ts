@@ -118,8 +118,11 @@ export async function create(input: CreateEventInput, actorId: number) {
   return getById(id);
 }
 
-export async function update(id: number, input: UpdateEventInput, actorId: number) {
+export async function update(id: number, input: UpdateEventInput, actorId: number, canEditSlug: boolean) {
   const current = await getById(id);
+  if (!canEditSlug && input.slug !== undefined && input.slug !== current.slug) {
+    throw new AppError(403, "Only admins can change the slug");
+  }
   const images = input.images ?? current.images;
   await run(() =>
     withTransaction(async (client) => {

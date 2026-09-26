@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { useAuth } from '@/context/auth-context'
 import { usePendingUploads } from '@/hooks/use-upload'
 import { getErrorMessage } from '@/lib/api'
 import { fileUrl, uploadFile } from '@/lib/upload'
@@ -52,6 +53,7 @@ export function EventFormDialog({ open, event, onOpenChange, onSaved }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(0)
   const pending = usePendingUploads()
+  const { isAdmin } = useAuth()
 
   const {
     register,
@@ -142,8 +144,15 @@ export function EventFormDialog({ open, event, onOpenChange, onSaved }: Props) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="event-slug">Slug</Label>
-              <Input id="event-slug" placeholder="Auto-generated from name if empty" {...register('slug')} />
-              <p className="text-xs text-muted-foreground">Also used as the page slug.</p>
+              <Input
+                id="event-slug"
+                placeholder="Auto-generated from name if empty"
+                readOnly={!isAdmin}
+                {...register('slug')}
+              />
+              <p className="text-xs text-muted-foreground">
+                {isAdmin ? 'Also used as the page slug.' : 'Only admins can change the slug.'}
+              </p>
               {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}
             </div>
           </div>

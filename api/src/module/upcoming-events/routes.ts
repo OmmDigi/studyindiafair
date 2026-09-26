@@ -70,7 +70,7 @@ upcomingEventRoutes.patch(
   validate(idParamSchema, "params"),
   validate(updateEventSchema),
   asyncHandler(async (req, res) => {
-    res.json(await service.update(Number(req.params.id), req.body, req.user!.id));
+    res.json(await service.update(Number(req.params.id), req.body, req.user!.id, req.user!.role === "admin"));
   })
 );
 
