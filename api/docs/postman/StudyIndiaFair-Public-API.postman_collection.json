@@ -1,0 +1,1126 @@
+{
+  "info": {
+    "name": "Study India Fair — Public API",
+    "description": "Public (no-auth) endpoints for the Study India Fair website frontend.\n\n**Setup**\n- Set `serverUrl` collection variable (default `http://localhost:4000`). `baseUrl` = `{{serverUrl}}/api/v1`.\n- Set `uploadUrl` to the upload server (default `http://localhost:4001`).\n\n**Image / file paths**\nAll `*_path` / `path` fields are relative (e.g. `/uploads/gallery/abc.webp`). Build the full URL as `{{uploadUrl}}` + path.\n\n**Rich text**\nFields like `answer`, `details`, `content`, `notice` are Editor.js JSON (`{ time, version, blocks: [{ type, data }] }`) or `null`.\n\n**Errors**\nAll errors return `{ \"message\": string, \"details\"?: any }`.\n- `404` — not found\n- `422` — validation failed (`details` holds zod `fieldErrors`/`formErrors`)\n- `429` — rate limited\n- `500` — internal server error",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "serverUrl",
+      "value": "http://localhost:4000"
+    },
+    {
+      "key": "baseUrl",
+      "value": "{{serverUrl}}/api/v1"
+    },
+    {
+      "key": "uploadUrl",
+      "value": "http://localhost:4001"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{serverUrl}}/health",
+              "host": [
+                "{{serverUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Server health. Lives at `/health` (outside `/api/v1`). Returns `{ \"ok\": true }`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Site Settings",
+      "item": [
+        {
+          "name": "Get site settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/site-settings/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "site-settings",
+                "public"
+              ]
+            },
+            "description": "Global site data: phones, emails, addresses, social links, logo, favicon and the announcement notice. `notice` is `null` when the notice is turned off."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/site-settings/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "site-settings",
+                    "public"
+                  ]
+                },
+                "description": "Global site data: phones, emails, addresses, social links, logo, favicon and the announcement notice. `notice` is `null` when the notice is turned off."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"phones\": [\n    {\n      \"label\": \"Office\",\n      \"number\": \"+91 98765 43210\",\n      \"is_primary\": true,\n      \"is_whatsapp\": true\n    }\n  ],\n  \"emails\": [\n    {\n      \"label\": \"Support\",\n      \"email\": \"info@studyindiafair.com\",\n      \"is_primary\": true\n    }\n  ],\n  \"addresses\": [\n    {\n      \"label\": \"Head Office\",\n      \"address\": \"Salt Lake, Kolkata\",\n      \"map_link\": \"https://maps.google.com/?q=...\"\n    }\n  ],\n  \"social_links\": [\n    {\n      \"name\": \"Facebook\",\n      \"url\": \"https://facebook.com/studyindiafair\",\n      \"icon_path\": \"/uploads/site-settings/fb.svg\"\n    }\n  ],\n  \"logo_path\": \"/uploads/site-settings/logo.png\",\n  \"favicon_path\": \"/uploads/site-settings/favicon.ico\",\n  \"notice\": {\n    \"time\": 1727000000000,\n    \"version\": \"2.30.0\",\n    \"blocks\": [\n      {\n        \"id\": \"a1\",\n        \"type\": \"paragraph\",\n        \"data\": {\n          \"text\": \"Rich text content\"\n        }\n      }\n    ]\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pages & SEO",
+      "item": [
+        {
+          "name": "List pages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pages/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pages",
+                "public"
+              ]
+            },
+            "description": "All CMS pages (id, name, slug), sorted by name. Use `slug` for SEO and FAQ lookups."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/pages/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "pages",
+                    "public"
+                  ]
+                },
+                "description": "All CMS pages (id, name, slug), sorted by name. Use `slug` for SEO and FAQ lookups."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Home\",\n    \"slug\": \"home\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"About Us\",\n    \"slug\": \"about-us\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get page SEO",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/seo/public/:slug",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seo",
+                "public",
+                ":slug"
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "home",
+                  "description": "Page slug"
+                }
+              ]
+            },
+            "description": "SEO meta for a page by slug. All SEO fields may be `null` if not configured. `schema_script` is JSON-LD to inject; `schema_position` is `head` or `body`."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/seo/public/:slug",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "seo",
+                    "public",
+                    ":slug"
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "home",
+                      "description": "Page slug"
+                    }
+                  ]
+                },
+                "description": "SEO meta for a page by slug. All SEO fields may be `null` if not configured. `schema_script` is JSON-LD to inject; `schema_position` is `head` or `body`."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"page_name\": \"Home\",\n  \"page_slug\": \"home\",\n  \"meta_title\": \"Study India Fair\",\n  \"meta_description\": \"Meet top Indian universities...\",\n  \"canonical_url\": \"https://studyindiafair.com/\",\n  \"og_title\": \"Study India Fair\",\n  \"og_description\": \"Meet top Indian universities...\",\n  \"og_image_path\": \"/uploads/seo/og.jpg\",\n  \"schema_script\": \"<script type=\\\"application/ld+json\\\">{...}</script>\",\n  \"schema_position\": \"head\"\n}"
+            },
+            {
+              "name": "404 Page not found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/seo/public/:slug",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "seo",
+                    "public",
+                    ":slug"
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "home",
+                      "description": "Page slug"
+                    }
+                  ]
+                },
+                "description": "SEO meta for a page by slug. All SEO fields may be `null` if not configured. `schema_script` is JSON-LD to inject; `schema_position` is `head` or `body`."
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"Page not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "FAQs",
+      "item": [
+        {
+          "name": "List FAQs for page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/faqs/public?page_slug=home",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "faqs",
+                "public"
+              ],
+              "query": [
+                {
+                  "key": "page_slug",
+                  "value": "home",
+                  "description": "Required. Page slug (lowercase letters, numbers, hyphens)",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Optional. 1–100, default 100",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Active FAQs for a page, sorted by `sort_order`. `answer` is Editor.js JSON."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/faqs/public?page_slug=home",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "faqs",
+                    "public"
+                  ],
+                  "query": [
+                    {
+                      "key": "page_slug",
+                      "value": "home",
+                      "description": "Required. Page slug (lowercase letters, numbers, hyphens)",
+                      "disabled": false
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100",
+                      "description": "Optional. 1–100, default 100",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Active FAQs for a page, sorted by `sort_order`. `answer` is Editor.js JSON."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 3,\n    \"question\": \"Is registration free?\",\n    \"answer\": {\n      \"time\": 1727000000000,\n      \"version\": \"2.30.0\",\n      \"blocks\": [\n        {\n          \"id\": \"a1\",\n          \"type\": \"paragraph\",\n          \"data\": {\n            \"text\": \"Rich text content\"\n          }\n        }\n      ]\n    },\n    \"sort_order\": 0\n  }\n]"
+            },
+            {
+              "name": "422 Missing page_slug",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/faqs/public?page_slug=home",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "faqs",
+                    "public"
+                  ],
+                  "query": [
+                    {
+                      "key": "page_slug",
+                      "value": "home",
+                      "description": "Required. Page slug (lowercase letters, numbers, hyphens)",
+                      "disabled": false
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100",
+                      "description": "Optional. 1–100, default 100",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Active FAQs for a page, sorted by `sort_order`. `answer` is Editor.js JSON."
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"Validation failed\",\n  \"details\": {\n    \"formErrors\": [],\n    \"fieldErrors\": {\n      \"page_slug\": [\n        \"Invalid input: expected string, received undefined\"\n      ]\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Testimonials",
+      "item": [
+        {
+          "name": "List testimonial categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/testimonial-categories/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "testimonial-categories",
+                "public"
+              ]
+            },
+            "description": "Active testimonial categories, sorted by `sort_order`. Use `slug` to filter testimonials."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/testimonial-categories/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "testimonial-categories",
+                    "public"
+                  ]
+                },
+                "description": "Active testimonial categories, sorted by `sort_order`. Use `slug` to filter testimonials."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Students\",\n    \"slug\": \"students\",\n    \"sort_order\": 0\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "List testimonials",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/testimonials/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "testimonials",
+                "public"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "video",
+                  "description": "Optional. text | text_image | video",
+                  "disabled": true
+                },
+                {
+                  "key": "category",
+                  "value": "students",
+                  "description": "Optional. Category slug",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Optional. 1–100, default 50",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Active testimonials. `type` is one of `text`, `text_image`, `video`. For video, use `youtube_id` / `youtube_url`. `content` is Editor.js JSON."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/testimonials/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "testimonials",
+                    "public"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "video",
+                      "description": "Optional. text | text_image | video",
+                      "disabled": true
+                    },
+                    {
+                      "key": "category",
+                      "value": "students",
+                      "description": "Optional. Category slug",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50",
+                      "description": "Optional. 1–100, default 50",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Active testimonials. `type` is one of `text`, `text_image`, `video`. For video, use `youtube_id` / `youtube_url`. `content` is Editor.js JSON."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 7,\n    \"type\": \"text_image\",\n    \"category_id\": 1,\n    \"category_name\": \"Students\",\n    \"category_slug\": \"students\",\n    \"name\": \"Ananya Das\",\n    \"designation\": \"B.Tech, VIT\",\n    \"content\": {\n      \"time\": 1727000000000,\n      \"version\": \"2.30.0\",\n      \"blocks\": [\n        {\n          \"id\": \"a1\",\n          \"type\": \"paragraph\",\n          \"data\": {\n            \"text\": \"Rich text content\"\n          }\n        }\n      ]\n    },\n    \"image_path\": \"/uploads/testimonials/ananya.webp\",\n    \"youtube_id\": null,\n    \"sort_order\": 0,\n    \"youtube_url\": null\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Team Members",
+      "item": [
+        {
+          "name": "List team members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/team-members/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "team-members",
+                "public"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Optional. 1–100, default 100",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Active team members sorted by `position`. `details` is Editor.js JSON or null."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/team-members/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "team-members",
+                    "public"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "100",
+                      "description": "Optional. 1–100, default 100",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Active team members sorted by `position`. `details` is Editor.js JSON or null."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Somnath Gupta\",\n    \"designation\": \"Director\",\n    \"details\": {\n      \"time\": 1727000000000,\n      \"version\": \"2.30.0\",\n      \"blocks\": [\n        {\n          \"id\": \"a1\",\n          \"type\": \"paragraph\",\n          \"data\": {\n            \"text\": \"Rich text content\"\n          }\n        }\n      ]\n    },\n    \"image_path\": \"/uploads/team-members/s.webp\",\n    \"position\": 0\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Gallery",
+      "item": [
+        {
+          "name": "List gallery categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gallery-categories/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gallery-categories",
+                "public"
+              ]
+            },
+            "description": "Active gallery categories with `item_count` and a `cover_image` (first active image, may be null)."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/gallery-categories/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "gallery-categories",
+                    "public"
+                  ]
+                },
+                "description": "Active gallery categories with `item_count` and a `cover_image` (first active image, may be null)."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Dhaka 2025\",\n    \"slug\": \"dhaka-2025\",\n    \"position\": 0,\n    \"cover_image\": \"/uploads/gallery/cover.webp\",\n    \"item_count\": 24\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "List gallery items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gallery/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gallery",
+                "public"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "dhaka-2025",
+                  "description": "Optional. Category slug",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Optional. Default 1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "24",
+                  "description": "Optional. 1–100, default 24",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Paginated active gallery items. `media_type` is `image` (use `image_path`) or `youtube` (use `youtube_id`)."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/gallery/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "gallery",
+                    "public"
+                  ],
+                  "query": [
+                    {
+                      "key": "category",
+                      "value": "dhaka-2025",
+                      "description": "Optional. Category slug",
+                      "disabled": true
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Optional. Default 1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "24",
+                      "description": "Optional. 1–100, default 24",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Paginated active gallery items. `media_type` is `image` (use `image_path`) or `youtube` (use `youtube_id`)."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": 10,\n      \"media_type\": \"image\",\n      \"image_path\": \"/uploads/gallery/photo.webp\",\n      \"youtube_id\": null,\n      \"alt_text\": \"Students at booth\",\n      \"position\": 0,\n      \"category_id\": 1,\n      \"category_name\": \"Dhaka 2025\",\n      \"category_slug\": \"dhaka-2025\"\n    }\n  ],\n  \"page\": 1,\n  \"limit\": 24,\n  \"total\": 1\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Upcoming Events",
+      "item": [
+        {
+          "name": "List upcoming events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/upcoming-events/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "upcoming-events",
+                "public"
+              ]
+            },
+            "description": "Active upcoming events sorted by position."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/upcoming-events/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "upcoming-events",
+                    "public"
+                  ]
+                },
+                "description": "Active upcoming events sorted by position."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Study India Fair Dhaka 2026\",\n    \"slug\": \"study-india-fair-dhaka-2026\",\n    \"images\": [\n      {\n        \"path\": \"/uploads/upcoming-events/banner.webp\",\n        \"alt_text\": \"Fair banner\"\n      }\n    ],\n    \"schedules\": [\n      {\n        \"location\": \"Dhaka, Bangladesh\",\n        \"date\": \"12-13 Nov 2026\"\n      }\n    ]\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get upcoming event",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/upcoming-events/public/:slug",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "upcoming-events",
+                "public",
+                ":slug"
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "study-india-fair-dhaka-2026",
+                  "description": "Event slug"
+                }
+              ]
+            },
+            "description": "Single active event by slug, including `university_logos` (`link` may be null)."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/upcoming-events/public/:slug",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "upcoming-events",
+                    "public",
+                    ":slug"
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "study-india-fair-dhaka-2026",
+                      "description": "Event slug"
+                    }
+                  ]
+                },
+                "description": "Single active event by slug, including `university_logos` (`link` may be null)."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Study India Fair Dhaka 2026\",\n  \"slug\": \"study-india-fair-dhaka-2026\",\n  \"images\": [\n    {\n      \"path\": \"/uploads/upcoming-events/banner.webp\",\n      \"alt_text\": \"Fair banner\"\n    }\n  ],\n  \"schedules\": [\n    {\n      \"location\": \"Dhaka, Bangladesh\",\n      \"date\": \"12-13 Nov 2026\"\n    }\n  ],\n  \"university_logos\": [\n    {\n      \"path\": \"/uploads/university-logos/vit.png\",\n      \"alt_text\": \"VIT\",\n      \"link\": \"https://vit.ac.in\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "404 Event not found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/upcoming-events/public/:slug",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "upcoming-events",
+                    "public",
+                    ":slug"
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "study-india-fair-dhaka-2026",
+                      "description": "Event slug"
+                    }
+                  ]
+                },
+                "description": "Single active event by slug, including `university_logos` (`link` may be null)."
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"Event not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Forms",
+      "item": [
+        {
+          "name": "Submit enquiry",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"phone\": \"+91 98765 43210\",\n  \"email\": \"rahul@example.com\",\n  \"course\": \"B.Tech\",\n  \"city\": \"Kolkata\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/forms/:formId/enquiries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "forms",
+                ":formId",
+                "enquiries"
+              ],
+              "variable": [
+                {
+                  "key": "formId",
+                  "value": "contact-us",
+                  "description": "Form ID (slug) created in CMS → Forms"
+                }
+              ]
+            },
+            "description": "Submit an enquiry to a CMS form.\n\n**Required fields**\n- `name` — string, 1–120 chars\n- `phone` — string matching `^\\+?[\\d\\s()-]{6,20}$`\n\n**Any extra fields** (email, course, city, message, …) are accepted and stored as the enquiry's `details`. You can also send them nested under a `details` object. Total extra data must be ≤ 10 KB.\n\n**Rate limit:** 10 submissions per minute per IP → `429` with `Retry-After` header.\n\nTriggers admin/user notification emails configured for the form."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"phone\": \"+91 98765 43210\",\n  \"email\": \"rahul@example.com\",\n  \"course\": \"B.Tech\",\n  \"city\": \"Kolkata\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/forms/:formId/enquiries",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "forms",
+                    ":formId",
+                    "enquiries"
+                  ],
+                  "variable": [
+                    {
+                      "key": "formId",
+                      "value": "contact-us",
+                      "description": "Form ID (slug) created in CMS → Forms"
+                    }
+                  ]
+                },
+                "description": "Submit an enquiry to a CMS form.\n\n**Required fields**\n- `name` — string, 1–120 chars\n- `phone` — string matching `^\\+?[\\d\\s()-]{6,20}$`\n\n**Any extra fields** (email, course, city, message, …) are accepted and stored as the enquiry's `details`. You can also send them nested under a `details` object. Total extra data must be ≤ 10 KB.\n\n**Rate limit:** 10 submissions per minute per IP → `429` with `Retry-After` header.\n\nTriggers admin/user notification emails configured for the form."
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 42\n}"
+            },
+            {
+              "name": "404 Form not found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"phone\": \"+91 98765 43210\",\n  \"email\": \"rahul@example.com\",\n  \"course\": \"B.Tech\",\n  \"city\": \"Kolkata\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/forms/:formId/enquiries",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "forms",
+                    ":formId",
+                    "enquiries"
+                  ],
+                  "variable": [
+                    {
+                      "key": "formId",
+                      "value": "contact-us",
+                      "description": "Form ID (slug) created in CMS → Forms"
+                    }
+                  ]
+                },
+                "description": "Submit an enquiry to a CMS form.\n\n**Required fields**\n- `name` — string, 1–120 chars\n- `phone` — string matching `^\\+?[\\d\\s()-]{6,20}$`\n\n**Any extra fields** (email, course, city, message, …) are accepted and stored as the enquiry's `details`. You can also send them nested under a `details` object. Total extra data must be ≤ 10 KB.\n\n**Rate limit:** 10 submissions per minute per IP → `429` with `Retry-After` header.\n\nTriggers admin/user notification emails configured for the form."
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"Form not found\"\n}"
+            },
+            {
+              "name": "422 Validation failed",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"phone\": \"+91 98765 43210\",\n  \"email\": \"rahul@example.com\",\n  \"course\": \"B.Tech\",\n  \"city\": \"Kolkata\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/forms/:formId/enquiries",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "forms",
+                    ":formId",
+                    "enquiries"
+                  ],
+                  "variable": [
+                    {
+                      "key": "formId",
+                      "value": "contact-us",
+                      "description": "Form ID (slug) created in CMS → Forms"
+                    }
+                  ]
+                },
+                "description": "Submit an enquiry to a CMS form.\n\n**Required fields**\n- `name` — string, 1–120 chars\n- `phone` — string matching `^\\+?[\\d\\s()-]{6,20}$`\n\n**Any extra fields** (email, course, city, message, …) are accepted and stored as the enquiry's `details`. You can also send them nested under a `details` object. Total extra data must be ≤ 10 KB.\n\n**Rate limit:** 10 submissions per minute per IP → `429` with `Retry-After` header.\n\nTriggers admin/user notification emails configured for the form."
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"Validation failed\",\n  \"details\": {\n    \"formErrors\": [],\n    \"fieldErrors\": {\n      \"phone\": [\n        \"Invalid phone number\"\n      ]\n    }\n  }\n}"
+            },
+            {
+              "name": "429 Rate limited",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"phone\": \"+91 98765 43210\",\n  \"email\": \"rahul@example.com\",\n  \"course\": \"B.Tech\",\n  \"city\": \"Kolkata\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/forms/:formId/enquiries",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "forms",
+                    ":formId",
+                    "enquiries"
+                  ],
+                  "variable": [
+                    {
+                      "key": "formId",
+                      "value": "contact-us",
+                      "description": "Form ID (slug) created in CMS → Forms"
+                    }
+                  ]
+                },
+                "description": "Submit an enquiry to a CMS form.\n\n**Required fields**\n- `name` — string, 1–120 chars\n- `phone` — string matching `^\\+?[\\d\\s()-]{6,20}$`\n\n**Any extra fields** (email, course, city, message, …) are accepted and stored as the enquiry's `details`. You can also send them nested under a `details` object. Total extra data must be ≤ 10 KB.\n\n**Rate limit:** 10 submissions per minute per IP → `429` with `Retry-After` header.\n\nTriggers admin/user notification emails configured for the form."
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"message\": \"Too many requests, please try again later\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
