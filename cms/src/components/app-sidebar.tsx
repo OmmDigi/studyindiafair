@@ -1,4 +1,4 @@
-import { CircleHelp, ClipboardList, Mail, FileText, FolderTree, Images, LayoutDashboard, LogOut, MessageSquareQuote, SearchCheck, Settings, Tags, UserCircle, Users, UsersRound, type LucideIcon } from 'lucide-react'
+import { CalendarDays, CircleHelp, ClipboardList, Mail, FileText, FolderTree, Images, LayoutDashboard, LogOut, MessageSquareQuote, SearchCheck, Settings, Tags, UserCircle, Users, UsersRound, type LucideIcon } from 'lucide-react'
 import { NavLink, useNavigate } from 'react-router'
 import { useAuth } from '@/context/auth-context'
 import {
@@ -24,6 +24,7 @@ const navGroups: { label?: string; items: NavItem[] }[] = [
     label: 'Content',
     items: [
       { title: 'Pages', url: '/pages', icon: FileText },
+      { title: 'Upcoming Events', url: '/upcoming-events', icon: CalendarDays },
       { title: 'SEO', url: '/seo', icon: SearchCheck },
       { title: 'FAQs', url: '/faqs', icon: CircleHelp },
       { title: 'Team Members', url: '/team-members', icon: UsersRound },

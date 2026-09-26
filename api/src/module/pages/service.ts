@@ -9,13 +9,19 @@ type Row = {
   name: string;
   slug: string;
   faq_count: number;
+  event_id: number | null;
   created_at: Date;
   updated_at: Date;
 };
 
 const SELECT = `SELECT p.id, p.name, p.slug, p.created_at, p.updated_at,
-  (SELECT COUNT(*)::int FROM faqs f WHERE f.page_slug = p.slug) AS faq_count
+  (SELECT COUNT(*)::int FROM faqs f WHERE f.page_slug = p.slug) AS faq_count,
+  (SELECT e.id FROM upcoming_events e WHERE e.page_id = p.id) AS event_id
   FROM pages p`;
+
+function assertEditable(page: Row) {
+  if (page.event_id) throw new AppError(409, "This page belongs to an upcoming event, manage it from Upcoming Events");
+}
 
 function resolveSlug(slug: string | undefined, name: string) {
   const value = slug ?? slugify(name);
@@ -67,6 +73,7 @@ export async function create(input: CreatePageInput, actorId: number) {
 
 export async function update(id: number, input: UpdatePageInput, actorId: number) {
   const current = await getById(id);
+  assertEditable(current);
   await run(() =>
     query("UPDATE pages SET name = $2, slug = $3, updated_by = $4, updated_at = NOW() WHERE id = $1", [
       id,
@@ -80,6 +87,7 @@ export async function update(id: number, input: UpdatePageInput, actorId: number
 
 export async function remove(id: number) {
   const current = await getById(id);
+  assertEditable(current);
   if (current.faq_count > 0) {
     throw new AppError(
       409,

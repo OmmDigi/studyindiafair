@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -93,19 +94,38 @@ export function PagesPage() {
             ) : (
               rows.map((p) => (
                 <TableRow key={p.id}>
-                  <TableCell className="font-medium">{p.name}</TableCell>
+                  <TableCell className="font-medium">
+                    {p.name}
+                    {p.event_id && (
+                      <Badge variant="secondary" className="ml-2">
+                        Event
+                      </Badge>
+                    )}
+                  </TableCell>
                   <TableCell className="text-muted-foreground">{p.slug}</TableCell>
                   <TableCell>{p.faq_count}</TableCell>
                   <TableCell className="space-x-1 text-right">
-                    <Button size="icon-sm" variant="ghost" title="Edit" onClick={() => openForm(p)}>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      title={p.event_id ? 'Manage from Upcoming Events' : 'Edit'}
+                      disabled={!!p.event_id}
+                      onClick={() => openForm(p)}
+                    >
                       <Pencil />
                     </Button>
                     {can('delete') && (
                       <Button
                         size="icon-sm"
                         variant="destructive"
-                        title={p.faq_count ? 'Move or delete its FAQs first' : 'Delete'}
-                        disabled={p.faq_count > 0}
+                        title={
+                          p.event_id
+                            ? 'Manage from Upcoming Events'
+                            : p.faq_count
+                              ? 'Move or delete its FAQs first'
+                              : 'Delete'
+                        }
+                        disabled={!!p.event_id || p.faq_count > 0}
                         onClick={() => setDeleting(p)}
                       >
                         <Trash2 />

@@ -11,6 +11,7 @@ import { siteSettingsRoutes } from "./module/site-settings/routes.js";
 import { teamMemberRoutes } from "./module/team-members/routes.js";
 import { testimonialCategoryRoutes } from "./module/testimonial-categories/routes.js";
 import { testimonialRoutes } from "./module/testimonials/routes.js";
+import { upcomingEventRoutes } from "./module/upcoming-events/routes.js";
 import { userRoutes } from "./module/users/routes.js";
 
 export const routes = Router();
@@ -28,3 +29,4 @@ routes.use("/pages", pageRoutes);
 routes.use("/seo", seoRoutes);
 routes.use("/forms", formRoutes);
 routes.use("/form-email-templates", formEmailRoutes);
+routes.use("/upcoming-events", upcomingEventRoutes);
