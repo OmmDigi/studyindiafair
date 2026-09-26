@@ -4,6 +4,7 @@ import { SLUG_PATTERN } from "../testimonial-categories/constant.js";
 export { slugify } from "../testimonial-categories/constant.js";
 
 export const UPLOAD_FOLDER = "upcoming-events";
+export const LOGO_FOLDER = "university-logos";
 
 const slug = z.preprocess(
   (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
@@ -20,6 +21,25 @@ const image = z.object({
     (v) => (typeof v === "string" && v.trim() === "" ? null : v),
     z.string().trim().max(250).nullable().default(null)
   ),
+});
+
+const emptyToNull = (v: unknown) => (typeof v === "string" && v.trim() === "" ? null : v);
+
+const logo = z.object({
+  path: z
+    .string()
+    .trim()
+    .max(500)
+    .refine((v) => v.startsWith(`/uploads/${LOGO_FOLDER}/`) && !v.includes(".."), "Invalid logo path"),
+  alt_text: z.preprocess(emptyToNull, z.string().trim().max(250).nullable().default(null)),
+  link: z.preprocess(
+    emptyToNull,
+    z.string().trim().max(1000).pipe(z.url({ protocol: /^https?$/ })).nullable().default(null)
+  ),
+});
+
+export const updateLogosSchema = z.object({
+  logos: z.array(logo).max(300),
 });
 
 const schedule = z.object({
@@ -67,6 +87,8 @@ export const updateEventSchema = z
   .refine((v) => Object.keys(v).length > 0, "Nothing to update");
 
 export type EventImage = z.infer<typeof image>;
+export type EventLogo = z.infer<typeof logo>;
+export type UpdateLogosInput = z.infer<typeof updateLogosSchema>;
 export type EventSchedule = z.infer<typeof schedule>;
 export type ListEventsQuery = z.infer<typeof listEventsSchema>;
 export type ReorderInput = z.infer<typeof reorderSchema>;

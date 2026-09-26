@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CalendarDays, GripVertical, MapPin, Pencil, Plus, Trash2 } from 'lucide-react'
+import { CalendarDays, GraduationCap, GripVertical, MapPin, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -23,6 +23,7 @@ import { fileUrl } from '@/lib/upload'
 import { upcomingEventService } from '@/services/upcoming-event.service'
 import type { UpcomingEvent } from '@/types/upcoming-event'
 import { EventFormDialog } from './event-form-dialog'
+import { UniversityLogosDialog } from './university-logos-dialog'
 
 export function UpcomingEventsPage() {
   const qc = useQueryClient()
@@ -34,6 +35,7 @@ export function UpcomingEventsPage() {
   const [formKey, setFormKey] = useState(0)
   const [editing, setEditing] = useState<UpcomingEvent | null>(null)
   const [deleting, setDeleting] = useState<UpcomingEvent | null>(null)
+  const [logosFor, setLogosFor] = useState<UpcomingEvent | null>(null)
 
   const params = { search: search.trim() || undefined, is_active: status === 'all' ? undefined : status === 'active' }
   const { data: events = [], isLoading } = useQuery({
@@ -120,6 +122,7 @@ export function UpcomingEventsPage() {
               <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Locations & Dates</TableHead>
+              <TableHead>Logos</TableHead>
               <TableHead>Active</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -127,13 +130,13 @@ export function UpcomingEventsPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground">
+                <TableCell colSpan={7} className="text-center text-muted-foreground">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : !list.length ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground">
+                <TableCell colSpan={7} className="text-center text-muted-foreground">
                   No upcoming events found
                 </TableCell>
               </TableRow>
@@ -181,6 +184,11 @@ export function UpcomingEventsPage() {
                     ))}
                   </TableCell>
                   <TableCell>
+                    <Button size="sm" variant="outline" onClick={() => setLogosFor(e)}>
+                      <GraduationCap /> {e.university_logos.length}
+                    </Button>
+                  </TableCell>
+                  <TableCell>
                     <Switch
                       checked={e.is_active}
                       disabled={toggle.isPending}
@@ -205,6 +213,15 @@ export function UpcomingEventsPage() {
       </div>
 
       <EventFormDialog key={formKey} open={formOpen} event={editing} onOpenChange={setFormOpen} onSaved={refresh} />
+      {logosFor && (
+        <UniversityLogosDialog
+          key={logosFor.id}
+          open
+          event={logosFor}
+          onOpenChange={(open) => !open && setLogosFor(null)}
+          onSaved={refresh}
+        />
+      )}
       <Dialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <DialogContent>
           <DialogHeader>

@@ -3,6 +3,12 @@ export type EventImage = {
   alt_text: string | null
 }
 
+export type EventLogo = {
+  path: string
+  alt_text: string | null
+  link: string | null
+}
+
 export type EventSchedule = {
   location: string
   date: string
@@ -15,6 +21,7 @@ export type UpcomingEvent = {
   slug: string
   images: EventImage[]
   schedules: EventSchedule[]
+  university_logos: EventLogo[]
   position: number
   is_active: boolean
   created_at: string

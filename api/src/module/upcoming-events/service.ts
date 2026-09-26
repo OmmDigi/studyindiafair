@@ -7,10 +7,12 @@ import {
   slugify,
   type CreateEventInput,
   type EventImage,
+  type EventLogo,
   type EventSchedule,
   type ListEventsQuery,
   type ReorderInput,
   type UpdateEventInput,
+  type UpdateLogosInput,
 } from "./constant.js";
 
 type Row = {
@@ -20,13 +22,14 @@ type Row = {
   slug: string;
   images: EventImage[];
   schedules: EventSchedule[];
+  university_logos: EventLogo[];
   position: number;
   is_active: boolean;
   created_at: Date;
   updated_at: Date;
 };
 
-const SELECT = `SELECT e.id, e.page_id, p.name, p.slug, e.images, e.schedules, e.position, e.is_active, e.created_at, e.updated_at
+const SELECT = `SELECT e.id, e.page_id, p.name, p.slug, e.images, e.schedules, e.university_logos, e.position, e.is_active, e.created_at, e.updated_at
   FROM upcoming_events e JOIN pages p ON p.id = e.page_id`;
 const ORDER = "ORDER BY e.position ASC, e.id ASC";
 
@@ -49,6 +52,18 @@ const removedImages = (before: EventImage[], after: EventImage[]) => {
   const kept = new Set(after.map((i) => i.path));
   return before.filter((i) => !kept.has(i.path)).map((i) => i.path);
 };
+
+async function deleteUnusedLogos(paths: string[]) {
+  const unique = [...new Set(paths)];
+  if (!unique.length) return;
+  const { rows } = await query<{ path: string }>(
+    `SELECT DISTINCT l->>'path' AS path FROM upcoming_events e, jsonb_array_elements(e.university_logos) l
+     WHERE l->>'path' = ANY($1::text[])`,
+    [unique]
+  );
+  const used = new Set(rows.map((r) => r.path));
+  await Promise.all(unique.filter((p) => !used.has(p)).map(deleteUpload));
+}
 
 export async function list({ search, is_active }: ListEventsQuery) {
   const params: unknown[] = [];
@@ -74,8 +89,8 @@ export async function listPublic() {
 export async function getPublic(slug: string) {
   const { rows } = await query<Row>(`${SELECT} WHERE p.slug = $1 AND e.is_active = TRUE`, [slug]);
   if (!rows[0]) throw new AppError(404, "Event not found");
-  const { id, name, images, schedules } = rows[0];
-  return { id, name, slug, images, schedules };
+  const { id, name, images, schedules, university_logos } = rows[0];
+  return { id, name, slug, images, schedules, university_logos };
 }
 
 export async function getById(id: number) {
@@ -126,6 +141,18 @@ export async function update(id: number, input: UpdateEventInput, actorId: numbe
   return getById(id);
 }
 
+export async function updateLogos(id: number, { logos }: UpdateLogosInput, actorId: number) {
+  const current = await getById(id);
+  await query("UPDATE upcoming_events SET university_logos = $2, updated_by = $3, updated_at = NOW() WHERE id = $1", [
+    id,
+    JSON.stringify(logos),
+    actorId,
+  ]);
+  const kept = new Set(logos.map((l) => l.path));
+  await deleteUnusedLogos(current.university_logos.map((l) => l.path).filter((p) => !kept.has(p)));
+  return getById(id);
+}
+
 export async function reorder({ ids }: ReorderInput, actorId: number) {
   await reorderRows("upcoming_events", ids, actorId);
   return list({});
@@ -147,5 +174,9 @@ export async function remove(id: number) {
     }
     throw err;
   }
-  await Promise.all([...current.images.map((i) => deleteUpload(i.path)), deleteUpload(seo.rows[0]?.og_image_path)]);
+  await Promise.all([
+    ...current.images.map((i) => deleteUpload(i.path)),
+    deleteUpload(seo.rows[0]?.og_image_path),
+    deleteUnusedLogos(current.university_logos.map((l) => l.path)),
+  ]);
 }
