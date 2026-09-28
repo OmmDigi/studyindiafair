@@ -9,6 +9,7 @@ import { deleteFile, uploadFile } from '@/lib/upload'
 import { youtubeId, youtubeThumb, youtubeWatchUrl } from '@/lib/youtube'
 import { galleryService, type GalleryCreatePayload } from '@/services/gallery.service'
 import type { GalleryCategory } from '@/types/gallery'
+import { randomKey } from '@/lib/utils'
 
 export const UPLOAD_FOLDER = 'gallery'
 const ACCEPT = ['image/jpeg', 'image/png', 'image/webp']
@@ -64,7 +65,7 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
         previews.current.add(preview)
         next.push({
           kind: 'image',
-          key: `${file.name}-${file.size}-${crypto.randomUUID()}`,
+          key: `${file.name}-${file.size}-${randomKey()}`,
           file,
           preview,
           alt: '',
@@ -83,7 +84,7 @@ export function BulkUploadDialog({ open, category, onOpenChange, onSaved }: Prop
       toast.error('Enter a valid YouTube URL')
       return
     }
-    append([{ kind: 'youtube', key: `yt-${id}-${crypto.randomUUID()}`, videoId: id, alt: '', progress: 0 }])
+    append([{ kind: 'youtube', key: `yt-${id}-${randomKey()}`, videoId: id, alt: '', progress: 0 }])
     setVideoUrl('')
   }
 
