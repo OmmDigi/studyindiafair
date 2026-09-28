@@ -1,20 +1,13 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-
-const countries = [
-  { name: "Sri Lanka", path: "/upcoming_expo/sri-lanka" },
-  { name: "Sierra Leone", path: "/upcoming_expo/sierra-leone" },
-  { name: "Liberia", path: "/upcoming_expo/liberia" },
-  { name: "Ghana", path: "/upcoming_expo/ghana" },
-  { name: "Myanmar", path: "/upcoming_expo/myanmar" },
-  { name: "Nepal", path: "/upcoming_expo/nepal" },
-  { name: "Bangladesh", path: "/upcoming_expo/bangladesh" },
-  { name: "Bahrain", path: "/upcoming_expo/bahrain" },
-  { name: "Qatar", path: "/upcoming_expo/qatar" },
-];
+import { useUpcomingEvents } from "@/hooks/api";
 
 export default function VisitorsRegistrationPage() {
+  const { data: events, isLoading } = useUpcomingEvents();
+  const displayEvents = Array.isArray(events) ? events : events?.data || [];
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="relative w-full  bg-white overflow-hidden flex flex-col md:flex-row">
@@ -120,17 +113,23 @@ export default function VisitorsRegistrationPage() {
             <h2 className="text-3xl font-serif font-bold text-[#003399] mb-8">
               Choose Your Country
             </h2>
-            <div className="flex flex-wrap gap-4">
-              {countries.map((country) => (
-                <Link
-                  key={country.name}
-                  href={country.path}
-                  className="px-6 py-3 border-2 border-[#003399] text-[#003399] rounded-lg hover:bg-[#003399] hover:text-white transition-all bg-white font-medium text-center shadow-sm hover:shadow-md min-w-[140px]"
-                >
-                  {country.name}
-                </Link>
-              ))}
-            </div>
+            {isLoading ? (
+               <div className="flex gap-4 flex-wrap">
+                 {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-12 w-32 bg-gray-200 animate-pulse rounded-lg"></div>)}
+               </div>
+            ) : (
+              <div className="flex flex-wrap gap-4">
+                {displayEvents.map((event: any) => (
+                  <Link
+                    key={event.id || event.slug}
+                    href={`/upcoming_expo/${event.slug || ""}`}
+                    className="px-6 py-3 border-2 border-[#003399] text-[#003399] rounded-lg hover:bg-[#003399] hover:text-white transition-all bg-white font-medium text-center shadow-sm hover:shadow-md min-w-[140px]"
+                  >
+                    {event.name || event.country || event.title}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
