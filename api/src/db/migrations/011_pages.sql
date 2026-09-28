@@ -1,0 +1,19 @@
+CREATE TABLE IF NOT EXISTS pages (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  updated_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO pages (name, slug) VALUES ('Home', 'home') ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO pages (name, slug)
+SELECT DISTINCT INITCAP(REPLACE(page_slug, '-', ' ')), page_slug FROM faqs
+ON CONFLICT (slug) DO NOTHING;
+
+ALTER TABLE faqs DROP CONSTRAINT IF EXISTS faqs_page_slug_fkey;
+ALTER TABLE faqs ADD CONSTRAINT faqs_page_slug_fkey
+  FOREIGN KEY (page_slug) REFERENCES pages(slug) ON UPDATE CASCADE ON DELETE RESTRICT;
