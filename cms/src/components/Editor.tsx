@@ -5,7 +5,7 @@ import EditorJS, {
 } from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
-// import ImageTool from "@editorjs/image";
+import ImageTool from "@editorjs/image";
 import Quote from "@editorjs/quote";
 import Table from "@editorjs/table";
 import Code from "@editorjs/code";
@@ -15,8 +15,22 @@ import TextColor from "./editor-tools/TextColor";
 import EditorToolbar from "./EditorToolbar";
 import { Label } from "./ui/label";
 import "./editor.css";
-// import { uploadFiles } from "@/utils/uploadFiles";
-// import { isAssetUrl } from "@/utils/assetUrl";
+import { getErrorMessage } from "@/lib/api";
+import { fileUrl, uploadFile } from "@/lib/upload";
+
+// same limits the cms image pickers enforce
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const MAX_IMAGE_MB = 5;
+const UPLOAD_FOLDER = "editor-assets";
+
+const isHttpUrl = (value: string) => {
+  try {
+    const { protocol } = new URL(value.trim());
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
+};
 
 interface EditorProps {
   onSave?: (data: OutputData) => void;
@@ -79,40 +93,45 @@ export default function Editor({ onSave, label, initData }: EditorProps) {
             },
           },
         },
-        // image: {
-        //   class: ImageTool,
-        //   config: {
-        //     uploader: {
-        //       async uploadByFile(file: File) {
-        //         const { data, error } = await uploadFiles({
-        //           files: [file],
-        //           folder: "/editor-asset",
-        //         });
+        image: {
+          class: ImageTool,
+          config: {
+            uploader: {
+              async uploadByFile(file: File) {
+                if (!IMAGE_TYPES.includes(file.type)) {
+                  alert("Unsupported file type. Use JPEG, PNG, WEBP or GIF.");
+                  return { success: 0 };
+                }
+                if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
+                  alert(`Image must be ${MAX_IMAGE_MB}MB or smaller`);
+                  return { success: 0 };
+                }
 
-        //         if (error || data.length === 0) {
-        //           alert("Uploading failed try again");
-        //           return { success: 0 };
-        //         }
+                try {
+                  const uploaded = await uploadFile(file, UPLOAD_FOLDER);
+                  // the upload server returns a path; the block keeps the
+                  // full url so the image renders wherever the content goes
+                  return {
+                    success: 1,
+                    file: { url: fileUrl(uploaded.url), path: uploaded.url },
+                  };
+                } catch (err) {
+                  alert(`Uploading failed: ${getErrorMessage(err)}`);
+                  return { success: 0 };
+                }
+              },
+              // lets the editor take an image that is already hosted elsewhere
+              async uploadByUrl(url: string) {
+                if (!isHttpUrl(url)) {
+                  alert("Enter a full image url, for example https://cdn.site.com/a.jpg");
+                  return { success: 0 };
+                }
 
-        //         return {
-        //           success: 1,
-        //           file: {
-        //             url: data[0].url,
-        //           },
-        //         };
-        //       },
-        //       // lets the editor take an image that is already hosted elsewhere
-        //       async uploadByUrl(url: string) {
-        //         if (!isAssetUrl(url)) {
-        //           alert("Enter a full image url, for example https://cdn.site.com/a.jpg");
-        //           return { success: 0 };
-        //         }
-
-        //         return { success: 1, file: { url: url.trim() } };
-        //       },
-        //     },
-        //   },
-        // },
+                return { success: 1, file: { url: url.trim() } };
+              },
+            },
+          },
+        },
         paragraph: {
           class: Paragraph as any,
           inlineToolbar: true,
