@@ -11,9 +11,12 @@ export default function EventDetailsPage() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   
-  // Use mock logos or real data if available from the API in the future
-  const mockLogos = Array(6).fill("/images/common/Study-in-India-fair-logo.png");
-  const logos = [...mockLogos, ...mockLogos]; // Duplicate for seamless infinite scroll
+  // Use real data if available from the API, otherwise fallback to mock logos
+  const apiLogos = event?.university_logos || [];
+  const baseLogos = apiLogos.length > 0 ? apiLogos : Array(6).fill({ path: "/images/common/Study-in-India-fair-logo.png" });
+  
+  // Duplicate array multiple times to ensure the carousel has enough content for a seamless infinite scroll, even if there are only 1-2 logos
+  const logos = [...baseLogos, ...baseLogos, ...baseLogos, ...baseLogos];
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -194,19 +197,28 @@ export default function EventDetailsPage() {
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               <div className="flex gap-6 w-max py-4">
-                {logos.map((logo, index) => (
-                  <div
-                    key={index}
-                    className="w-40 h-24 flex-shrink-0 bg-white border border-gray-200 flex items-center justify-center rounded-xl shadow-sm hover:shadow-md transition-shadow grayscale hover:grayscale-0 cursor-pointer p-4"
-                  >
-                    <img
-                      src={logo}
-                      alt={`University Logo ${index + 1}`}
-                      className="opacity-50 object-contain w-full h-full transition-all duration-500"
-                      draggable="false"
-                    />
-                  </div>
-                ))}
+                {logos.map((logoItem: any, index: number) => {
+                  const imageSrc = logoItem.path && !logoItem.path.startsWith("/images")
+                    ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${logoItem.path}`
+                    : logoItem.path;
+                    
+                  return (
+                    <a
+                      key={index}
+                      href={logoItem.link || "#"}
+                      target={logoItem.link ? "_blank" : "_self"}
+                      rel="noopener noreferrer"
+                      className="w-40 h-24 flex-shrink-0 bg-white border border-gray-200 flex items-center justify-center rounded-xl shadow-sm hover:shadow-md transition-shadow grayscale hover:grayscale-0 cursor-pointer p-4"
+                    >
+                      <img
+                        src={imageSrc}
+                        alt={logoItem.alt_text || `University Logo ${index + 1}`}
+                        className="opacity-80 object-contain w-full h-full transition-all duration-500"
+                        draggable="false"
+                      />
+                    </a>
+                  );
+                })}
               </div>
             </div>
             
