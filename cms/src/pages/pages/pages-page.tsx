@@ -101,6 +101,11 @@ export function PagesPage() {
                         Event
                       </Badge>
                     )}
+                    {p.is_scholarship && (
+                      <Badge variant="secondary" className="ml-2">
+                        Scholarship
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-muted-foreground">{p.slug}</TableCell>
                   <TableCell>{p.faq_count}</TableCell>
@@ -121,11 +126,13 @@ export function PagesPage() {
                         title={
                           p.event_id
                             ? 'Manage from Upcoming Events'
-                            : p.faq_count
+                            : p.is_scholarship
+                              ? 'The scholarship page can\'t be deleted'
+                              : p.faq_count
                               ? 'Move or delete its FAQs first'
                               : 'Delete'
                         }
-                        disabled={!!p.event_id || p.faq_count > 0}
+                        disabled={!!p.event_id || p.is_scholarship || p.faq_count > 0}
                         onClick={() => setDeleting(p)}
                       >
                         <Trash2 />

@@ -876,6 +876,59 @@
       ]
     },
     {
+      "name": "Scholarship",
+      "item": [
+        {
+          "name": "Get scholarship page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/scholarship/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "scholarship",
+                "public"
+              ]
+            },
+            "description": "Scholarship page content in three sections: about (heading, rich-text description, side image), eligibility (heading, description, ordered points, optional `eligibility_notice`) and how to apply (heading, description, ordered points each with `icon_path` and `position` = `left` | `right`). Rich-text fields are Editor.js JSON. Fields are `null` until the page is first saved in the CMS. Use `page_slug` to fetch SEO (`/seo/public/:slug`) and FAQs for this page."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/scholarship/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "scholarship",
+                    "public"
+                  ]
+                },
+                "description": "Scholarship page content in three sections: about (heading, rich-text description, side image), eligibility (heading, description, ordered points, optional `eligibility_notice`) and how to apply (heading, description, ordered points each with `icon_path` and `position` = `left` | `right`). Rich-text fields are Editor.js JSON. Fields are `null` until the page is first saved in the CMS. Use `page_slug` to fetch SEO (`/seo/public/:slug`) and FAQs for this page."
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"page_name\": \"Scholarship\",\n  \"page_slug\": \"scholarship\",\n  \"about_heading\": \"About the Scholarship\",\n  \"about_description\": {\n    \"time\": 1727000000000,\n    \"version\": \"2.30.0\",\n    \"blocks\": [\n      {\n        \"id\": \"a1\",\n        \"type\": \"paragraph\",\n        \"data\": {\n          \"text\": \"Rich text content\"\n        }\n      }\n    ]\n  },\n  \"about_image_path\": \"/uploads/scholarship/about.jpg\",\n  \"eligibility_heading\": \"Eligibility\",\n  \"eligibility_description\": {\n    \"time\": 1727000000000,\n    \"version\": \"2.30.0\",\n    \"blocks\": [\n      {\n        \"id\": \"a1\",\n        \"type\": \"paragraph\",\n        \"data\": {\n          \"text\": \"Rich text content\"\n        }\n      }\n    ]\n  },\n  \"eligibility_points\": [\n    {\n      \"heading\": \"Academic merit\",\n      \"description\": {\n        \"time\": 1727000000000,\n        \"version\": \"2.30.0\",\n        \"blocks\": [\n          {\n            \"id\": \"a1\",\n            \"type\": \"paragraph\",\n            \"data\": {\n              \"text\": \"Rich text content\"\n            }\n          }\n        ]\n      }\n    }\n  ],\n  \"eligibility_notice\": {\n    \"time\": 1727000000000,\n    \"version\": \"2.30.0\",\n    \"blocks\": [\n      {\n        \"id\": \"a1\",\n        \"type\": \"paragraph\",\n        \"data\": {\n          \"text\": \"Rich text notice\"\n        }\n      }\n    ]\n  },\n  \"apply_heading\": \"How to Apply\",\n  \"apply_description\": {\n    \"time\": 1727000000000,\n    \"version\": \"2.30.0\",\n    \"blocks\": [\n      {\n        \"id\": \"a1\",\n        \"type\": \"paragraph\",\n        \"data\": {\n          \"text\": \"Rich text content\"\n        }\n      }\n    ]\n  },\n  \"apply_points\": [\n    {\n      \"heading\": \"Register online\",\n      \"description\": {\n        \"time\": 1727000000000,\n        \"version\": \"2.30.0\",\n        \"blocks\": [\n          {\n            \"id\": \"a1\",\n            \"type\": \"paragraph\",\n            \"data\": {\n              \"text\": \"Rich text content\"\n            }\n          }\n        ]\n      },\n      \"icon_path\": \"/uploads/scholarship/register.svg\",\n      \"position\": \"left\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Forms",
       "item": [
         {

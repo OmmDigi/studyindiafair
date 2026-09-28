@@ -4,6 +4,7 @@ export type Page = {
   slug: string
   faq_count: number
   event_id: number | null
+  is_scholarship: boolean
   created_at: string
   updated_at: string
 }

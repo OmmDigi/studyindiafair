@@ -10,13 +10,15 @@ type Row = {
   slug: string;
   faq_count: number;
   event_id: number | null;
+  is_scholarship: boolean;
   created_at: Date;
   updated_at: Date;
 };
 
 const SELECT = `SELECT p.id, p.name, p.slug, p.created_at, p.updated_at,
   (SELECT COUNT(*)::int FROM faqs f WHERE f.page_slug = p.slug) AS faq_count,
-  (SELECT e.id FROM upcoming_events e WHERE e.page_id = p.id) AS event_id
+  (SELECT e.id FROM upcoming_events e WHERE e.page_id = p.id) AS event_id,
+  EXISTS (SELECT 1 FROM scholarship s WHERE s.page_id = p.id) AS is_scholarship
   FROM pages p`;
 
 function assertEditable(page: Row) {
@@ -88,6 +90,7 @@ export async function update(id: number, input: UpdatePageInput, actorId: number
 export async function remove(id: number) {
   const current = await getById(id);
   assertEditable(current);
+  if (current.is_scholarship) throw new AppError(409, "The scholarship page can't be deleted");
   if (current.faq_count > 0) {
     throw new AppError(
       409,
