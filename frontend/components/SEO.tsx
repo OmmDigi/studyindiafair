@@ -23,7 +23,7 @@ interface SEOProps {
 export function generateSEO({
   title,
   description,
-  image = 'https://studyindiafair.com/wp-content/uploads/2025/09/Study-in-India-fair-logo.png',
+  image = '/images/common/Study-in-India-fair-logo.png',
   url = 'https://studyindiafair.com',
 }: SEOProps): Metadata {
   return {

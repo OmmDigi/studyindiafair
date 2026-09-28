@@ -1,0 +1,152 @@
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+
+const countries = [
+  { name: "Sri Lanka", path: "/upcoming_expo/sri-lanka" },
+  { name: "Sierra Leone", path: "/upcoming_expo/sierra-leone" },
+  { name: "Liberia", path: "/upcoming_expo/liberia" },
+  { name: "Ghana", path: "/upcoming_expo/ghana" },
+  { name: "Myanmar", path: "/upcoming_expo/myanmar" },
+  { name: "Nepal", path: "/upcoming_expo/nepal" },
+  { name: "Bangladesh", path: "/upcoming_expo/bangladesh" },
+  { name: "Bahrain", path: "/upcoming_expo/bahrain" },
+  { name: "Qatar", path: "/upcoming_expo/qatar" },
+];
+
+export default function VisitorsRegistrationPage() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="relative w-full  bg-white overflow-hidden flex flex-col md:flex-row">
+        {/* Left Content Area */}
+        <div className="w-full md:w-1/2 lg:w-3/5 p-8 md:px-16 flex flex-col bg-[#F9FBFC]">
+          {/* Why Attend Section */}
+          <div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#003399] mb-5">
+              Why <span className="text-[#E87A24]">Attend</span>
+            </h1>
+
+            <ul className="space-y-4">
+              <li className="flex items-center gap-6">
+                <div className="w-14 h-14 rounded-full bg-[#FFF2E5] flex items-center justify-center flex-shrink-0 shadow-sm border border-[#FFE0C2]">
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#E87A24"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                  </svg>
+                </div>
+                <span className="text-[#003399] font-medium text-xl md:text-2xl">
+                  Discover Top Institution Of India
+                </span>
+              </li>
+              <li className="flex items-center gap-6">
+                <div className="w-14 h-14 rounded-full bg-[#FFF2E5] flex items-center justify-center flex-shrink-0 shadow-sm border border-[#FFE0C2]">
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#E87A24"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <span className="text-[#003399] font-medium text-xl md:text-2xl">
+                  Direct Interactions
+                </span>
+              </li>
+              <li className="flex items-center gap-6">
+                <div className="w-14 h-14 rounded-full bg-[#FFF2E5] flex items-center justify-center flex-shrink-0 shadow-sm border border-[#FFE0C2]">
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#E87A24"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <span className="text-[#003399] font-medium text-xl md:text-2xl">
+                  Get Admission Guidance
+                </span>
+              </li>
+              <li className="flex items-center gap-6">
+                <div className="w-14 h-14 rounded-full bg-[#FFF2E5] flex items-center justify-center flex-shrink-0 shadow-sm border border-[#FFE0C2]">
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#E87A24"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                  </svg>
+                </div>
+                <span className="text-[#003399] font-medium text-xl md:text-2xl">
+                  Scholarships & Admission Opportunities
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Choose Your Country Section */}
+          <div className="mt-auto pt-8 border-t border-gray-200">
+            <h2 className="text-3xl font-serif font-bold text-[#003399] mb-8">
+              Choose Your Country
+            </h2>
+            <div className="flex flex-wrap gap-4">
+              {countries.map((country) => (
+                <Link
+                  key={country.name}
+                  href={country.path}
+                  className="px-6 py-3 border-2 border-[#003399] text-[#003399] rounded-lg hover:bg-[#003399] hover:text-white transition-all bg-white font-medium text-center shadow-sm hover:shadow-md min-w-[140px]"
+                >
+                  {country.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Image Area */}
+        <div
+          className="hidden md:block w-1/2 lg:w-2/5 h-full bg-cover bg-center relative min-h-[85vh]"
+          style={{
+            backgroundImage:
+              'url("https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2070&auto=format&fit=crop")',
+          }}
+        >
+          {/* Overlay to ensure image matches the warm tones of the mockup */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-[#E87A24]/10 mix-blend-overlay"></div>
+        </div>
+      </div>
+    </div>
+  );
+}

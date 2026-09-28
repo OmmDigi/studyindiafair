@@ -1,12 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useSiteSettings } from "@/hooks/api";
+import { EditorJsDescription } from "@/components/EditorJsDescription";
 
 export default function Header() {
+  const { data: siteSettings } = useSiteSettings();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+
+  useEffect(() => {
+    if (siteSettings?.favicon_path) {
+      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+      }
+      link.href = `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${siteSettings.favicon_path}`;
+    }
+  }, [siteSettings?.favicon_path]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    // Check initial scroll position
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -16,40 +47,91 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-full bg-white shadow-sm sticky top-0 z-40">
+      <header
+        className={`w-full z-40 transition-all duration-300 ${
+          isHomePage
+            ? `fixed top-0 left-0 right-0 ${isScrolled ? "bg-white shadow-md py-0" : "bg-transparent py-2"}`
+            : "sticky top-0 bg-white shadow-md py-0"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center justify-between h-20">
+          <nav className="relative flex items-center justify-between h-20">
             {/* Logo Section */}
             <div className="flex-shrink-0">
               <Link href="/">
                 <img
-                  src="https://studyindiafair.com/wp-content/uploads/2025/09/Study-in-India-fair-logo.png"
+                  src={
+                    siteSettings?.logo_path
+                      ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${siteSettings.logo_path}`
+                      : "/images/common/Study-in-India-fair-logo.png"
+                  }
                   alt="Study in India Fair Logo"
-                  className="h-20 w-auto object-contain"
+                  className={
+                    !isHomePage || isScrolled
+                      ? "h-15 w-auto object-contain"
+                      : "h-20 w-auto object-contain brightness-0 invert"
+                  }
+                  style={
+                    isHomePage && !isScrolled
+                      ? { filter: "brightness(0) invert(1)" }
+                      : {}
+                  }
                 />
               </Link>
             </div>
 
             {/* Marquee/Announcement Section */}
-            <div className="hidden md:flex flex-1 justify-center px-8">
-              <div className="bg-gray-50 border border-gray-100 rounded-lg p-2 text-sm text-center">
-                <p className="text-gray-800">
-                  <span className="text-red-600 font-bold uppercase tracking-wide">
-                    Upcoming Fair
-                  </span>
-                  <br />
-                  <strong>Bahrain</strong> - 13th &amp; 14th November 2026
-                  <br />
-                  <span className="text-gray-500">Ramee Grand Hotel, Seef</span>
-                </p>
+            <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 justify-center pointer-events-none h-16 overflow-hidden">
+              <style>{`
+                @keyframes scrollUp {
+                  0% { transform: translateY(100%); }
+                  100% { transform: translateY(-100%); }
+                }
+                .animate-scroll-up {
+                  animation: scrollUp 10s linear infinite;
+                }
+                .animate-scroll-up:hover {
+                  animation-play-state: paused;
+                }
+                /* Hide any accordion borders or padding that EditorJsDescription might render */
+                .marquee-notice .border-t { border: none !important; }
+                .marquee-notice .mt-2 { margin-top: 0 !important; }
+                .marquee-notice .py-4 { padding-top: 0 !important; padding-bottom: 0 !important; }
+              `}</style>
+              <div
+                className={`pointer-events-auto h-full overflow-hidden flex flex-col justify-center ${!isHomePage || isScrolled ? "bg-gray-50 border border-gray-100 rounded-lg px-4 text-sm text-center text-black" : "bg-transparent  px-4 text-sm text-center text-white"}`}
+              >
+                <div className="animate-scroll-up marquee-notice flex flex-col items-center">
+                  {siteSettings?.notice ? (
+                    <div className="w-full text-center">
+                      <EditorJsDescription data={siteSettings.notice} />
+                    </div>
+                  ) : (
+                    <p>
+                      <span className="font-bold uppercase tracking-wide">
+                        Upcoming Fair
+                      </span>
+                      <br />
+                      <strong>Bahrain</strong> - 13th &amp; 14th November 2026
+                      <br />
+                      <span>Ramee Grand Hotel, Seef</span>
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Menu Button Section */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
+              <Link
+                href="/scholarship"
+                className="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-[#003399] hover:bg-blue-800 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                Apply for Scholarship
+              </Link>
               <button
                 onClick={toggleSidebar}
-                className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition-colors"
+                className={` ${!isHomePage || isScrolled ? "p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition-colors" : "p-2 rounded-md text-white hover:text-gray-900 hover:bg-gray-100 focus:outline-none transition-colors"}`}
                 aria-label="Open menu"
               >
                 <svg
@@ -90,7 +172,11 @@ export default function Header() {
           <div className="logo1">
             <Link href="/" onClick={toggleSidebar}>
               <img
-                src="https://studyindiafair.com/wp-content/uploads/2025/09/Study-in-India-fair-logo.png"
+                src={
+                  siteSettings?.logo_path
+                    ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${siteSettings.logo_path}`
+                    : "/images/common/Study-in-India-fair-logo.png"
+                }
                 alt="Study in India Fair Logo"
                 className="h-10 w-auto"
               />
