@@ -1,5 +1,5 @@
 import { Award, CalendarDays, CircleHelp, ClipboardList, Mail, FileText, FolderTree, Images, LayoutDashboard, LogOut, MessageSquareQuote, SearchCheck, Settings, Tags, UserCircle, Users, UsersRound, type LucideIcon } from 'lucide-react'
-import { NavLink, useNavigate } from 'react-router'
+import { NavLink } from 'react-router'
 import { useAuth } from '@/context/auth-context'
 import {
   Sidebar,
@@ -64,12 +64,6 @@ const navGroups: { label?: string; items: NavItem[] }[] = [
 
 export function AppSidebar() {
   const { user, isAdmin, logout } = useAuth()
-  const navigate = useNavigate()
-
-  const handleLogout = async () => {
-    await logout()
-    navigate('/login')
-  }
 
   return (
     <Sidebar>
@@ -96,7 +90,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <NavItemLink item={{ title: 'Profile', url: '/profile', icon: UserCircle }} />
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout}>
+            <SidebarMenuButton onClick={logout}>
               <LogOut />
               <span>Logout ({user?.name})</span>
             </SidebarMenuButton>

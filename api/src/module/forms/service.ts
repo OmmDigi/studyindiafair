@@ -1,4 +1,4 @@
-import { query } from "../../db/pool.js";
+import { query, withTransaction } from "../../db/pool.js";
 import { AppError } from "../../utils/AppError.js";
 import { isUniqueViolation } from "../auth/service.js";
 import { dispatchEnquiryEmails } from "../form-emails/service.js";
@@ -97,6 +97,28 @@ export async function create(input: CreateFormInput, actorId: number) {
     )
   );
   return getById(rows[0].id);
+}
+
+export async function copy(id: number, input: CreateFormInput, actorId: number) {
+  await getById(id);
+  const formId = resolveFormId(input.form_id, input.name);
+  const newId = await run(() =>
+    withTransaction(async (client) => {
+      const { rows } = await client.query<{ id: number }>(
+        "INSERT INTO forms (name, form_id, created_by, updated_by) VALUES ($1, $2, $3, $3) RETURNING id",
+        [input.name, formId, actorId]
+      );
+      await client.query(
+        `INSERT INTO form_email_templates
+          (form_id, type, is_enabled, to_emails, recipient_field, cc, bcc, reply_to, subject, body, body_html, updated_by)
+        SELECT $1, type, is_enabled, to_emails, recipient_field, cc, bcc, reply_to, subject, body, body_html, $3
+        FROM form_email_templates WHERE form_id = $2`,
+        [rows[0].id, id, actorId]
+      );
+      return rows[0].id;
+    })
+  );
+  return getById(newId);
 }
 
 export async function update(id: number, input: UpdateFormInput, actorId: number) {

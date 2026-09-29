@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authRoutes } from "./module/auth/routes.js";
+import { dashboardRoutes } from "./module/dashboard/routes.js";
 import { faqRoutes } from "./module/faqs/routes.js";
 import { formEmailRoutes } from "./module/form-emails/routes.js";
 import { formRoutes } from "./module/forms/routes.js";
@@ -19,6 +20,7 @@ export const routes = Router();
 
 routes.use("/auth", authRoutes);
 routes.use("/users", userRoutes);
+routes.use("/dashboard", dashboardRoutes);
 routes.use("/testimonial-categories", testimonialCategoryRoutes);
 routes.use("/testimonials", testimonialRoutes);
 routes.use("/faqs", faqRoutes);
