@@ -208,7 +208,7 @@ export default function EditorToolbar({ getEditor }: IProps) {
       <select
         value={blockKey}
         onChange={(e) => changeBlock(e.currentTarget.value)}
-        className="h-8 rounded-md border border-green-600 bg-black px-2 text-sm"
+        className="h-8 rounded-md border border-green-600 bg-white dark:bg-black px-2 text-sm"
       >
         {BLOCK_OPTIONS.map((option) => (
           <option
