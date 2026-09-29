@@ -29,12 +29,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const { user } = await authService.login({ email, password })
+    qc.clear()
     qc.setQueryData(['me'], user)
   }
 
   const logout = async () => {
-    await authService.logout()
-    qc.clear()
+    try {
+      await authService.logout()
+    } finally {
+      qc.clear()
+      window.location.replace('/login')
+    }
   }
 
   const setUser = (next: User) => qc.setQueryData(['me'], next)
