@@ -15,6 +15,8 @@ const schema = z.object({
   JWT_SECRET: z.string().min(1),
   JWT_EXPIRES_IN: z.string().default("7d"),
   CORS_ORIGINS: z.string().default(""),
+  MAIL_PROVIDER: z.enum(["smtp", "brevo"]).default("smtp"),
+  BREVO_API_KEY: z.string().default(""),
   SMTP_HOST: z.string().default("smtp.gmail.com"),
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_USER: z.string().default(""),
