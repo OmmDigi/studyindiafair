@@ -150,8 +150,7 @@ export default function WhyIndia() {
             </span>
             <h2 className="text-4xl md:text-5xl lg:text-5xl font-bold text-[#0B2046] mb-4 leading-tight">
               A Brighter <br className="hidden lg:block" />
-              Tomorrow in{" "}
-              <span className="text-orange-500 italic font-serif">India</span>
+              Tomorrow in <span className="text-orange-500 italic ">India</span>
             </h2>
             <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-8 max-w-sm font-medium">
               Globally recognised education, diverse programs and a vibrant

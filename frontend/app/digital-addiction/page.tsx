@@ -9,7 +9,7 @@ export default function DigitalAddictionPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Page Header */}
-      <div className="bg-primary py-8 md:py-16 text-center border-b border-gray-100">
+      <div className="bg-primary py-3 md:py-6 text-center border-b border-gray-100">
         <h1 className="text-4xl md:text-5xl font-bold text-secondary">
           Digital Addiction
         </h1>

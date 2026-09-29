@@ -8,6 +8,12 @@ import Team from "@/components/about/Team";
 export default function AboutPage() {
   return (
     <main>
+      {/* Page Header */}
+      <div className="bg-primary py-3 md:py-6 text-center border-b border-gray-100">
+        <h1 className="text-4xl md:text-5xl font-bold text-secondary">
+          About - US
+        </h1>
+      </div>
       {/* Page Content */}
       <AboutContent />
       <OurMission />

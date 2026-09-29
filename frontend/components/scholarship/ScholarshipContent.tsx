@@ -1,17 +1,23 @@
 "use client";
 import React, { useState } from "react";
 import {
-  GraduationCap,
-  ChevronsRight,
-  Search,
-  PenTool,
   CheckCircle,
+  ChevronsRight,
+  GraduationCap,
+  PenTool,
+  Search,
 } from "lucide-react";
 import Image from "next/image";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { useScholarships, useSubmitEnquiry } from "@/hooks/api";
+import EditorJsDescription from "../EditorJsDescription";
 
 export default function ScholarshipContent() {
-  const [formData, setFormData] = useState({
-    fullName: "",
+  const { data: scholarshipData, isLoading } = useScholarships();
+
+  const initialFormState = {
+    name: "",
     gender: "",
     dob: "",
     nationality: "",
@@ -23,7 +29,23 @@ export default function ScholarshipContent() {
     examinationPassed: "",
     percentageGrade: "",
     agreeToNotifications: false,
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormState);
+
+  const { mutate: submitEnquiry, isPending: isSubmitting } = useSubmitEnquiry(
+    "scholarship",
+    {
+      onSuccess: () => {
+        alert("Registration successful!");
+        setFormData(initialFormState);
+      },
+      onError: (error: any) => {
+        console.error(error);
+        alert("Failed to submit. Please try again.");
+      },
+    },
+  );
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -36,11 +58,16 @@ export default function ScholarshipContent() {
     }));
   };
 
+  const handlePhoneChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      phone: value,
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add logic to submit form data
-    alert("Form submitted successfully!");
+    submitEnquiry(formData);
   };
 
   return (
@@ -56,8 +83,8 @@ export default function ScholarshipContent() {
               <div className="md:col-span-2">
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   placeholder="Full Name*"
                   required
@@ -126,15 +153,38 @@ export default function ScholarshipContent() {
                 />
               </div>
 
-              <div>
-                <input
-                  type="tel"
-                  name="phone"
+              <div className="react-phone-wrapper w-full">
+                <style jsx global>{`
+                  .react-phone-wrapper .react-tel-input .form-control {
+                    width: 100%;
+                    height: 50px;
+                    border-radius: 0.5rem;
+                    border: 1px solid #d1d5db;
+                    font-size: 1rem;
+                  }
+                  .react-phone-wrapper .react-tel-input .form-control:focus {
+                    border-color: #013fa4; /* secondary ring color */
+                    box-shadow: 0 0 0 1px #013fa4;
+                  }
+                  .react-phone-wrapper .react-tel-input .flag-dropdown {
+                    border-color: #d1d5db;
+                    border-top-left-radius: 0.5rem;
+                    border-bottom-left-radius: 0.5rem;
+                    background-color: transparent;
+                  }
+                  .react-phone-wrapper .react-tel-input .flag-dropdown:hover {
+                    background-color: #f9fafb;
+                  }
+                `}</style>
+                <PhoneInput
+                  country={"in"}
                   value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Phone No.*"
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-secondary"
+                  onChange={handlePhoneChange}
+                  inputProps={{
+                    name: "phone",
+                    required: true,
+                    placeholder: "Phone No.*",
+                  }}
                 />
               </div>
 
@@ -234,232 +284,145 @@ export default function ScholarshipContent() {
             <div className="text-center mt-8">
               <button
                 type="submit"
-                className="px-8 py-3 bg-secondary text-white font-bold rounded-full hover:bg-secondary/80 transition-colors shadow-md"
+                disabled={isSubmitting}
+                className="px-8 py-3 bg-secondary text-white font-bold rounded-full hover:bg-secondary/80 transition-colors shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Submit Application
+                {isSubmitting ? "Submitting..." : "Submit Application"}
               </button>
             </div>
           </form>
         </div>
 
-        {/* Comprehensive Guide Section */}
-        <div className="flex flex-col lg:flex-row gap-12 mb-16 items-center">
-          <div className="w-full lg:w-1/2">
-            <h2 className="text-3xl font-bold text-secondary mb-6">
-              Comprehensive Guide to Scholarships for Higher Studies
-            </h2>
-            <div className="text-gray-600 space-y-4 leading-relaxed">
-              <p>
-                We frequently get mail from our readers to publish information
-                about scholarship for studies. In this page, we fulfill a
-                long-standing demand of readers details of various scholarships
-                available for studies. Fortunately, there are some avenues of
-                scholarships available. The only conditions that one must have a
-                very good academic record and be able to compete with other
-                candidates.
-              </p>
-              <p>
-                A scholarship is a form of financial aid awarded to students for
-                further education. Generally, scholarships are awarded based on
-                a set of criteria such as academic merit, diversity and
-                inclusion, athletic skill, and financial need. Not all
-                scholarships are created equal. Some scholarships are in the
-                form of tuition fee waivers only, some only cover living
-                expenses, while some offer a partial cash grant but there are
-                those scholarship programs that cover both tuition fee and
-                living expenses and sometimes include travel costs, book
-                allowance, insurance, etc.
-              </p>
-              <p>
-                Scholarship criteria usually reflect the values and goals of the
-                donor of the award, and while scholarship recipients are not
-                required to repay scholarships, the awards may require that the
-                recipient continue to meet certain requirements during their
-                period of support, such maintaining a minimum grade point
-                average or engaging in a certain activity.
-              </p>
-              <p>
-                The best way to win a scholarship is to apply for those with
-                criteria that fit your specific profile. But how do you find
-                those elusive scholarships? Most of the develop countries
-                provides scholarships to students from select countries who have
-                no other source of financial help for their graduate and post
-                graduate studies. The scholarships are 100 percent grant.
+        {/* Dynamic Scholarship Content */}
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-pulse flex flex-col items-center">
+              <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-secondary font-medium">
+                Loading Scholarship Details...
               </p>
             </div>
           </div>
-          <div className="w-full lg:w-1/2 flex justify-center">
-            {/* Fallback layout if image is missing */}
-            <div className="relative w-full max-w-md aspect-[3/4] bg-gray-100 rounded-2xl overflow-hidden shadow-lg border border-gray-200 flex items-center justify-center">
-              <span className="text-gray-400">Scholarship Image</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Websites That Allow Search Section */}
-        <div className="bg-gray-50 rounded-3xl p-8 md:p-12 mb-16">
-          <h2 className="text-3xl font-bold text-secondary mb-6 text-center">
-            Websites That Allow International Students To Search For
-            Scholarships
-          </h2>
-          <div className="text-center mb-10 max-w-3xl mx-auto space-y-4 text-gray-600">
-            <p>
-              Embassies/High commission of the respective countries’ websites
-              will provide complete details regarding Scholarships.
-            </p>
-            <p>
-              Don’t miss important scholarship announcements and other vital
-              news follow Embassies/High commission WEBSITES regularly
-            </p>
-          </div>
-
-          <div className="mb-8">
-            <h4 className="font-bold text-xl mb-4 text-slate-800">
-              The most common scholarships may be classified as:
-            </h4>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                {
-                  title: "Merit-based",
-                  desc: "These awards are based on a student’s academic, artistic, athletic, or other abilities, and often a factor in an applicant’s extracurricular activities and community service record.",
-                },
-                {
-                  title: "Need-based",
-                  desc: "Some private need-based awards are confusingly called scholarships, and require the results of a FAFSA (the family’s expected family contribution).",
-                },
-                {
-                  title: "Student-specific",
-                  desc: "These are scholarships for which applicants must initially qualify based upon gender, race, religion, family, and medical history, or many other student-specific factors.",
-                },
-                {
-                  title: "Career-specific",
-                  desc: "These are scholarships a college or university awards to students who plan to pursue a specific field of study. Often, the most generous awards go to students who pursue careers in high-need areas.",
-                },
-                {
-                  title: "College-specific",
-                  desc: "College-specific scholarships are offered by individual colleges and universities to highly qualified applicants based on academic and personal achievement.",
-                },
-                {
-                  title: "Athletic",
-                  desc: "Awarded to students with exceptional skill in a sport. Often this is so that the student will be available to attend the school or college and play the sport on their team.",
-                },
-                {
-                  title: "Brand",
-                  desc: "These scholarships are sponsored by a corporation that is trying to gain attention to their brand, or a cause. Sometimes these scholarships are referred to as branded scholarships.",
-                },
-                {
-                  title: "Creative contest",
-                  desc: "These scholarships are awarded to students based on a creative submission. Contest scholarships are also called mini project-based scholarships.",
-                },
-              ].map((item, idx) => (
-                <li
-                  key={idx}
-                  className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100"
-                >
-                  <ChevronsRight className="w-5 h-5 text-[#2da970] shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-slate-800 block mb-1">
-                      {item.title}:
-                    </strong>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {item.desc}
-                    </p>
+        ) : scholarshipData ? (
+          <>
+            {/* Comprehensive Guide Section */}
+            <div className="flex flex-col lg:flex-row gap-12 mb-16 items-center mt-12">
+              <div className="w-full lg:w-1/2">
+                <h2 className="text-3xl font-bold text-secondary mb-6">
+                  {scholarshipData.about_heading}
+                </h2>
+                <div className="text-gray-600 space-y-4 leading-relaxed">
+                  <EditorJsDescription
+                    data={scholarshipData.about_description}
+                  />
+                </div>
+              </div>
+              <div className="w-full lg:w-1/2 flex justify-center">
+                {scholarshipData.about_image_path ? (
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${scholarshipData.about_image_path}`}
+                    alt={scholarshipData.about_heading || "Scholarship"}
+                    className="w-full max-w-md rounded-2xl shadow-lg border border-gray-200"
+                  />
+                ) : (
+                  <div className="relative w-full max-w-md aspect-[3/4] bg-gray-100 rounded-2xl overflow-hidden shadow-lg border border-gray-200 flex items-center justify-center">
+                    <span className="text-gray-400">Scholarship Image</span>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-[#e8f5e9] border border-[#c8e6c9] p-6 rounded-xl text-gray-700 leading-relaxed text-center">
-            <p className="mb-2">
-              Applying to college as an international student can be daunting
-              enough without thinking about how to pay for it. However, there
-              are many countries with scholarships for prospective undergraduate
-              to PHD students.
-            </p>
-            <p>
-              International students should look for scholarships that accept
-              international applicants. Most scholarships require an application
-              process. Some may require an essay, proof of community involvement
-              or examples of leadership skills. Some also require proof of
-              language proficiency or other test scores.
-            </p>
-          </div>
-        </div>
-
-        {/* Tips / Process Section */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-secondary mb-4 text-center">
-            Scholarships For Study All Over The World
-          </h2>
-          <p className="text-center text-gray-600 mb-12 text-lg">
-            Here Are Some Tips On How To Get Started:
-          </p>
-
-          <div className="space-y-8">
-            {/* Step 1 */}
-            <div className="flex flex-col md:flex-row bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 items-center gap-8">
-              <div className="w-20 h-20 shrink-0 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center">
-                <Search className="w-10 h-10" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-3">
-                  Search
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Start your search for scholarships like Embassies/High
-                  commission, universities etc. websites. You can search
-                  scholarships by location, subject of study, student origin, or
-                  scholarships name. After you find an scholarships that you are
-                  interested in, click on it. You will then be prompted to sign
-                  into your account, or to create an account. After this is
-                  complete you can contact the host institution directly to
-                  apply.
-                </p>
+                )}
               </div>
             </div>
 
-            {/* Step 2 */}
-            <div className="flex flex-col md:flex-row-reverse bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 items-center gap-8">
-              <div className="w-20 h-20 shrink-0 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center">
-                <PenTool className="w-10 h-10" />
+            {/* Websites That Allow Search Section */}
+            <div className="bg-gray-50 rounded-3xl p-8 md:p-12 mb-16">
+              <h2 className="text-3xl font-bold text-secondary mb-6 text-center">
+                {scholarshipData.eligibility_heading}
+              </h2>
+              <div className="text-center mb-10 max-w-3xl mx-auto space-y-4 text-gray-600">
+                <EditorJsDescription
+                  data={scholarshipData.eligibility_description}
+                />
               </div>
-              <div className="md:text-right">
-                <h3 className="text-2xl font-bold text-slate-800 mb-3">
-                  Register or Sign In
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Create an account, or sign in when searching for scholarships,
-                  so when you find an scholarships that you are interested in,
-                  you have access to the information you need to apply- right at
-                  your fingertips. To create an account, you simply need an
-                  email and a password. You can also save awards that you are
-                  interested in and come back later to apply!
-                </p>
-              </div>
+
+              {scholarshipData.eligibility_points?.length > 0 && (
+                <div className="mb-8">
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {scholarshipData.eligibility_points.map(
+                      (item: any, idx: number) => (
+                        <li
+                          key={idx}
+                          className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100"
+                        >
+                          <ChevronsRight className="w-5 h-5 text-[#2da970] shrink-0 mt-0.5" />
+                          <div>
+                            <strong className="text-slate-800 block mb-1">
+                              {item.heading}:
+                            </strong>
+                            <div className="text-gray-600 text-sm leading-relaxed scholarship-editorjs-content">
+                              <EditorJsDescription data={item.description} />
+                            </div>
+                          </div>
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </div>
+              )}
+
+              {scholarshipData.eligibility_notice && (
+                <div className="bg-[#e8f5e9] border border-[#c8e6c9] p-6 rounded-xl text-gray-700 leading-relaxed text-center">
+                  <EditorJsDescription
+                    data={scholarshipData.eligibility_notice}
+                  />
+                </div>
+              )}
             </div>
 
-            {/* Step 3 */}
-            <div className="flex flex-col md:flex-row bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 items-center gap-8">
-              <div className="w-20 h-20 shrink-0 bg-green-50 text-green-500 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-10 h-10" />
+            {/* Tips / Process Section */}
+            <div className="mb-12">
+              <h2 className="text-3xl font-bold text-secondary mb-4 text-center">
+                {scholarshipData.apply_heading}
+              </h2>
+              <div className="text-center text-gray-600 mb-12 text-lg">
+                <EditorJsDescription data={scholarshipData.apply_description} />
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-3">
-                  Apply for scholarships
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Once you have created an account, logged in and decided on an
-                  award you would like to apply for, you can view the contact
-                  information for the host institution that offers the award;
-                  contact that organization directly for more information; and
-                  find out how to apply. If eligible, you can then apply for the
-                  award directly through the host organization.
-                </p>
+
+              <div className="space-y-8">
+                {scholarshipData.apply_points?.map((step: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className={`flex flex-col md:flex-row${step.position === "right" ? "-reverse" : ""} bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 items-center gap-8`}
+                  >
+                    <div className="w-20 h-20 shrink-0 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center p-4">
+                      {step.icon_path ? (
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${step.icon_path}`}
+                          className="w-full h-full object-contain"
+                          alt=""
+                        />
+                      ) : (
+                        <CheckCircle className="w-10 h-10" />
+                      )}
+                    </div>
+                    <div
+                      className={`flex-1 ${step.position === "right" ? "md:text-right" : ""}`}
+                    >
+                      <h3 className="text-2xl font-bold text-slate-800 mb-3">
+                        {step.heading}
+                      </h3>
+                      <div className="text-gray-600 leading-relaxed scholarship-editorjs-content">
+                        <EditorJsDescription data={step.description} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
+          </>
+        ) : (
+          <div className="text-center py-12 text-gray-500">
+            No scholarship information available at the moment.
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

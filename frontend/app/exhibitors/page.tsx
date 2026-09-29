@@ -2,9 +2,44 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React, { useState, useRef } from "react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { useSubmitEnquiry } from "@/hooks/api/useForms";
 
 export default function ExhibitorsPage() {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [phone, setPhone] = useState<string>("");
+
+  const { mutate: submitEnquiry, isPending: isSubmitting } = useSubmitEnquiry(
+    "exhibitors",
+    {
+      onSuccess: () => {
+        alert("Registration successful!");
+        if (formRef.current) formRef.current.reset();
+        setPhone("");
+      },
+      onError: (error: any) => {
+        console.error(error);
+        alert("Failed to submit. Please try again.");
+      },
+    },
+  );
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: phone,
+      institution: formData.get("institution"),
+      website: formData.get("website"),
+      agree: formData.get("agree") === "on",
+    };
+    submitEnquiry(data);
+  };
 
   return (
     <div
@@ -142,35 +177,59 @@ export default function ExhibitorsPage() {
         {/* Right Side: Form */}
         <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-6 relative">
           <form
+            ref={formRef}
             className="space-y-4 mt-2 text-black"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
           >
             <div>
               <input
                 type="text"
+                name="name"
                 placeholder="Full Name*"
                 className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary"
                 required
               />
             </div>
 
-            <div className="flex gap-2">
-              <select className="border border-gray-300 rounded-md px-3 py-3 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary w-28">
-                <option value="+91">🇮🇳 +91</option>
-                <option value="+1">🇺🇸 +1</option>
-                <option value="+44">🇬🇧 +44</option>
-              </select>
-              <input
-                type="tel"
-                placeholder="Ph. No.*"
-                className="flex-1 border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary"
-                required
+            <div className="react-phone-wrapper w-full">
+              <style jsx global>{`
+                .react-phone-wrapper .react-tel-input .form-control {
+                  width: 100%;
+                  height: 50px;
+                  border-radius: 0.375rem;
+                  border: 1px solid #d1d5db;
+                  font-size: 1rem;
+                }
+                .react-phone-wrapper .react-tel-input .form-control:focus {
+                  border-color: #013fa4; /* using secondary ring color */
+                  box-shadow: 0 0 0 2px rgba(1, 63, 164, 0.2);
+                }
+                .react-phone-wrapper .react-tel-input .flag-dropdown {
+                  border-color: #d1d5db;
+                  border-top-left-radius: 0.375rem;
+                  border-bottom-left-radius: 0.375rem;
+                  background-color: transparent;
+                }
+                .react-phone-wrapper .react-tel-input .flag-dropdown:hover {
+                  background-color: #f9fafb;
+                }
+              `}</style>
+              <PhoneInput
+                country={"in"}
+                value={phone}
+                onChange={setPhone}
+                inputProps={{
+                  name: "phone",
+                  required: true,
+                  placeholder: "Ph. No.*",
+                }}
               />
             </div>
 
             <div>
               <input
                 type="email"
+                name="email"
                 placeholder="Email*"
                 className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary"
                 required
@@ -180,6 +239,7 @@ export default function ExhibitorsPage() {
             <div>
               <input
                 type="text"
+                name="institution"
                 placeholder="Institution Name*"
                 className="w-full border border-gray-300 rounded-md px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary"
                 required
@@ -205,6 +265,7 @@ export default function ExhibitorsPage() {
               </span>
               <input
                 type="url"
+                name="website"
                 placeholder="Institution's Official Website URL*"
                 className="w-full border border-gray-300 rounded-md pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary"
                 required
@@ -215,6 +276,7 @@ export default function ExhibitorsPage() {
               <input
                 type="checkbox"
                 id="agree"
+                name="agree"
                 className="mt-1 h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-secondary"
                 required
               />
@@ -227,48 +289,12 @@ export default function ExhibitorsPage() {
               </label>
             </div>
 
-            <div className="border border-gray-200 rounded p-4 flex items-center justify-between bg-gray-50/50">
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  className="h-7 w-7 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  I'm not a robot
-                </span>
-              </div>
-              <div className="flex flex-col items-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4285f4">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
-                </svg>
-                <span className="text-[10px] text-gray-500 mt-1">
-                  reCAPTCHA
-                </span>
-                <span className="text-[8px] text-gray-400">
-                  Privacy - Terms
-                </span>
-              </div>
-            </div>
-
             <button
               type="submit"
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-full transition-colors flex items-center justify-center gap-2"
+              disabled={isSubmitting}
+              className="bg-secondary hover:bg-secondary/90 text-white font-semibold py-3 px-10 rounded-full transition-colors text-sm shadow-md mt-4 inline-block disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Submit
-              <svg
-                width="16"
-                height="16"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </form>
         </div>

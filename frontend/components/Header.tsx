@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSiteSettings } from "@/hooks/api";
+import { useSiteSettings, useUpcomingEvents } from "@/hooks/api";
 import { EditorJsDescription } from "@/components/EditorJsDescription";
 
 export default function Header() {
+  const { data: events, isLoading } = useUpcomingEvents();
+
   const { data: siteSettings } = useSiteSettings();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -15,17 +17,7 @@ export default function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
-  useEffect(() => {
-    if (siteSettings?.favicon_path) {
-      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-      if (!link) {
-        link = document.createElement("link");
-        link.rel = "icon";
-        document.head.appendChild(link);
-      }
-      link.href = `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${siteSettings.favicon_path}`;
-    }
-  }, [siteSettings?.favicon_path]);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -257,27 +249,25 @@ export default function Header() {
               <ul
                 className={`bg-gray-50 overflow-hidden transition-all duration-200 ${openDropdown === "expo" ? "max-h-96 py-2" : "max-h-0"}`}
               >
-                {[
-                  { name: "Sri Lanka", path: "/upcoming_expo/sri-lanka" },
-                  { name: "Sierra Leone", path: "/upcoming_expo/sierra-leone" },
-                  { name: "Liberia", path: "/upcoming_expo/liberia" },
-                  { name: "Ghana", path: "/upcoming_expo/ghana" },
-                  { name: "Myanmar", path: "/upcoming_expo/myanmar" },
-                  { name: "Nepal", path: "/upcoming_expo/nepal" },
-                  { name: "Bangladesh", path: "/upcoming_expo/bangladesh" },
-                  { name: "Bahrain", path: "/upcoming_expo/bahrain" },
-                  { name: "Qatar", path: "/upcoming_expo/qatar" },
-                ].map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      href={item.path}
-                      className="block px-10 py-2 text-sm text-gray-600 hover:text-red-600"
-                      onClick={toggleSidebar}
-                    >
-                      {item.name}
-                    </Link>
+                {isLoading ? (
+                  <li>
+                    <span className="block px-10 py-2 text-sm text-gray-400">
+                      Loading...
+                    </span>
                   </li>
-                ))}
+                ) : (
+                  events?.map((event: any) => (
+                    <li key={event.id || event.slug || event.name}>
+                      <Link
+                        href={`/upcoming_expo/${event.slug || ""}`}
+                        className="block px-10 py-2 text-sm text-gray-600 hover:text-red-600"
+                        onClick={toggleSidebar}
+                      >
+                        {event.name}
+                      </Link>
+                    </li>
+                  ))
+                )}
               </ul>
             </li>
 

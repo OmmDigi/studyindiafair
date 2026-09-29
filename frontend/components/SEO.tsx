@@ -5,6 +5,7 @@ interface SEOProps {
   description: string;
   image?: string;
   url?: string;
+  icons?: Metadata['icons'];
 }
 
 /**
@@ -25,10 +26,12 @@ export function generateSEO({
   description,
   image = '/images/common/Study-in-India-fair-logo.png',
   url = 'https://studyindiafair.com',
+  icons,
 }: SEOProps): Metadata {
   return {
     title,
     description,
+    icons,
     openGraph: {
       title,
       description,

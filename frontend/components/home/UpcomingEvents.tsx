@@ -54,7 +54,7 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
       <div className="container mx-auto px-4 md:max-w-[1400px]">
         {/* Header Section */}
         {!hideHeader && (
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-2">
             <h2 className="text-2xl md:text-3xl font-bold text-secondary tracking-wide uppercase">
               Upcoming Education Fairs
             </h2>
@@ -70,7 +70,7 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
               <div className="flex gap-2">
                 <button
                   onClick={() => scroll("left")}
-                  className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-secondary text-secondary flex items-center justify-center hover:bg-secondary hover:text-white transition-colors"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-0 border-2 border-secondary text-secondary flex items-center justify-center hover:bg-secondary hover:text-white transition-colors cursor-pointer"
                   aria-label="Previous"
                 >
                   <svg
@@ -90,7 +90,7 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
                 </button>
                 <button
                   onClick={() => scroll("right")}
-                  className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-secondary text-white flex items-center justify-center hover:bg-secondary/90 transition-colors"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-0 border-2 border-secondary text-secondary flex items-center justify-center hover:bg-secondary hover:text-white transition-colors cursor-pointer"
                   aria-label="Next"
                 >
                   <svg
@@ -116,7 +116,7 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
         {/* Cards Carousel */}
         <div
           ref={scrollRef}
-          className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x"
+          className="flex overflow-x-auto gap-2 pb-6 scrollbar-hide snap-x"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {displayEvents?.map((event: any, idx: number) => {
@@ -126,7 +126,7 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
                 onClick={() =>
                   router.push(`/upcoming_expo/${event.slug || ""}`)
                 }
-                className="min-w-[300px] w-[300px] md:min-w-[360px] md:w-[360px] bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex-shrink-0 snap-start flex flex-col relative group cursor-pointer"
+                className="min-w-[300px] w-[300px] md:min-w-[320px] md:w-[320px] bg-white rounded-sm shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex-shrink-0 snap-start flex flex-col relative group cursor-pointer"
               >
                 <div className="h-48 md:h-56 w-full relative overflow-hidden">
                   <img
@@ -143,13 +143,13 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
                 </div>
 
                 <div className="p-3 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold text-secondary mb-5 leading-tight whitespace-pre-line">
+                  <h3 className="text-xl font-bold text-secondary mb-2 leading-tight whitespace-pre-line">
                     {event.name}
                   </h3>
 
-                  <div className="mt-auto space-y-2 text-sm md:text-base text-secondary pb-8">
-                    {event.schedules?.map((schedule: any, sIdx: number) => (
-                      <div key={sIdx} className="space-y-1">
+                  <div className=" space-y-2 text-sm md:text-base text-secondary pb-2">
+                    {event?.schedules?.length > 0 && (
+                      <div className="space-y-1">
                         <div className="flex items-start gap-3">
                           <svg
                             className="w-5 h-5 mt-0.5 flex-shrink-0 text-secondary"
@@ -165,7 +165,15 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
                               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                             ></path>
                           </svg>
-                          <span className="font-medium">{schedule.date}</span>
+                          <span className="font-medium">
+                            {Array.from(
+                              new Set(
+                                event.schedules
+                                  .map((s: any) => s.date)
+                                  .filter(Boolean),
+                              ),
+                            ).join(", ")}
+                          </span>
                         </div>
                         <div className="flex items-start gap-3">
                           <svg
@@ -189,16 +197,22 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
                             ></path>
                           </svg>
                           <span className="font-medium line-clamp-2">
-                            {schedule.location}
+                            {Array.from(
+                              new Set(
+                                event.schedules
+                                  .map((s: any) => s.location)
+                                  .filter(Boolean),
+                              ),
+                            ).join(", ")}
                           </span>
                         </div>
                       </div>
-                    ))}
+                    )}
                   </div>
 
                   <Link
                     href={`/upcoming_expo/${event.slug || ""}`}
-                    className="absolute bottom-6 right-6 w-11 h-11 rounded-full bg-secondary text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-md"
+                    className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center hover:bg-orange-600 transition-colors shadow-md"
                     aria-label={`View details for ${event.name}`}
                   >
                     <svg

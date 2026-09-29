@@ -15,7 +15,9 @@ export default function UpcomingExpoPage() {
             Upcoming Education Fairs
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore our schedule of upcoming education fairs across various countries. Find the one nearest to you and discover endless educational opportunities.
+            Explore our schedule of upcoming education fairs across various
+            countries. Find the one nearest to you and discover endless
+            educational opportunities.
           </p>
         </div>
 
@@ -29,11 +31,11 @@ export default function UpcomingExpoPage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {events?.map((event: any, idx: number) => (
               <div
                 key={event.id || idx}
-                className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden flex flex-col group relative"
+                className="bg-white rounded-sm shadow-sm hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden flex flex-col group relative"
               >
                 <div className="h-56 w-full relative overflow-hidden">
                   <img
@@ -42,7 +44,9 @@ export default function UpcomingExpoPage() {
                         ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${event.images[0].path}`
                         : "/images/placeholder.jpg"
                     }
-                    alt={event.images?.[0]?.alt_text || event.name || "Fair Image"}
+                    alt={
+                      event.images?.[0]?.alt_text || event.name || "Fair Image"
+                    }
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
@@ -53,8 +57,8 @@ export default function UpcomingExpoPage() {
 
                 <div className="p-6 flex-1 flex flex-col bg-white">
                   <div className="flex-1 space-y-4 text-sm md:text-base text-gray-700 pb-12">
-                    {event.schedules?.map((schedule: any, sIdx: number) => (
-                      <div key={sIdx} className="space-y-2 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-orange-200 transition-colors">
+                    {event.schedules?.length > 0 && (
+                      <div className="space-y-2 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-orange-200 transition-colors">
                         <div className="flex items-start gap-3">
                           <svg
                             className="w-5 h-5 mt-0.5 flex-shrink-0 text-secondary"
@@ -69,7 +73,15 @@ export default function UpcomingExpoPage() {
                               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                             />
                           </svg>
-                          <span className="font-semibold text-secondary">{schedule.date}</span>
+                          <span className="font-semibold text-secondary">
+                            {Array.from(
+                              new Set(
+                                event.schedules
+                                  .map((s: any) => s.date)
+                                  .filter(Boolean),
+                              ),
+                            ).join(", ")}
+                          </span>
                         </div>
                         <div className="flex items-start gap-3">
                           <svg
@@ -91,10 +103,18 @@ export default function UpcomingExpoPage() {
                               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                             />
                           </svg>
-                          <span className="line-clamp-2">{schedule.location}</span>
+                          <span className="line-clamp-2">
+                            {Array.from(
+                              new Set(
+                                event.schedules
+                                  .map((s: any) => s.location)
+                                  .filter(Boolean),
+                              ),
+                            ).join(", ")}
+                          </span>
                         </div>
                       </div>
-                    ))}
+                    )}
                   </div>
 
                   <Link
@@ -122,7 +142,7 @@ export default function UpcomingExpoPage() {
             ))}
           </div>
         )}
-        
+
         {!isLoading && (!events || events.length === 0) && (
           <div className="text-center py-20 text-gray-500">
             <h3 className="text-2xl font-medium mb-2">No Upcoming Fairs</h3>

@@ -131,7 +131,7 @@ const Testimonials = () => {
                       return (
                         <div
                           key={`testimonial-${t.id}-${idx}`}
-                          className="w-72 md:w-[350px] flex-shrink-0 relative rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all group"
+                          className="w-72 md:w-[350px] flex-shrink-0 relative rounded-sm overflow-hidden shadow-sm hover:shadow-lg transition-all group"
                           onClick={() => setActiveVideo(t.youtube_id)}
                         >
                           <img
@@ -165,7 +165,7 @@ const Testimonials = () => {
                     return (
                       <div
                         key={`testimonial-${t.id}-${idx}`}
-                        className="w-80 md:w-[500px] flex-shrink-0 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between"
+                        className="w-80 md:w-[500px] flex-shrink-0 bg-white p-6 md:p-8 rounded-sm shadow-sm border border-gray-100 flex flex-col justify-between"
                       >
                         <div className="text-gray-700 italic mb-6">
                           {t.content ? (

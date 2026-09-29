@@ -35,7 +35,7 @@ export default function GalleryPage() {
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Hero Section */}
       <div
-        className="relative w-full py-20 bg-secondary flex items-center justify-center text-center"
+        className="relative w-full py-3 md:py-6 bg-secondary flex items-center justify-center text-center"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=2000')",
@@ -121,7 +121,9 @@ export default function GalleryPage() {
                           ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${item.image_path}`
                           : "/images/placeholder.jpg"
                       }
-                      alt={item.alt_text || item.category_name || "Gallery Image"}
+                      alt={
+                        item.alt_text || item.category_name || "Gallery Image"
+                      }
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                     />
 
