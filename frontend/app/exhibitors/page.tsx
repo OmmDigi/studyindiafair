@@ -16,9 +16,9 @@ export default function ExhibitorsPage() {
     "exhibitors",
     {
       onSuccess: () => {
-        alert("Registration successful!");
         if (formRef.current) formRef.current.reset();
         setPhone("");
+        router.push("/thank-you");
       },
       onError: (error: any) => {
         console.error(error);

@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { generateSEO } from "@/components/SEO";
 import { Providers } from "@/components/Providers";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 // Removed Geist since we are using Google Fonts from CDN
 
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Header />
           <main className="flex-1 w-full">{children}</main>
           <Footer />
+          <WhatsAppButton />
         </Providers>
       </body>
     </html>

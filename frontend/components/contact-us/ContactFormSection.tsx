@@ -1,7 +1,45 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Home, Phone, Mail } from "lucide-react";
+import { useSubmitEnquiry } from "@/hooks/api";
+import { useRouter } from "next/navigation";
 
 export default function ContactFormSection() {
+  const initialFormState = {
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  };
+
+  const [formData, setFormData] = useState(initialFormState);
+  const router = useRouter();
+
+  const { mutate: submitEnquiry, isPending: isSubmitting } = useSubmitEnquiry(
+    "contact-us",
+    {
+      onSuccess: () => {
+        setFormData(initialFormState);
+        router.push("/thank-you");
+      },
+      onError: (error: any) => {
+        console.error("Failed to submit:", error);
+        alert("Failed to send message. Please try again.");
+      },
+    }
+  );
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitEnquiry(formData);
+  };
   return (
     <section className="py-3 md:py-6 bg-white">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
@@ -112,10 +150,13 @@ export default function ContactFormSection() {
               Grow Together!
             </h3>
 
-            <form className="space-y-2 text-black">
+            <form onSubmit={handleSubmit} className="space-y-2 text-black">
               <div>
                 <input
                   type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   placeholder="Full Name"
                   className="w-full px-5 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-all"
                   required
@@ -124,6 +165,9 @@ export default function ContactFormSection() {
               <div>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Email"
                   className="w-full px-5 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-all"
                   required
@@ -132,6 +176,9 @@ export default function ContactFormSection() {
               <div>
                 <input
                   type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   placeholder="Phone No"
                   className="w-full px-5 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-all"
                   required
@@ -139,6 +186,9 @@ export default function ContactFormSection() {
               </div>
               <div>
                 <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   placeholder="Message"
                   rows={2}
                   className="w-full px-5 py-4 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-all resize-none"
@@ -148,9 +198,10 @@ export default function ContactFormSection() {
 
               <button
                 type="submit"
-                className="w-full py-4 bg-secondary text-white font-bold rounded-lg hover:bg-secondary/90 transition-colors shadow-lg shadow-secondary/20"
+                disabled={isSubmitting}
+                className="w-full py-4 bg-secondary text-white font-bold rounded-lg hover:bg-secondary/90 transition-colors shadow-lg shadow-secondary/20 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Submit
+                {isSubmitting ? "Sending..." : "Submit"}
               </button>
             </form>
           </div>

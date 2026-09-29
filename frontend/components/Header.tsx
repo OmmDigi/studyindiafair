@@ -89,9 +89,13 @@ export default function Header() {
                 .marquee-notice .border-t { border: none !important; }
                 .marquee-notice .mt-2 { margin-top: 0 !important; }
                 .marquee-notice .py-4 { padding-top: 0 !important; padding-bottom: 0 !important; }
+                
+                /* Force text color for EditorJsDescription contents */
+                .marquee-text-white .marquee-notice * { color: white !important; }
+                .marquee-text-black .marquee-notice * { color: black !important; }
               `}</style>
               <div
-                className={`pointer-events-auto h-full overflow-hidden flex flex-col justify-center ${!isHomePage || isScrolled ? "bg-gray-50 border border-gray-100 rounded-lg px-4 text-sm text-center text-black" : "bg-transparent  px-4 text-sm text-center text-white"}`}
+                className={`pointer-events-auto h-full overflow-hidden flex flex-col justify-center ${!isHomePage || isScrolled ? "bg-gray-50 border border-gray-100 rounded-lg px-4 text-sm text-center text-black marquee-text-black" : "bg-transparent px-4 text-sm text-center text-white marquee-text-white"}`}
               >
                 <div className="animate-scroll-up marquee-notice flex flex-col items-center">
                   {siteSettings?.notice ? (

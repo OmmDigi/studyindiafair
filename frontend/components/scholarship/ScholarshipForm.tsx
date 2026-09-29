@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useSubmitEnquiry } from "@/hooks/api";
+import { useRouter } from "next/navigation";
 
 export default function ScholarshipForm() {
   const initialFormState = {
@@ -21,13 +22,14 @@ export default function ScholarshipForm() {
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  const router = useRouter();
 
   const { mutate: submitEnquiry, isPending: isSubmitting } = useSubmitEnquiry(
     "scholarship",
     {
       onSuccess: () => {
-        alert("Registration successful!");
         setFormData(initialFormState);
+        router.push("/thank-you");
       },
       onError: (error: any) => {
         console.error(error);

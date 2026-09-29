@@ -2,7 +2,7 @@
 
 import { useUpcomingEvent } from "@/hooks/api";
 import { useSubmitEnquiry } from "@/hooks/api/useForms";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import UpcomingEvents from "@/components/home/UpcomingEvents";
 import PhoneInput from "react-phone-input-2";
@@ -12,6 +12,7 @@ export default function EventDetailsPage() {
   const { slug } = useParams();
   const { data: event, isLoading } = useUpcomingEvent(slug as string);
   const [phone, setPhone] = useState<string>("");
+  const router = useRouter();
 
   const formRef = useRef<HTMLFormElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -20,9 +21,9 @@ export default function EventDetailsPage() {
     slug as string,
     {
       onSuccess: () => {
-        alert("Registration successful!");
         if (formRef.current) formRef.current.reset();
         setPhone("");
+        router.push("/thank-you");
       },
       onError: (error: any) => {
         console.error(error);
@@ -82,14 +83,14 @@ export default function EventDetailsPage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div
-        className="relative w-full py-20 lg:py-32 bg-cover bg-center"
+        className="relative w-full py-3 lg:py-6 bg-cover bg-top bg-no-repeat"
         style={{
           backgroundImage: event.images?.[0]?.path
             ? `url(${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${event.images[0].path})`
             : "url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000')",
         }}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
 
         <div className="container mx-auto px-4 md:max-w-7xl relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
           {/* Left Content */}
@@ -106,7 +107,7 @@ export default function EventDetailsPage() {
                 >
                   <div className="flex items-start gap-4 mb-3">
                     <svg
-                      className="w-6 h-6 shrink-0 mt-1 text-orange-500"
+                      className="w-6 h-6 shrink-0 mt-1 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -125,13 +126,13 @@ export default function EventDetailsPage() {
                       ></path>
                     </svg>
                     <span>
-                      <strong className="text-orange-400">Venue:</strong>{" "}
+                      <strong className="text-white">Venue:</strong>{" "}
                       {schedule.location}
                     </span>
                   </div>
                   <div className="flex items-start gap-4">
                     <svg
-                      className="w-6 h-6 shrink-0 mt-1 text-orange-500"
+                      className="w-6 h-6 shrink-0 mt-1 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -144,7 +145,7 @@ export default function EventDetailsPage() {
                       ></path>
                     </svg>
                     <span>
-                      <strong className="text-orange-400">Date:</strong>{" "}
+                      <strong className="text-white">Date:</strong>{" "}
                       {schedule.date}
                     </span>
                   </div>
@@ -262,7 +263,7 @@ export default function EventDetailsPage() {
       </div>
 
       {/* Participating Universities */}
-      <div className="py-20 bg-white container mx-auto px-4 max-w-7xl border-b border-gray-100 overflow-hidden">
+      <div className="py-3 lg:py-6 bg-white container mx-auto px-4 max-w-7xl border-b border-gray-100 overflow-hidden">
         <div className="flex flex-col md:flex-row items-center md:items-center gap-12">
           <div className="md:w-1/3 text-center md:text-left z-10">
             <h2 className="text-4xl font-bold text-secondary mb-4 leading-tight">
@@ -277,9 +278,7 @@ export default function EventDetailsPage() {
           </div>
 
           <div className="md:w-2/3 w-full relative overflow-hidden">
-            <div
-              className="flex w-max animate-marquee hover:paused"
-            >
+            <div className="flex w-max animate-marquee hover:paused">
               <div className="flex gap-6 py-2 pr-6">
                 {logos.map((logoItem: any, index: number) => {
                   const imageSrc =
@@ -326,7 +325,7 @@ export default function EventDetailsPage() {
       </div>
 
       {/* Upcoming Expo */}
-      <div className="bg-[#FDF8F3] py-20">
+      <div className="bg-[#FDF8F3] py-5">
         <div className="container mx-auto px-4 max-w-7xl text-center mb-12">
           <h2 className="text-4xl font-bold text-secondary mb-6">
             Upcoming Expo
