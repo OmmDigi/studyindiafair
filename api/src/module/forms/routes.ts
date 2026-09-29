@@ -57,6 +57,16 @@ formRoutes.post(
   })
 );
 
+formRoutes.post(
+  "/:id/copy",
+  can("create"),
+  validate(idParamSchema, "params"),
+  validate(createFormSchema),
+  asyncHandler(async (req, res) => {
+    res.status(201).json(await service.copy(Number(req.params.id), req.body, req.user!.id));
+  })
+);
+
 formRoutes.patch(
   "/:id",
   validate(idParamSchema, "params"),

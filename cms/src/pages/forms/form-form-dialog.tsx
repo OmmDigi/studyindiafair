@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { getErrorMessage } from '@/lib/api'
@@ -24,25 +24,29 @@ type FormValues = z.infer<typeof schema>
 type Props = {
   open: boolean
   form: Form | null
+  copying?: Form | null
   onOpenChange: (open: boolean) => void
   onSaved: () => void
 }
 
-export function FormFormDialog({ open, form, onOpenChange, onSaved }: Props) {
+export function FormFormDialog({ open, form, copying = null, onOpenChange, onSaved }: Props) {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    values: form ? { name: form.name, form_id: form.form_id } : { name: '', form_id: '' },
+    values: form
+      ? { name: form.name, form_id: form.form_id }
+      : { name: copying ? `${copying.name} (Copy)` : '', form_id: '' },
   })
 
   const onSubmit = async (values: FormValues) => {
     try {
       if (form) await formService.update(form.id, values.form_id ? values : { ...values, form_id: form.form_id })
+      else if (copying) await formService.copy(copying.id, values)
       else await formService.create(values)
-      toast.success(form ? 'Form updated' : 'Form created')
+      toast.success(form ? 'Form updated' : copying ? 'Form copied' : 'Form created')
       onSaved()
       onOpenChange(false)
     } catch (error) {
@@ -54,7 +58,10 @@ export function FormFormDialog({ open, form, onOpenChange, onSaved }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{form ? 'Edit Form' : 'New Form'}</DialogTitle>
+          <DialogTitle>{form ? 'Edit Form' : copying ? 'Copy Form' : 'New Form'}</DialogTitle>
+          {copying && (
+            <DialogDescription>Email setup of {copying.name} will be copied to the new form. Enquiries are not copied.</DialogDescription>
+          )}
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">

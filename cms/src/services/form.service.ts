@@ -14,6 +14,7 @@ export const formService = {
   list: (params: { search?: string } = {}) => api.get<Form[]>('/forms', { params }).then((r) => r.data),
   get: (id: number) => api.get<Form>(`/forms/${id}`).then((r) => r.data),
   create: (data: FormPayload) => api.post<Form>('/forms', data).then((r) => r.data),
+  copy: (id: number, data: FormPayload) => api.post<Form>(`/forms/${id}/copy`, data).then((r) => r.data),
   update: (id: number, data: Partial<FormPayload>) => api.patch<Form>(`/forms/${id}`, data).then((r) => r.data),
   remove: (id: number) => api.delete(`/forms/${id}`),
   enquiries: (id: number, params: EnquiryListParams) =>

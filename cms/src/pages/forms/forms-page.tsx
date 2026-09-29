@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Eye, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Copy, Eye, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
@@ -29,6 +29,7 @@ export function FormsPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [formKey, setFormKey] = useState(0)
   const [editing, setEditing] = useState<Form | null>(null)
+  const [copying, setCopying] = useState<Form | null>(null)
   const [deleting, setDeleting] = useState<Form | null>(null)
 
   const refresh = () => qc.invalidateQueries({ queryKey: ['forms'] })
@@ -46,8 +47,9 @@ export function FormsPage() {
     onError: (error) => toast.error(getErrorMessage(error)),
   })
 
-  const openForm = (form: Form | null) => {
+  const openForm = (form: Form | null, copyFrom: Form | null = null) => {
     setEditing(form)
+    setCopying(copyFrom)
     setFormKey((k) => k + 1)
     setFormOpen(true)
   }
@@ -109,6 +111,11 @@ export function FormsPage() {
                     <Button size="icon-sm" variant="ghost" title="Edit" onClick={() => openForm(f)}>
                       <Pencil />
                     </Button>
+                    {can('create') && (
+                      <Button size="icon-sm" variant="ghost" title="Copy form" onClick={() => openForm(null, f)}>
+                        <Copy />
+                      </Button>
+                    )}
                     {can('delete') && (
                       <Button
                         size="icon-sm"
@@ -128,7 +135,7 @@ export function FormsPage() {
         </Table>
       </div>
 
-      <FormFormDialog key={formKey} open={formOpen} form={editing} onOpenChange={setFormOpen} onSaved={refresh} />
+      <FormFormDialog key={formKey} open={formOpen} form={editing} copying={copying} onOpenChange={setFormOpen} onSaved={refresh} />
       <Dialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <DialogContent>
           <DialogHeader>
