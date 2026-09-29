@@ -24,6 +24,7 @@ const schema = z.object({
     .default("Study India Fair <no-reply@studyindiafair.com>"),
   OTP_EXPIRES_MIN: z.coerce.number().default(10),
   UPLOAD_URL: z.string().default("http://localhost:4001"),
+  REDIS_URL: z.string().default(""),
 
   INIT_DB_PASS: z.string().min(1),
 });

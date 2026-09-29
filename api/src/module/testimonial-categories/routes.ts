@@ -2,6 +2,8 @@ import { Router } from "express";
 import { requireAuth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { cached, invalidateOnWrite } from "../../utils/cache.js";
+import { publicRateLimit } from "../../utils/rateLimit.js";
 import { createCategorySchema, idParamSchema, listCategoriesSchema, updateCategorySchema } from "./constant.js";
 import * as service from "./service.js";
 
@@ -9,12 +11,15 @@ export const testimonialCategoryRoutes = Router();
 
 testimonialCategoryRoutes.get(
   "/public",
+  publicRateLimit,
+  cached("testimonial-categories"),
   asyncHandler(async (_req, res) => {
     res.json(await service.listPublic());
   })
 );
 
 testimonialCategoryRoutes.use(requireAuth);
+testimonialCategoryRoutes.use(invalidateOnWrite("testimonial-categories"));
 
 testimonialCategoryRoutes.get(
   "/",

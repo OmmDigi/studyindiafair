@@ -2,6 +2,8 @@ import { Router } from "express";
 import { requireAuth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { cached, invalidateOnWrite } from "../../utils/cache.js";
+import { publicRateLimit } from "../../utils/rateLimit.js";
 import {
   createTeamMemberSchema,
   idParamSchema,
@@ -16,6 +18,8 @@ export const teamMemberRoutes = Router();
 
 teamMemberRoutes.get(
   "/public",
+  publicRateLimit,
+  cached("team-members"),
   validate(publicListSchema, "query"),
   asyncHandler(async (req, res) => {
     res.json(await service.listPublic(publicListSchema.parse(req.query)));
@@ -23,6 +27,7 @@ teamMemberRoutes.get(
 );
 
 teamMemberRoutes.use(requireAuth);
+teamMemberRoutes.use(invalidateOnWrite("team-members"));
 
 teamMemberRoutes.get(
   "/",

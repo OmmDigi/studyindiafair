@@ -2,6 +2,8 @@ import { Router } from "express";
 import { requireAuth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { cached, invalidateOnWrite } from "../../utils/cache.js";
+import { publicRateLimit } from "../../utils/rateLimit.js";
 import { createCategorySchema, idParamSchema, listCategoriesSchema, reorderSchema, updateCategorySchema } from "./constant.js";
 import * as service from "./service.js";
 
@@ -9,12 +11,15 @@ export const galleryCategoryRoutes = Router();
 
 galleryCategoryRoutes.get(
   "/public",
+  publicRateLimit,
+  cached("gallery-categories", "gallery"),
   asyncHandler(async (_req, res) => {
     res.json(await service.listPublic());
   })
 );
 
 galleryCategoryRoutes.use(requireAuth);
+galleryCategoryRoutes.use(invalidateOnWrite("gallery-categories"));
 
 galleryCategoryRoutes.get(
   "/",

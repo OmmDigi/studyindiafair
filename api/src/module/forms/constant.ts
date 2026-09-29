@@ -3,7 +3,7 @@ import { SLUG_PATTERN } from "../testimonial-categories/constant.js";
 
 export { slugify } from "../testimonial-categories/constant.js";
 
-export const SUBMIT_RATE_LIMIT = { windowMs: 60_000, max: 10 };
+export const SUBMIT_RATE_LIMIT = { name: "form-submit", windowMs: 60_000, max: 10 };
 export const MAX_DETAILS_BYTES = 10_000;
 
 const formId = z.preprocess(

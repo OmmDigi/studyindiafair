@@ -2,6 +2,8 @@ import { Router } from "express";
 import { requireAuth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { cached, invalidateOnWrite } from "../../utils/cache.js";
+import { publicRateLimit } from "../../utils/rateLimit.js";
 import {
   createTestimonialSchema,
   idParamSchema,
@@ -15,6 +17,8 @@ export const testimonialRoutes = Router();
 
 testimonialRoutes.get(
   "/public",
+  publicRateLimit,
+  cached("testimonials", "testimonial-categories"),
   validate(publicListSchema, "query"),
   asyncHandler(async (req, res) => {
     res.json(await service.listPublic(publicListSchema.parse(req.query)));
@@ -22,6 +26,7 @@ testimonialRoutes.get(
 );
 
 testimonialRoutes.use(requireAuth);
+testimonialRoutes.use(invalidateOnWrite("testimonials"));
 
 testimonialRoutes.get(
   "/",
