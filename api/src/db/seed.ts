@@ -12,7 +12,7 @@ async function run() {
     ["Admin", email, hash]
   );
   console.log(`admin ready: ${email}`);
-  await pool.end();
+  // await pool.end();
 }
 
 run().catch((err) => {

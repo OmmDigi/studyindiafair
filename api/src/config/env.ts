@@ -6,7 +6,8 @@ config({
 });
 
 const schema = z.object({
-  PORT: z.coerce.number().default(4000),
+  HOST : z.string().min(1),
+  PORT: z.coerce.number().default(3000),
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
@@ -18,9 +19,13 @@ const schema = z.object({
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_USER: z.string().default(""),
   SMTP_PASS: z.string().default(""),
-  MAIL_FROM: z.string().default("Study India Fair <no-reply@studyindiafair.com>"),
+  MAIL_FROM: z
+    .string()
+    .default("Study India Fair <no-reply@studyindiafair.com>"),
   OTP_EXPIRES_MIN: z.coerce.number().default(10),
   UPLOAD_URL: z.string().default("http://localhost:4001"),
+
+  INIT_DB_PASS: z.string().min(1),
 });
 
 export const env = schema.parse(process.env);

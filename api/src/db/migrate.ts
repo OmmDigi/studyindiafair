@@ -30,7 +30,7 @@ async function run() {
       client.release();
     }
   }
-  await pool.end();
+  // await pool.end();
 }
 
 run().catch((err) => {

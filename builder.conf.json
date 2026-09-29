@@ -1,0 +1,19 @@
+{
+  "endCommands": ["docker exec nginx nginx -s reload"],
+  "dockerComposePath": "docker-compose.yml",
+  "keepFiles": [
+    "frontend/.env",
+    "nginx",
+    "api/.env",
+    "cms/.env",
+    "upload/.env",
+    "docker-compose.yml",
+    ".env"
+  ],
+  "serverInfo": {
+    "username": "root",
+    "ip": "200.234.44.8",
+    "workingDir": "/root/study"
+  },
+  "sshKeyPath": "~/.ssh/my_server_key"
+}
