@@ -2,6 +2,8 @@ import { Router } from "express";
 import { requireAuth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { cached, invalidateOnWrite } from "../../utils/cache.js";
+import { publicRateLimit } from "../../utils/rateLimit.js";
 import {
   createGallerySchema,
   idParamSchema,
@@ -16,6 +18,8 @@ export const galleryRoutes = Router();
 
 galleryRoutes.get(
   "/public",
+  publicRateLimit,
+  cached("gallery", "gallery-categories"),
   validate(publicListSchema, "query"),
   asyncHandler(async (req, res) => {
     res.json(await service.listPublic(publicListSchema.parse(req.query)));
@@ -23,6 +27,7 @@ galleryRoutes.get(
 );
 
 galleryRoutes.use(requireAuth);
+galleryRoutes.use(invalidateOnWrite("gallery"));
 
 galleryRoutes.get(
   "/",

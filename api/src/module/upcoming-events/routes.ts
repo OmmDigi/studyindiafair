@@ -2,6 +2,8 @@ import { Router } from "express";
 import { can, requireAuth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { cached, invalidateOnWrite } from "../../utils/cache.js";
+import { publicRateLimit } from "../../utils/rateLimit.js";
 import {
   createEventSchema,
   idParamSchema,
@@ -17,6 +19,8 @@ export const upcomingEventRoutes = Router();
 
 upcomingEventRoutes.get(
   "/public",
+  publicRateLimit,
+  cached("upcoming-events", "pages"),
   asyncHandler(async (_req, res) => {
     res.json(await service.listPublic());
   })
@@ -24,6 +28,8 @@ upcomingEventRoutes.get(
 
 upcomingEventRoutes.get(
   "/public/:slug",
+  publicRateLimit,
+  cached("upcoming-events", "pages"),
   validate(slugParamSchema, "params"),
   asyncHandler(async (req, res) => {
     res.json(await service.getPublic(slugParamSchema.parse(req.params).slug));
@@ -31,6 +37,7 @@ upcomingEventRoutes.get(
 );
 
 upcomingEventRoutes.use(requireAuth);
+upcomingEventRoutes.use(invalidateOnWrite("upcoming-events", "pages"));
 
 upcomingEventRoutes.get(
   "/",

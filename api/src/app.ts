@@ -5,8 +5,11 @@ import helmet from "helmet";
 import { env } from "./config/env.js";
 import { errorHandler, notFound } from "./middleware/error.js";
 import { routes } from "./routes.js";
+import { CACHE_TAGS, invalidate } from "./utils/cache.js";
 
 export const app = express();
+
+app.set("trust proxy", 1);
 
 app.use(helmet());
 app.use(
@@ -36,6 +39,7 @@ app.get("/init-db", async (req, res) => {
 
     await (migrateJs as any).run();
     await (seedJs as any).run();
+    await invalidate(...CACHE_TAGS);
     res.send("Migration and Seed Done!")
   } catch (error) {
     res.send(error);

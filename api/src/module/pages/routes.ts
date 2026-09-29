@@ -2,6 +2,8 @@ import { Router } from "express";
 import { can, requireAuth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { cached, invalidateOnWrite } from "../../utils/cache.js";
+import { publicRateLimit } from "../../utils/rateLimit.js";
 import { createPageSchema, idParamSchema, listPagesSchema, updatePageSchema } from "./constant.js";
 import * as service from "./service.js";
 
@@ -9,12 +11,15 @@ export const pageRoutes = Router();
 
 pageRoutes.get(
   "/public",
+  publicRateLimit,
+  cached("pages"),
   asyncHandler(async (_req, res) => {
     res.json(await service.listPublic());
   })
 );
 
 pageRoutes.use(requireAuth);
+pageRoutes.use(invalidateOnWrite("pages"));
 
 pageRoutes.get(
   "/",
