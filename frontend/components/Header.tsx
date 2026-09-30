@@ -17,8 +17,6 @@ export default function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
-
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -121,7 +119,7 @@ export default function Header() {
             <div className="flex items-center gap-4">
               <Link
                 href="/scholarship"
-                className="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-[#003399] hover:bg-blue-800 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
+                className="hidden md:inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-secondary hover:bg-blue-800 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 whitespace-nowrap"
               >
                 Apply for Scholarship
               </Link>

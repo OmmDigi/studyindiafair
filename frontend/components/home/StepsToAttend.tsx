@@ -28,23 +28,13 @@ const StepsToAttend = () => {
               </div>
               <div className="shrink-0">
                 {/* Clipboard Icon */}
-                <svg
-                  width="36"
-                  height="36"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  className="text-secondary"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                  <path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"></path>
-                  <path d="M16 20h-6"></path>
-                  <path d="M12 20v-8"></path>
-                  <path d="M9 15h6"></path>
-                </svg>
+                <img
+                  src="/images/steps/task.gif"
+                  alt="Pre Registration"
+                  width="40"
+                  height="40"
+                  className="object-contain"
+                />
               </div>
               <div>
                 <h3 className="text-sm lg:text-base font-bold text-secondary leading-tight mb-1">
@@ -112,21 +102,13 @@ const StepsToAttend = () => {
               </div>
               <div className="shrink-0">
                 {/* Entry Icon */}
-                <svg
-                  width="36"
-                  height="36"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  className="text-secondary"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                  <polyline points="10 17 15 12 10 7"></polyline>
-                  <line x1="15" y1="12" x2="3" y2="12"></line>
-                </svg>
+                <img
+                  src="/images/steps/metal-detector.gif"
+                  alt="Show it During Entry"
+                  width="40"
+                  height="40"
+                  className="object-contain"
+                />
               </div>
               <div>
                 <h3 className="text-sm lg:text-base font-bold text-secondary leading-tight mb-1">

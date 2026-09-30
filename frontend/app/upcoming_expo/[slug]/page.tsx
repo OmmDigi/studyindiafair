@@ -3,19 +3,122 @@
 import { useUpcomingEvent } from "@/hooks/api";
 import { useSubmitEnquiry } from "@/hooks/api/useForms";
 import { useParams, useRouter } from "next/navigation";
-import React, { useState, useEffect, useRef } from "react";
-import UpcomingEvents from "@/components/home/UpcomingEvents";
+import React, { useState, useRef, useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import UpcomingEvents from "@/components/home/UpcomingEvents";
+import {
+  CalendarDaysIcon,
+  MapPinIcon,
+  ClockIcon,
+  LockClosedIcon,
+  ArrowRightIcon,
+  AcademicCapIcon,
+  UserGroupIcon,
+  DocumentTextIcon,
+  StarIcon,
+  HandRaisedIcon,
+} from "@heroicons/react/24/outline";
+
+// Helper function to determine default country code based on slug
+const getCountryCode = (slug: string): string => {
+  if (!slug) return "in";
+  const s = slug.toLowerCase();
+  if (s.includes("sri-lanka") || s.includes("srilanka")) return "lk";
+  if (s.includes("bangladesh") || s.includes("dhaka")) return "bd";
+  if (s.includes("nepal") || s.includes("kathmandu")) return "np";
+  if (s.includes("bhutan")) return "bt";
+  if (s.includes("maldives")) return "mv";
+  if (s.includes("oman")) return "om";
+  if (
+    s.includes("uae") ||
+    s.includes("dubai") ||
+    s.includes("abudhabi") ||
+    s.includes("abu-dhabi") ||
+    s.includes("sharjah")
+  )
+    return "ae";
+  if (s.includes("kenya")) return "ke";
+  if (s.includes("nigeria")) return "ng";
+  if (s.includes("qatar") || s.includes("doha")) return "qa";
+  if (s.includes("saudi") || s.includes("riyadh") || s.includes("jeddah"))
+    return "sa";
+  if (s.includes("bahrain")) return "bh";
+  if (s.includes("kuwait")) return "kw";
+  if (s.includes("tanzania")) return "tz";
+  if (s.includes("uganda")) return "ug";
+  if (s.includes("malaysia")) return "my";
+  if (s.includes("singapore")) return "sg";
+  return "in";
+};
 
 export default function EventDetailsPage() {
   const { slug } = useParams();
   const { data: event, isLoading } = useUpcomingEvent(slug as string);
   const [phone, setPhone] = useState<string>("");
   const router = useRouter();
-
   const formRef = useRef<HTMLFormElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    let animationFrameId: number;
+    let isHovered = false;
+    let isDragging = false;
+    let startX: number;
+    let scrollLeft: number;
+
+    const handleMouseEnter = () => (isHovered = true);
+    const handleMouseLeave = () => {
+      isHovered = false;
+      isDragging = false;
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDragging = true;
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+    };
+    const handleMouseUp = () => {
+      isDragging = false;
+    };
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 2;
+      el.scrollLeft = scrollLeft - walk;
+    };
+
+    el.addEventListener("mouseenter", handleMouseEnter);
+    el.addEventListener("mouseleave", handleMouseLeave);
+    el.addEventListener("mousedown", handleMouseDown);
+    el.addEventListener("mouseup", handleMouseUp);
+    el.addEventListener("mousemove", handleMouseMove);
+
+    const scroll = () => {
+      if (!isHovered && !isDragging) {
+        el.scrollLeft += 1;
+        if (el.scrollLeft >= el.scrollWidth / 2) {
+          el.scrollLeft = 0;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+
+    animationFrameId = requestAnimationFrame(scroll);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      el.removeEventListener("mouseenter", handleMouseEnter);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+      el.removeEventListener("mousedown", handleMouseDown);
+      el.removeEventListener("mouseup", handleMouseUp);
+      el.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [isLoading]);
 
   const { mutate: submitEnquiry, isPending: isSubmitting } = useSubmitEnquiry(
     slug as string,
@@ -34,8 +137,6 @@ export default function EventDetailsPage() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("fshdffhsfdhsd");
-
     const formData = new FormData(e.currentTarget);
     const data = {
       name: formData.get("name"),
@@ -43,29 +144,25 @@ export default function EventDetailsPage() {
       phone: phone,
       city: formData.get("city"),
       course: formData.get("course"),
-      agree: formData.get("agree") === "on",
+      agree: true, // Always agree based on the new design's implicit statement
     };
     submitEnquiry(data);
   };
 
-  // Use real data if available from the API, otherwise fallback to mock logos
   const apiLogos = event?.university_logos || [];
   const baseLogos =
     apiLogos.length > 0
       ? apiLogos
-      : Array(6).fill({ path: "/images/common/Study-in-India-fair-logo.png" });
+      : Array(12).fill({ path: "/images/common/Study-in-India-fair-logo.png" });
 
-  // Duplicate array multiple times to ensure the carousel has enough content for a seamless infinite scroll, even if there are only 1-2 logos
-  const logos = [...baseLogos, ...baseLogos, ...baseLogos, ...baseLogos];
-
-  // The CSS marquee handles the auto-slide and hover stop seamlessly!
+  const logos = baseLogos.slice(0, 12); // Show up to 12 logos in grid
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center">
-          <div className="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-secondary font-medium">Loading Event Details...</p>
+          <div className="w-12 h-12 border-4 border-[#003B7A] border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-[#003B7A] font-medium">Loading Event Details...</p>
         </div>
       </div>
     );
@@ -79,266 +176,389 @@ export default function EventDetailsPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div
-        className="relative w-full py-3 lg:py-6 bg-cover bg-top bg-no-repeat"
-        style={{
-          backgroundImage: event.images?.[0]?.path
-            ? `url(${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${event.images[0].path})`
-            : "url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000')",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+  // Extract and combine all schedules if there are multiple
+  const displayDate =
+    event.schedules && event.schedules.length > 0
+      ? event.schedules
+          .map((s: any) => s.date)
+          .filter(Boolean)
+          .join(", ")
+      : "TBD";
 
-        <div className="container mx-auto px-4 md:max-w-7xl relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
-          {/* Left Content */}
-          <div className="flex-1 text-white">
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 drop-shadow-lg leading-tight">
+  const displayLocation =
+    event.schedules && event.schedules.length > 0
+      ? event.schedules
+          .map((s: any) => s.location)
+          .filter(Boolean)
+          .join(", ")
+      : "Venue TBD";
+  const heroImage = event.images?.[0]?.path
+    ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${event.images[0].path}`
+    : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000";
+
+  return (
+    <div className="min-h-screen bg-white font-sans text-gray-800">
+      {/* Hero Banner Section */}
+      <div className="relative w-full h-[350px] md:h-[450px]">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-right"
+          style={{ backgroundImage: `url('${heroImage}')` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-transparent w-full md:w-4/5"></div>
+        </div>
+
+        {/* Banner Content */}
+        <div className="container mx-auto px-4 lg:px-8 max-w-7xl h-full flex flex-col justify-center relative z-10">
+          <div className="max-w-3xl mt-4">
+            <p className="text-sm md:text-base font-semibold tracking-wider uppercase text-gray-700 mb-1">
+              STUDY IN INDIA EDUCATION FAIR
+            </p>
+            <h1 className="text-6xl md:text-[5.5rem] leading-none   font-bold mb-3 uppercase text-[#002B5B]">
               {event.name}
             </h1>
+            <p className="text-lg md:text-xl font-medium tracking-wide uppercase text-[#004B87] mb-10">
+              DISCOVER YOUR HIGHER EDUCATION OPPORTUNITIES IN INDIA
+            </p>
 
-            <div className="space-y-4 text-lg md:text-xl font-medium drop-shadow-md">
-              {event.schedules?.map((schedule: any, idx: number) => (
-                <div
-                  key={idx}
-                  className="bg-black/30 p-5 rounded-xl backdrop-blur-sm border border-white/20 shadow-lg"
-                >
-                  <div className="flex items-start gap-4 mb-3">
-                    <svg
-                      className="w-6 h-6 shrink-0 mt-1 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"
-                      ></path>
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      ></path>
-                    </svg>
-                    <span>
-                      <strong className="text-white">Venue:</strong>{" "}
-                      {schedule.location}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <svg
-                      className="w-6 h-6 shrink-0 mt-1 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      ></path>
-                    </svg>
-                    <span>
-                      <strong className="text-white">Date:</strong>{" "}
-                      {schedule.date}
-                    </span>
+            {/* Schedule Info (Inline) */}
+            <div className="flex flex-wrap gap-2 md:gap-2 items-end text-sm md:text-base">
+              <div className="flex items-center gap-3">
+                <CalendarDaysIcon className="w-10 h-10 text-[#f96d2b]" />
+                <div className="leading-tight">
+                  <div className="font-bold text-[#002B5B] whitespace-pre-wrap">
+                    {displayDate}
                   </div>
                 </div>
-              ))}
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPinIcon className="w-10 h-10 text-[#f96d2b]" />
+                <div className="leading-tight">
+                  <div className="font-bold text-[#002B5B] whitespace-pre-wrap">
+                    {displayLocation}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Right Content: Registration Form */}
-          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 relative">
-            <h2 className="text-2xl font-bold text-orange-600 mb-6 pb-2 border-b border-gray-100">
-              Register Now
+      {/* Main Content Area */}
+      <div className="container mx-auto px-4 lg:px-8 max-w-7xl mt-10 flex flex-col lg:flex-row gap-10">
+        {/* Left Column - Registration Form */}
+        <div className="lg:w-[35%] shrink-0">
+          <div className="bg-[#f0f6ff] rounded-xl p-5 md:p-6 shadow-sm">
+            <h2 className="text-xl font-bold text-[#003B7A] mb-4">
+              Visitor Registration
             </h2>
-            <form
-              ref={formRef}
-              className="space-y-4 text-gray-800"
-              onSubmit={handleSubmit}
-            >
+
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-3">
               <div>
                 <input
                   type="text"
                   name="name"
                   placeholder="Full Name*"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-sm transition-colors"
                   required
+                  className="w-full bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
                 <input
                   type="email"
                   name="email"
-                  placeholder="Email*"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-sm transition-colors"
+                  placeholder="Email Address*"
                   required
+                  className="w-full bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
-              <div className="react-phone-wrapper w-full">
+
+              <div className="react-phone-wrapper w-full bg-white">
                 <style jsx global>{`
                   .react-phone-wrapper .react-tel-input .form-control {
                     width: 100%;
-                    height: 46px;
-                    border-radius: 0.5rem;
-                    border: 1px solid #d1d5db;
+                    height: 40px;
+                    border-radius: 0.375rem;
+                    border: 1px solid #e5e7eb;
                     font-size: 0.875rem;
                   }
                   .react-phone-wrapper .react-tel-input .form-control:focus {
-                    border-color: #013fa4;
-                    box-shadow: 0 0 0 1px #013fa4;
-                  }
-                  .react-phone-wrapper .react-tel-input .flag-dropdown {
-                    border-color: #d1d5db;
-                    border-top-left-radius: 0.5rem;
-                    border-bottom-left-radius: 0.5rem;
-                    background-color: transparent;
-                  }
-                  .react-phone-wrapper .react-tel-input .flag-dropdown:hover {
-                    background-color: #f9fafb;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 1px #3b82f6;
                   }
                 `}</style>
                 <PhoneInput
-                  country={"in"}
+                  country={getCountryCode(slug as string)}
                   value={phone}
                   onChange={setPhone}
                   inputProps={{
                     name: "phone",
                     required: true,
-                    placeholder: "Phone No.*",
+                    placeholder: "Mobile Number*",
                   }}
                 />
               </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="Your City"
-                  className="w-full sm:w-1/2 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-sm transition-colors"
-                />
-                <select
-                  name="course"
-                  className="w-full sm:w-1/2 border border-gray-300 rounded-lg px-4 py-3 bg-white text-gray-700 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-sm transition-colors"
-                >
-                  <option value="">Select Course</option>
-                  <option value="ug">Undergraduate</option>
-                  <option value="pg">Postgraduate</option>
-                </select>
-              </div>
 
-              <div className="flex items-start gap-3 pt-2">
-                <input
-                  type="checkbox"
-                  id="agree"
-                  name="agree"
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-secondary cursor-pointer"
-                  required
-                />
-                <label
-                  htmlFor="agree"
-                  className="text-[12px] text-gray-600 leading-tight cursor-pointer"
-                >
-                  I agree to receive notifications from Study In India Fairs
-                  through call, email, SMS & WhatsApp.
-                </label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="w-full sm:w-1/2">
+                  <input
+                    type="text"
+                    name="city"
+                    placeholder="City*"
+                    required
+                    className="w-full bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="w-full sm:w-1/2">
+                  <select
+                    name="course"
+                    required
+                    defaultValue=""
+                    className="w-full bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-500"
+                  >
+                    <option value="" disabled>
+                      Course of Interest*
+                    </option>
+                    <option value="ug">Undergraduate</option>
+                    <option value="pg">Postgraduate</option>
+                  </select>
+                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-secondary hover:bg-secondary/90 text-white font-semibold py-3 px-10 rounded-full transition-colors text-sm shadow-md mt-4 inline-block disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-[#f96d2b] hover:bg-[#e05b1c] text-white font-bold py-2.5 px-4 rounded-md transition-colors flex items-center justify-center gap-2 mt-1 text-sm disabled:opacity-70"
               >
-                {isSubmitting ? "Submitting..." : "Submit"}
+                {isSubmitting ? "Submitting..." : "Register Now"}
+                <ArrowRightIcon className="w-4 h-4" />
               </button>
             </form>
+
+            <div className="mt-4 flex items-start gap-2 text-xs text-[#003B7A]">
+              <LockClosedIcon className="w-4 h-4 shrink-0 mt-0.5" />
+              <p>
+                <strong>Your information is safe with us.</strong>
+                <br />
+                <span className="opacity-80">
+                  Your information will only be used to update you on fair
+                  related details.
+                </span>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Participating Universities */}
-      <div className="py-3 lg:py-6 bg-white container mx-auto px-4 max-w-7xl border-b border-gray-100 overflow-hidden">
-        <div className="flex flex-col md:flex-row items-center md:items-center gap-12">
-          <div className="md:w-1/3 text-center md:text-left z-10">
-            <h2 className="text-4xl font-bold text-secondary mb-4 leading-tight">
-              Participating
-              <br />
-              <span className="text-orange-500">Universities</span>
+        {/* Right Column - Content */}
+        <div className="lg:w-[65%] space-y-12">
+          {/* Universities You Will Meet */}
+          <section>
+            <h2 className="text-3xl font-bold text-[#003B7A] mb-3">
+              Universities You Will Meet
             </h2>
-            <p className="text-base text-gray-600">
-              Explore the prestigious Indian Universities joining us at our
-              upcoming fair.
+            <p className="text-gray-600 mb-6">
+              Meet top Indian universities and institutions offering a wide
+              range of undergraduate and postgraduate programs.
+            </p>
+
+            <div className="w-full relative overflow-hidden mb-4">
+              <div
+                ref={scrollRef}
+                className="flex overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                <div className="flex gap-4 w-max py-2">
+                  {[...logos, ...logos, ...logos].map(
+                    (logoItem: any, index: number) => {
+                      const imageSrc =
+                        logoItem.path && !logoItem.path.startsWith("/images")
+                          ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${logoItem.path}`
+                          : logoItem.path;
+
+                      return (
+                        <div
+                          key={index}
+                          className="w-40 h-24 flex-shrink-0 bg-white border border-gray-200 rounded-md p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
+                        >
+                          <img
+                            src={imageSrc}
+                            alt={logoItem.alt_text || `University ${index + 1}`}
+                            className="max-h-full max-w-full object-contain pointer-events-none"
+                            draggable="false"
+                          />
+                        </div>
+                      );
+                    },
+                  )}
+                </div>
+              </div>
+              <style>{`
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+              `}</style>
+            </div>
+          </section>
+        </div>
+      </div>
+      {event?.past_edition?.is_active &&
+        event.past_edition.cards &&
+        event.past_edition.cards.length > 0 && (
+          <div className="container mx-auto px-4 lg:px-8 max-w-7xl mt-12 mb-12">
+            <section className="bg-[#fef9f4] rounded-2xl p-6 md:p-10 border border-[#f5eadb]">
+              <h2 className="text-4xl font-bold text-[#002B5B] mb-3">
+                {event.past_edition.heading || "Past Edition at a Glance"}
+              </h2>
+              {event.past_edition.description?.blocks &&
+              event.past_edition.description.blocks.length > 0 ? (
+                <div
+                  className="text-gray-700 mb-8 max-w-4xl text-[15px]"
+                  dangerouslySetInnerHTML={{
+                    __html: event.past_edition.description.blocks
+                      .map((b: any) => b.data.text)
+                      .join("<br />"),
+                  }}
+                />
+              ) : (
+                <p className="text-gray-700 mb-8 max-w-4xl text-[15px]">
+                  Our previous editions have created meaningful opportunities
+                  for Indian institutions to connect with aspiring students.
+                </p>
+              )}
+
+              <div className="flex flex-col md:flex-row gap-6">
+                {event?.past_edition?.cards?.map((card: any, index: number) => (
+                  <div
+                    key={index}
+                    className="flex-1 rounded-xl p-6 relative overflow-hidden border shadow-sm"
+                    style={{
+                      backgroundColor: card.bg_color || "#fef1e5",
+                      borderColor: "rgba(0,0,0,0.05)",
+                    }}
+                  >
+                    {card.bg_image_path && (
+                      <div
+                        className="absolute right-0 top-0 bottom-0 w-2/3 opacity-30 pointer-events-none mix-blend-multiply"
+                        style={{
+                          backgroundImage: `url('${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${card.bg_image_path}')`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "right",
+                          maskImage:
+                            "linear-gradient(to right, transparent, black 60%)",
+                          WebkitMaskImage:
+                            "linear-gradient(to right, transparent, black 60%)",
+                        }}
+                      ></div>
+                    )}
+                    <div className="relative z-10 flex flex-col sm:flex-row items-start gap-6">
+                      <div className="bg-white rounded-full p-4 shrink-0 shadow-sm mt-1 flex items-center justify-center w-20 h-20">
+                        {card.icon_path ? (
+                          <img
+                            src={`${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${card.icon_path}`}
+                            alt="Icon"
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        ) : (
+                          <svg
+                            className="w-10 h-10 text-[#f96d2b]"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-4.5-9L2 6v2h19V6l-9.5-5z" />
+                          </svg>
+                        )}
+                      </div>
+                      <div>
+                        <div className="text-[3.5rem] font-bold text-[#002B5B] leading-none mb-2">
+                          {card.value}
+                        </div>
+                        <div className="text-lg font-bold text-[#002B5B] leading-tight mb-3 pr-4">
+                          {card.title}
+                        </div>
+                        <p className="text-sm text-gray-700 leading-relaxed font-medium">
+                          {card.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
+
+      {/* Why Should You Attend */}
+      <section className="max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-[#003B7A] mb-8 text-center md:text-left">
+          Why Should You Attend?
+        </h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+              <AcademicCapIcon className="w-8 h-8" />
+            </div>
+            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
+              Meet top Indian universities
+            </h3>
+            <p className="text-xs text-gray-500">
+              Explore a wide range of UG & PG programs from leading
+              institutions.
             </p>
           </div>
 
-          <div className="md:w-2/3 w-full relative overflow-hidden">
-            <div className="flex w-max animate-marquee hover:paused">
-              <div className="flex gap-6 py-2 pr-6">
-                {logos.map((logoItem: any, index: number) => {
-                  const imageSrc =
-                    logoItem.path && !logoItem.path.startsWith("/images")
-                      ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${logoItem.path}`
-                      : logoItem.path;
-
-                  return (
-                    <a
-                      key={index}
-                      href={logoItem.link || "#"}
-                      target={logoItem.link ? "_blank" : "_self"}
-                      rel="noopener noreferrer"
-                      className="w-40 h-24 flex-shrink-0 bg-white border border-gray-200 flex items-center justify-center rounded-sm shadow-sm hover:shadow-md transition-shadow cursor-pointer p-1"
-                    >
-                      <img
-                        src={imageSrc}
-                        alt={
-                          logoItem.alt_text || `University Logo ${index + 1}`
-                        }
-                        className="opacity-100 hover:scale-105 object-contain w-full h-full transition-all duration-500"
-                        draggable="false"
-                      />
-                    </a>
-                  );
-                })}
-              </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+              <UserGroupIcon className="w-8 h-8" />
             </div>
+            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
+              Get personalized guidance
+            </h3>
+            <p className="text-xs text-gray-500">
+              One-to-one counselling with university representatives.
+            </p>
+          </div>
 
-            <style>{`
-              @keyframes marquee {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
-              }
-              .animate-marquee {
-                animation: marquee 30s linear infinite;
-              }
-              .animate-marquee:hover {
-                animation-play-state: paused;
-              }
-            `}</style>
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+              <DocumentTextIcon className="w-8 h-8" />
+            </div>
+            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
+              Explore a wide range of programs
+            </h3>
+            <p className="text-xs text-gray-500">
+              Discover programs that match your interests & career goals.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+              <StarIcon className="w-8 h-8" />
+            </div>
+            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
+              Learn about scholarships
+            </h3>
+            <p className="text-xs text-gray-500">
+              Get complete information on eligibility and admission procedures.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
+              <HandRaisedIcon className="w-8 h-8" />
+            </div>
+            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
+              Interact directly
+            </h3>
+            <p className="text-xs text-gray-500">
+              Ask questions and get answers from university delegates.
+            </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Upcoming Expo */}
-      <div className="bg-[#FDF8F3] py-5">
-        <div className="container mx-auto px-4 max-w-7xl text-center mb-12">
-          <h2 className="text-4xl font-bold text-secondary mb-6">
-            Upcoming Expo
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Study in India Education Fairs brings a common platform where
-            students can directly engage with premier Indian Institutions
-            seeking quality education options.
-          </p>
-        </div>
-        {/* Render the component without its own header */}
-        <UpcomingEvents hideHeader={true} />
-      </div>
+      {/* Upcoming Events Section */}
+      <UpcomingEvents />
     </div>
   );
 }

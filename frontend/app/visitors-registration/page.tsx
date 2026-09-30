@@ -9,10 +9,19 @@ export default function VisitorsRegistrationPage() {
   const displayEvents = Array.isArray(events) ? events : events?.data || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="relative w-full  bg-white overflow-hidden flex flex-col md:flex-row">
-        {/* Left Content Area */}
-        <div className="w-full md:w-1/2 lg:w-3/5 p-8 md:px-16 flex flex-col bg-[#F9FBFC]">
+    <div className="min-h-screen relative flex bg-[#F9FBFC] overflow-hidden">
+      {/* Background Image covering full width */}
+      <div
+        className="absolute inset-0 bg-cover bg-right"
+        style={{ backgroundImage: `url('/images/home/VisitorsRegistrationPage.jpeg')` }}
+      >
+        {/* Gradient overlay creating the creamy area on the left */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F9FBFC] via-[#F9FBFC]/95 to-transparent w-full md:w-[70%] lg:w-[60%]"></div>
+      </div>
+
+      {/* Left Content Area */}
+      <div className="relative z-10 w-full md:w-[70%] lg:w-[60%] p-8 md:px-12 lg:px-24 flex flex-col justify-center min-h-screen">
+        <div className="w-full max-w-xl mx-auto md:mx-0">
           {/* Why Attend Section */}
           <div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#003399] mb-5">
@@ -131,19 +140,6 @@ export default function VisitorsRegistrationPage() {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Right Image Area */}
-        <div
-          className="hidden md:block w-1/2 lg:w-2/5 h-full bg-cover bg-center relative min-h-[85vh]"
-          style={{
-            backgroundImage:
-              'url("https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2070&auto=format&fit=crop")',
-          }}
-        >
-          {/* Overlay to ensure image matches the warm tones of the mockup */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-          <div className="absolute inset-0 bg-[#E87A24]/10 mix-blend-overlay"></div>
         </div>
       </div>
     </div>

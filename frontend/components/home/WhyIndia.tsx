@@ -18,7 +18,7 @@ const features = [
         height="50"
         viewBox="0 0 24 24"
         fill="currentColor"
-        className="text-blue-600"
+        className="text-secondary"
       >
         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
       </svg>
@@ -33,7 +33,7 @@ const features = [
         height="50"
         viewBox="0 0 24 24"
         fill="currentColor"
-        className="text-blue-600"
+        className="text-secondary"
       >
         <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2.12-1.15V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
       </svg>
@@ -48,7 +48,7 @@ const features = [
         height="50"
         viewBox="0 0 24 24"
         fill="currentColor"
-        className="text-blue-600"
+        className="text-secondary"
       >
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.43-2.81 3.11-3.14V3.98h2.67v1.95c1.24.26 2.53 1.14 2.82 2.8l-1.95.22c-.17-.97-.9-1.62-2.22-1.62-1.32 0-2.25.68-2.25 1.54 0 .7.42 1.25 2.72 1.81 2.92.73 4.14 1.93 4.14 3.99 0 1.92-1.43 2.96-3.26 3.42z" />
       </svg>
@@ -67,7 +67,7 @@ const features = [
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-blue-600"
+        className="text-secondary"
       >
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
@@ -87,7 +87,7 @@ const features = [
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-blue-600"
+        className="text-secondary"
       >
         <path d="M12 2v20" />
         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
@@ -103,7 +103,7 @@ const features = [
         height="50"
         viewBox="0 0 24 24"
         fill="currentColor"
-        className="text-blue-600"
+        className="text-secondary"
       >
         <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
       </svg>
@@ -118,7 +118,7 @@ const features = [
         height="50"
         viewBox="0 0 24 24"
         fill="currentColor"
-        className="text-blue-600"
+        className="text-secondary"
       >
         <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
       </svg>
@@ -165,11 +165,11 @@ export default function WhyIndia() {
           </div>
 
           {/* Center Graphic */}
-          <div className="w-full lg:w-[20%] flex justify-center relative">
+          <div className="w-full lg:w-[25%] flex justify-center relative">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 aspect-square bg-orange-100/60 rounded-full blur-3xl -z-10"></div>
 
             <img
-              src="/images/home/why-india-8.png"
+              src="/images/home/imdiamap.png"
               alt="Why India Map"
               className="w-full max-w-md lg:max-w-lg h-auto object-contain drop-shadow-2xl hover:scale-[1.02] transition-transform duration-700"
             />
@@ -208,7 +208,7 @@ export default function WhyIndia() {
                   <div className="transform group-hover:scale-110 transition-transform duration-300 w-full h-full flex items-center justify-center">
                     {feature.icon}
                   </div>
-                  <h4 className="text-[9px] md:text-[10px] font-bold text-[#1B3679] text-center leading-tight mb-4 px-1">
+                  <h4 className="text-[9px] md:text-[10px] font-bold text-secondary text-center leading-tight mb-4 px-1">
                     {feature.title}
                   </h4>
 
