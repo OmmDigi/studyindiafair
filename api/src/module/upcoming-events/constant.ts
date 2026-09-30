@@ -1,10 +1,12 @@
 import { z } from "zod";
+import { editorContent } from "../../utils/editorContent.js";
 import { SLUG_PATTERN } from "../testimonial-categories/constant.js";
 
 export { slugify } from "../testimonial-categories/constant.js";
 
 export const UPLOAD_FOLDER = "upcoming-events";
 export const LOGO_FOLDER = "university-logos";
+export const PAST_EDITION_FOLDER = "past-editions";
 
 const slug = z.preprocess(
   (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
@@ -40,6 +42,30 @@ const logo = z.object({
 
 export const updateLogosSchema = z.object({
   logos: z.array(logo).max(300),
+});
+
+const pastEditionPath = z
+  .string()
+  .trim()
+  .max(500)
+  .refine((v) => v.startsWith(`/uploads/${PAST_EDITION_FOLDER}/`) && !v.includes(".."), "Invalid image path");
+
+const hexColor = z.string().trim().regex(/^#[0-9a-f]{6}$/i, "Invalid color");
+
+const pastEditionCard = z.object({
+  icon_path: pastEditionPath,
+  value: z.string().trim().min(1, "Value is required").max(50),
+  title: z.string().trim().min(1, "Title is required").max(150),
+  description: z.preprocess(emptyToNull, z.string().trim().max(500).nullable().default(null)),
+  bg_color: hexColor,
+  bg_image_path: z.preprocess(emptyToNull, pastEditionPath.nullable().default(null)),
+});
+
+export const updatePastEditionSchema = z.object({
+  is_active: z.boolean(),
+  heading: z.string().trim().min(1, "Heading is required").max(200),
+  description: editorContent,
+  cards: z.array(pastEditionCard).min(1, "Add at least one card").max(12),
 });
 
 const schedule = z.object({
@@ -89,6 +115,7 @@ export const updateEventSchema = z
 export type EventImage = z.infer<typeof image>;
 export type EventLogo = z.infer<typeof logo>;
 export type UpdateLogosInput = z.infer<typeof updateLogosSchema>;
+export type PastEdition = z.infer<typeof updatePastEditionSchema>;
 export type EventSchedule = z.infer<typeof schedule>;
 export type ListEventsQuery = z.infer<typeof listEventsSchema>;
 export type ReorderInput = z.infer<typeof reorderSchema>;

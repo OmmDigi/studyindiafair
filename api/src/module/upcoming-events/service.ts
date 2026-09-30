@@ -10,6 +10,7 @@ import {
   type EventLogo,
   type EventSchedule,
   type ListEventsQuery,
+  type PastEdition,
   type ReorderInput,
   type UpdateEventInput,
   type UpdateLogosInput,
@@ -23,13 +24,14 @@ type Row = {
   images: EventImage[];
   schedules: EventSchedule[];
   university_logos: EventLogo[];
+  past_edition: PastEdition | null;
   position: number;
   is_active: boolean;
   created_at: Date;
   updated_at: Date;
 };
 
-const SELECT = `SELECT e.id, e.page_id, p.name, p.slug, e.images, e.schedules, e.university_logos, e.position, e.is_active, e.created_at, e.updated_at
+const SELECT = `SELECT e.id, e.page_id, p.name, p.slug, e.images, e.schedules, e.university_logos, e.past_edition, e.position, e.is_active, e.created_at, e.updated_at
   FROM upcoming_events e JOIN pages p ON p.id = e.page_id`;
 const ORDER = "ORDER BY e.position ASC, e.id ASC";
 
@@ -52,6 +54,9 @@ const removedImages = (before: EventImage[], after: EventImage[]) => {
   const kept = new Set(after.map((i) => i.path));
   return before.filter((i) => !kept.has(i.path)).map((i) => i.path);
 };
+
+const pastEditionUploads = (p: PastEdition | null) =>
+  (p?.cards ?? []).flatMap((c) => [c.icon_path, c.bg_image_path]).filter((v): v is string => !!v);
 
 async function deleteUnusedLogos(paths: string[]) {
   const unique = [...new Set(paths)];
@@ -89,8 +94,9 @@ export async function listPublic() {
 export async function getPublic(slug: string) {
   const { rows } = await query<Row>(`${SELECT} WHERE p.slug = $1 AND e.is_active = TRUE`, [slug]);
   if (!rows[0]) throw new AppError(404, "Event not found");
-  const { id, name, images, schedules, university_logos } = rows[0];
-  return { id, name, slug, images, schedules, university_logos };
+  const { id, name, images, schedules, university_logos, past_edition } = rows[0];
+  const pastEdition = past_edition?.is_active ? past_edition : null;
+  return { id, name, slug, images, schedules, university_logos, past_edition: pastEdition };
 }
 
 export async function getById(id: number) {
@@ -156,6 +162,18 @@ export async function updateLogos(id: number, { logos }: UpdateLogosInput, actor
   return getById(id);
 }
 
+export async function updatePastEdition(id: number, input: PastEdition, actorId: number) {
+  const current = await getById(id);
+  await query("UPDATE upcoming_events SET past_edition = $2, updated_by = $3, updated_at = NOW() WHERE id = $1", [
+    id,
+    JSON.stringify(input),
+    actorId,
+  ]);
+  const kept = new Set(pastEditionUploads(input));
+  await Promise.all(pastEditionUploads(current.past_edition).filter((p) => !kept.has(p)).map(deleteUpload));
+  return getById(id);
+}
+
 export async function reorder({ ids }: ReorderInput, actorId: number) {
   await reorderRows("upcoming_events", ids, actorId);
   return list({});
@@ -181,5 +199,6 @@ export async function remove(id: number) {
     ...current.images.map((i) => deleteUpload(i.path)),
     deleteUpload(seo.rows[0]?.og_image_path),
     deleteUnusedLogos(current.university_logos.map((l) => l.path)),
+    ...pastEditionUploads(current.past_edition).map(deleteUpload),
   ]);
 }

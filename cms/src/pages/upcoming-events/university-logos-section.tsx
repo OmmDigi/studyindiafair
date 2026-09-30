@@ -6,7 +6,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { usePendingUploads } from '@/hooks/use-upload'
 import { getErrorMessage } from '@/lib/api'
@@ -41,13 +41,11 @@ type FormValues = z.infer<typeof schema>
 const logoKey = (l: { path: string; link: string | null }) => `${l.path}|${(l.link ?? '').trim()}`
 
 type Props = {
-  open: boolean
   event: UpcomingEvent
-  onOpenChange: (open: boolean) => void
-  onSaved: () => void
+  onSaved: (event: UpcomingEvent) => void
 }
 
-export function UniversityLogosDialog({ open, event, onOpenChange, onSaved }: Props) {
+export function UniversityLogosSection({ event, onSaved }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(0)
   const [importOpen, setImportOpen] = useState(false)
@@ -117,11 +115,6 @@ export function UniversityLogosDialog({ open, event, onOpenChange, onSaved }: Pr
     setImportOpen(false)
   }
 
-  const handleOpenChange = (next: boolean) => {
-    if (!next) pending.discard()
-    onOpenChange(next)
-  }
-
   const onSubmit = async ({ logos: values }: FormValues) => {
     try {
       const saved = await upcomingEventService.updateLogos(
@@ -130,26 +123,21 @@ export function UniversityLogosDialog({ open, event, onOpenChange, onSaved }: Pr
       )
       pending.commit(saved.university_logos.map((l) => l.path))
       toast.success('University logos saved')
-      onSaved()
-      onOpenChange(false)
+      onSaved(saved)
     } catch (error) {
       toast.error(getErrorMessage(error))
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>University Logos</DialogTitle>
-          <DialogDescription>{event.name}</DialogDescription>
-        </DialogHeader>
-
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs text-muted-foreground">
-            {logos.fields.length} logo{logos.fields.length === 1 ? '' : 's'}. Drag rows to reorder.
-          </p>
-          <div className="flex gap-2">
+    <Card className="gap-0 py-0">
+      <CardHeader className="items-center border-b px-6 py-4">
+        <CardTitle>University Logos</CardTitle>
+        <CardDescription>
+          {logos.fields.length} logo{logos.fields.length === 1 ? '' : 's'}. Drag rows to reorder.
+        </CardDescription>
+        <CardAction>
+          <div className="flex flex-wrap justify-end gap-2">
             <Button
               type="button"
               size="sm"
@@ -169,8 +157,13 @@ export function UniversityLogosDialog({ open, event, onOpenChange, onSaved }: Pr
             >
               <ImagePlus /> Upload Logos
             </Button>
+            <Button type="submit" size="sm" form="logos-form" disabled={isSubmitting || uploading > 0}>
+              {uploading ? 'Uploading...' : isSubmitting ? 'Saving...' : 'Save'}
+            </Button>
           </div>
-        </div>
+        </CardAction>
+      </CardHeader>
+      <CardContent className="p-6">
         <input
           ref={inputRef}
           type="file"
@@ -233,12 +226,6 @@ export function UniversityLogosDialog({ open, event, onOpenChange, onSaved }: Pr
           )}
         </form>
 
-        <DialogFooter>
-          <Button type="submit" form="logos-form" disabled={isSubmitting || uploading > 0}>
-            {uploading ? 'Uploading...' : isSubmitting ? 'Saving...' : 'Save'}
-          </Button>
-        </DialogFooter>
-
         <ImportLogosDialog
           key={importKey}
           open={importOpen}
@@ -246,7 +233,7 @@ export function UniversityLogosDialog({ open, event, onOpenChange, onSaved }: Pr
           onOpenChange={setImportOpen}
           onImport={importLogos}
         />
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   )
 }
