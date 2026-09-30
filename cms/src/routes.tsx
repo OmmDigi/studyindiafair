@@ -20,6 +20,7 @@ import { SiteSettingsPage } from '@/pages/site-settings/site-settings-page'
 import { TeamMembersPage } from '@/pages/team-members/team-members-page'
 import { TestimonialCategoriesPage } from '@/pages/testimonial-categories/testimonial-categories-page'
 import { TestimonialsPage } from '@/pages/testimonials/testimonials-page'
+import { EventContentPage } from '@/pages/upcoming-events/event-content-page'
 import { UpcomingEventsPage } from '@/pages/upcoming-events/upcoming-events-page'
 import { UsersPage } from '@/pages/users/users-page'
 
@@ -41,6 +42,7 @@ export const router = createBrowserRouter([
           { path: 'seo', element: <SeoPage /> },
           { path: 'faqs', element: <FaqsPage /> },
           { path: 'upcoming-events', element: <UpcomingEventsPage /> },
+          { path: 'upcoming-events/:id/content', element: <EventContentPage /> },
           { path: 'forms', element: <FormsPage /> },
           { path: 'forms/:id', element: <EnquiriesPage /> },
           { path: 'email-templates', element: <EmailTemplatesPage /> },

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CalendarDays, GraduationCap, GripVertical, MapPin, Pencil, Plus, Trash2 } from 'lucide-react'
+import { CalendarDays, GripVertical, LayoutList, MapPin, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,7 +24,6 @@ import { fileUrl } from '@/lib/upload'
 import { upcomingEventService } from '@/services/upcoming-event.service'
 import type { UpcomingEvent } from '@/types/upcoming-event'
 import { EventFormDialog } from './event-form-dialog'
-import { UniversityLogosDialog } from './university-logos-dialog'
 
 export function UpcomingEventsPage() {
   const qc = useQueryClient()
@@ -35,7 +35,6 @@ export function UpcomingEventsPage() {
   const [formKey, setFormKey] = useState(0)
   const [editing, setEditing] = useState<UpcomingEvent | null>(null)
   const [deleting, setDeleting] = useState<UpcomingEvent | null>(null)
-  const [logosFor, setLogosFor] = useState<UpcomingEvent | null>(null)
 
   const params = { search: search.trim() || undefined, is_active: status === 'all' ? undefined : status === 'active' }
   const { data: events = [], isLoading } = useQuery({
@@ -122,7 +121,7 @@ export function UpcomingEventsPage() {
               <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Locations & Dates</TableHead>
-              <TableHead>Logos</TableHead>
+              <TableHead>Page Content</TableHead>
               <TableHead>Active</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -184,8 +183,10 @@ export function UpcomingEventsPage() {
                     ))}
                   </TableCell>
                   <TableCell>
-                    <Button size="sm" variant="outline" onClick={() => setLogosFor(e)}>
-                      <GraduationCap /> {e.university_logos.length}
+                    <Button asChild size="sm" variant="outline" title={`${e.university_logos.length} logos`}>
+                      <Link to={`/upcoming-events/${e.id}/content`}>
+                        <LayoutList /> Manage
+                      </Link>
                     </Button>
                   </TableCell>
                   <TableCell>
@@ -213,15 +214,6 @@ export function UpcomingEventsPage() {
       </div>
 
       <EventFormDialog key={formKey} open={formOpen} event={editing} onOpenChange={setFormOpen} onSaved={refresh} />
-      {logosFor && (
-        <UniversityLogosDialog
-          key={logosFor.id}
-          open
-          event={logosFor}
-          onOpenChange={(open) => !open && setLogosFor(null)}
-          onSaved={refresh}
-        />
-      )}
       <Dialog open={!!deleting} onOpenChange={(open) => !open && setDeleting(null)}>
         <DialogContent>
           <DialogHeader>

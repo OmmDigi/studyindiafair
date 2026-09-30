@@ -1,4 +1,3 @@
-import React from "react";
 import { CheckCircle, ChevronsRight } from "lucide-react";
 import EditorJsDescription from "../EditorJsDescription";
 import ScholarshipForm from "./ScholarshipForm";

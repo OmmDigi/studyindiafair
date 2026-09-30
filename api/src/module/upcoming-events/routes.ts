@@ -12,6 +12,7 @@ import {
   slugParamSchema,
   updateEventSchema,
   updateLogosSchema,
+  updatePastEditionSchema,
 } from "./constant.js";
 import * as service from "./service.js";
 
@@ -87,6 +88,15 @@ upcomingEventRoutes.put(
   validate(updateLogosSchema),
   asyncHandler(async (req, res) => {
     res.json(await service.updateLogos(Number(req.params.id), req.body, req.user!.id));
+  })
+);
+
+upcomingEventRoutes.put(
+  "/:id/past-edition",
+  validate(idParamSchema, "params"),
+  validate(updatePastEditionSchema),
+  asyncHandler(async (req, res) => {
+    res.json(await service.updatePastEdition(Number(req.params.id), req.body, req.user!.id));
   })
 );
 

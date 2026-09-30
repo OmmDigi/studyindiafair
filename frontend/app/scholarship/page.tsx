@@ -1,5 +1,4 @@
 import ScholarshipContent from "@/components/scholarship/ScholarshipContent";
-import React from "react";
 
 export default function ScholarshipPage() {
   return (
