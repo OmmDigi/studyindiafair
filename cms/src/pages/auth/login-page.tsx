@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router'
+import { Link } from 'react-router'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,7 @@ type FormValues = z.infer<typeof schema>
 
 export function LoginPage() {
   const { login } = useAuth()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -29,7 +29,8 @@ export function LoginPage() {
   const onSubmit = async (values: FormValues) => {
     try {
       await login(values.email, values.password)
-      navigate('/', { replace: true })
+      // navigate('/', { replace: true })
+      window.location.href = "/"
     } catch (error) {
       toast.error(getErrorMessage(error))
     }
