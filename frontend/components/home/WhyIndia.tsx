@@ -158,7 +158,7 @@ export default function WhyIndia() {
             </p>
             <Link
               href="/why-india"
-              className="inline-flex items-center gap-2 border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white rounded-full px-6 py-2.5 font-medium transition-colors"
+              className="inline-flex items-center gap-2 border-2 border-secondary text-secondary hover:bg-secondary hover:text-white rounded-full px-6 py-2.5 font-medium transition-colors"
             >
               Learn More <span>&rarr;</span>
             </Link>

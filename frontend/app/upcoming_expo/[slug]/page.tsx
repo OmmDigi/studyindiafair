@@ -7,6 +7,7 @@ import React, { useState, useRef, useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import UpcomingEvents from "@/components/home/UpcomingEvents";
+import Counter from "@/components/Counter";
 import {
   CalendarDaysIcon,
   MapPinIcon,
@@ -470,7 +471,17 @@ export default function EventDetailsPage() {
                       </div>
                       <div>
                         <div className="text-[3.5rem] font-bold text-[#002B5B] leading-none mb-2">
-                          {card.value}
+                          {(() => {
+                            const val = String(card.value || "");
+                            const match = val.match(/^([^0-9.-]*)([\d.,]+)(.*)$/);
+                            if (match) {
+                              const num = parseFloat(match[2].replace(/,/g, ''));
+                              if (!isNaN(num)) {
+                                return <Counter end={num} prefix={match[1]} suffix={match[3]} />;
+                              }
+                            }
+                            return card.value;
+                          })()}
                         </div>
                         <div className="text-lg font-bold text-[#002B5B] leading-tight mb-3 pr-4">
                           {card.title}

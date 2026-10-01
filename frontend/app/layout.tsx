@@ -7,6 +7,7 @@ import { generateSEO } from "@/components/SEO";
 import { Providers } from "@/components/Providers";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import SocialSidebar from "@/components/SocialSidebar";
+import BackToTop from "@/components/BackToTop";
 
 // Removed Geist since we are using Google Fonts from CDN
 
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Footer />
           <WhatsAppButton />
           <SocialSidebar />
+          <BackToTop />
         </Providers>
       </body>
     </html>
