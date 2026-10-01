@@ -62,7 +62,7 @@ export default function NewTeamSection() {
       {/* Modal */}
       {selectedMember && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
-          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-sm w-full max-w-md overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
             <button
               onClick={() => setSelectedMember(null)}
               className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-red-100 hover:text-red-600 text-gray-600 rounded-full transition-colors z-10"

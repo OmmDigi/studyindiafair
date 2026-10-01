@@ -31,10 +31,13 @@ export default function Hero() {
           muted
           loop
           playsInline
+          // 2️⃣ CRITICAL FIX: Add 'crossOrigin="anonymous"' to the video element
+          crossOrigin="anonymous"
         >
+          {/* 3️⃣ Use relative path to /public/ folder */}
           <source
-            src="https://studyindiafair.com/wp-content/uploads/2025/12/study-in-india-homepage-video.mp4"
-            type="video/mp4"
+            src="/uploads/m3u8-hero-banner/master.m3u8"
+            type="application/x-mpegURL"
           />
         </video>
 
