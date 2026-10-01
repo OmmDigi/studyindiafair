@@ -1,60 +1,95 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Hls from "hls.js";
+
+const DESKTOP_SRC = "/uploads/m3u8-hero-banner-desktop/master.m3u8";
+const MOBILE_SRC = "/uploads/m3u8-hero-banner-mobile/master.m3u8";
+const DESKTOP_POSTER = "/uploads/m3u8-hero-banner-desktop/poster.webp";
+const MOBILE_POSTER = "/uploads/m3u8-hero-banner-mobile/poster.webp";
 
 export default function Hero() {
   const [isPlaying, setIsPlaying] = useState(true);
-  const desktopVideoRef = useRef<HTMLVideoElement>(null);
-  const mobileVideoRef = useRef<HTMLVideoElement>(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
     if (isPlaying) {
-      desktopVideoRef.current?.pause();
-      mobileVideoRef.current?.pause();
+      video.pause();
     } else {
-      desktopVideoRef.current?.play();
-      mobileVideoRef.current?.play();
+      video.play().catch(() => {});
     }
     setIsPlaying(!isPlaying);
   };
 
-  return (
-    <div className="relative w-full h-[80vh] lg:h-[100vh] min-h-[500px] overflow-hidden group">
-      {/* Background Videos */}
-      <div className="absolute inset-0 w-full h-full">
-        {/* Desktop Video */}
-        <video
-          ref={desktopVideoRef}
-          className="hidden lg:block absolute top-0 left-0 w-full h-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          // 2️⃣ CRITICAL FIX: Add 'crossOrigin="anonymous"' to the video element
-          crossOrigin="anonymous"
-        >
-          {/* 3️⃣ Use relative path to /public/ folder */}
-          <source
-            src="/uploads/m3u8-hero-banner/master.m3u8"
-            type="application/x-mpegURL"
-          />
-        </video>
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
 
-        {/* Mobile/Tablet Video */}
+    const mql = window.matchMedia("(min-width: 1024px)");
+    let hls: Hls | null = null;
+
+    const loadSource = () => {
+      const src = mql.matches ? DESKTOP_SRC : MOBILE_SRC;
+
+      hls?.destroy();
+      hls = null;
+      setIsVideoReady(false);
+
+      if (Hls.isSupported()) {
+        hls = new Hls({
+          enableWorker: true,
+          capLevelToPlayerSize: true,
+        });
+        hls.loadSource(src);
+        hls.attachMedia(video);
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        // Safari / iOS native HLS
+        video.src = src;
+      }
+
+      video.play().catch(() => {});
+      setIsPlaying(true);
+    };
+
+    loadSource();
+    mql.addEventListener("change", loadSource);
+
+    return () => {
+      mql.removeEventListener("change", loadSource);
+      hls?.destroy();
+    };
+  }, []);
+
+  return (
+    <div className="relative aspect-[9/16] lg:aspect-video overflow-hidden group">
+      {/* Background Video */}
+      <div className="absolute inset-0 w-full h-full">
         <video
-          ref={mobileVideoRef}
-          className="block lg:hidden absolute top-0 left-0 w-full h-full object-cover"
+          ref={videoRef}
+          className="absolute top-0 left-0 w-full h-full object-cover"
           autoPlay
           muted
           loop
           playsInline
-        >
-          <source
-            src="https://studyindiafair.com/wp-content/uploads/2025/12/study-in-india-homepage-video-for-mobile.mp4"
-            type="video/mp4"
+          onPlaying={() => setIsVideoReady(true)}
+        />
+
+        {/* Poster shown until the first video frame plays */}
+        <picture>
+          <source media="(min-width: 1024px)" srcSet={DESKTOP_POSTER} />
+          <img
+            src={MOBILE_POSTER}
+            alt=""
+            fetchPriority="high"
+            className={`absolute top-0 left-0 w-full h-full object-cover pointer-events-none transition-opacity duration-500 ${
+              isVideoReady ? "opacity-0" : "opacity-100"
+            }`}
           />
-        </video>
+        </picture>
 
         {/* Dark overlay for better button visibility */}
         <div className="absolute inset-0 bg-black/20"></div>
