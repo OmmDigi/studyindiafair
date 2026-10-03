@@ -19,6 +19,7 @@ import { getErrorMessage } from '@/lib/api'
 import { formService } from '@/services/form.service'
 import type { Form } from '@/types/form'
 import { SetupEmailButton } from '../email-templates/setup-email-button'
+import { SetupWebhookButton } from '../webhooks/setup-webhook-button'
 import { FormFormDialog } from './form-form-dialog'
 
 export function FormsPage() {
@@ -108,6 +109,7 @@ export function FormsPage() {
                       </Link>
                     </Button>
                     <SetupEmailButton form={f} />
+                    <SetupWebhookButton form={f} />
                     <Button size="icon-sm" variant="ghost" title="Edit" onClick={() => openForm(f)}>
                       <Pencil />
                     </Button>

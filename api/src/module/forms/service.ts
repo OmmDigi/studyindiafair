@@ -2,6 +2,7 @@ import { query, withTransaction } from "../../db/pool.js";
 import { AppError } from "../../utils/AppError.js";
 import { isUniqueViolation } from "../auth/service.js";
 import { dispatchEnquiryEmails } from "../form-emails/service.js";
+import { dispatchEnquiryWebhooks } from "../form-webhooks/service.js";
 import {
   slugify,
   type CreateFormInput,
@@ -33,6 +34,12 @@ const ENQUIRY_EMAILS = `(SELECT COALESCE(json_agg(json_build_object(
     'id', m.id, 'type', m.type, 'recipients', m.recipients, 'subject', m.subject,
     'status', m.status, 'error', m.error, 'created_at', m.created_at) ORDER BY m.id), '[]')
   FROM form_enquiry_emails m WHERE m.enquiry_id = form_enquiries.id) AS emails`;
+
+const ENQUIRY_WEBHOOKS = `(SELECT COALESCE(json_agg(json_build_object(
+    'id', w.id, 'webhook_id', w.webhook_id, 'webhook_name', w.webhook_name, 'method', w.method, 'url', w.url,
+    'request_body', w.request_body, 'status', w.status, 'status_code', w.status_code, 'attempts', w.attempts,
+    'response', w.response, 'error', w.error, 'created_at', w.created_at, 'updated_at', w.updated_at) ORDER BY w.id), '[]')
+  FROM form_enquiry_webhooks w WHERE w.enquiry_id = form_enquiries.id) AS webhooks`;
 
 const SELECT = `SELECT f.id, f.name, f.form_id, f.created_at, f.updated_at,
   (SELECT COUNT(*)::int FROM form_enquiries e WHERE e.form_id = f.form_id) AS enquiry_count
@@ -115,6 +122,12 @@ export async function copy(id: number, input: CreateFormInput, actorId: number) 
         FROM form_email_templates WHERE form_id = $2`,
         [rows[0].id, id, actorId]
       );
+      await client.query(
+        `INSERT INTO form_webhooks (form_id, name, is_enabled, method, url, headers, body, created_by, updated_by)
+        SELECT $1, name, is_enabled, method, url, headers, body, $3, $3
+        FROM form_webhooks WHERE form_id = $2 ORDER BY id`,
+        [rows[0].id, id, actorId]
+      );
       return rows[0].id;
     })
   );
@@ -159,6 +172,7 @@ export async function submit(formId: string, input: SubmitEnquiryInput, ip: stri
   );
   const id = result.rows[0].id;
   dispatchEnquiryEmails(id).catch((err) => console.error("[form-emails]", err));
+  dispatchEnquiryWebhooks(id).catch((err) => console.error("[form-webhooks]", err));
   return { id };
 }
 
@@ -167,7 +181,7 @@ export async function listEnquiries(id: number, { page, limit, ...filter }: List
   const { clause, params } = enquiryWhere(form.form_id, filter);
   const [{ rows }, count] = await Promise.all([
     query<EnquiryRow>(
-      `SELECT id, name, phone, details, created_at, ${ENQUIRY_EMAILS} FROM form_enquiries ${clause}
+      `SELECT id, name, phone, details, created_at, ${ENQUIRY_EMAILS}, ${ENQUIRY_WEBHOOKS} FROM form_enquiries ${clause}
        ORDER BY created_at DESC, id DESC LIMIT ${limit} OFFSET ${(page - 1) * limit}`,
       params
     ),

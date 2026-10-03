@@ -23,6 +23,8 @@ import { TestimonialsPage } from '@/pages/testimonials/testimonials-page'
 import { EventContentPage } from '@/pages/upcoming-events/event-content-page'
 import { UpcomingEventsPage } from '@/pages/upcoming-events/upcoming-events-page'
 import { UsersPage } from '@/pages/users/users-page'
+import { WebhookSetupPage } from '@/pages/webhooks/webhook-setup-page'
+import { WebhooksPage } from '@/pages/webhooks/webhooks-page'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -47,6 +49,8 @@ export const router = createBrowserRouter([
           { path: 'forms/:id', element: <EnquiriesPage /> },
           { path: 'email-templates', element: <EmailTemplatesPage /> },
           { path: 'email-templates/:id', element: <EmailTemplateSetupPage /> },
+          { path: 'webhooks', element: <WebhooksPage /> },
+          { path: 'webhooks/:id', element: <WebhookSetupPage /> },
           { path: 'team-members', element: <TeamMembersPage /> },
           { path: 'gallery', element: <GalleryPage /> },
           { path: 'gallery-categories', element: <GalleryCategoriesPage /> },

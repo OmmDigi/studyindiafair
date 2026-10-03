@@ -1,4 +1,4 @@
-import { Award, CalendarDays, CircleHelp, ClipboardList, Mail, FileText, FolderTree, Images, LayoutDashboard, LogOut, MessageSquareQuote, SearchCheck, Settings, Tags, UserCircle, Users, UsersRound, type LucideIcon } from 'lucide-react'
+import { Award, CalendarDays, CircleHelp, ClipboardList, Mail, FileText, FolderTree, Images, LayoutDashboard, LogOut, MessageSquareQuote, SearchCheck, Settings, Tags, UserCircle, Users, UsersRound, Webhook, type LucideIcon } from 'lucide-react'
 import { NavLink } from 'react-router'
 import { useAuth } from '@/context/auth-context'
 import {
@@ -50,6 +50,7 @@ const navGroups: { label?: string; items: NavItem[] }[] = [
     items: [
       { title: 'Forms', url: '/forms', icon: ClipboardList },
       { title: 'Email Templates', url: '/email-templates', icon: Mail },
+      { title: 'Webhooks', url: '/webhooks', icon: Webhook },
     ],
   },
   {

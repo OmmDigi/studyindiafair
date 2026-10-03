@@ -15,5 +15,5 @@
     "ip": "200.234.44.8",
     "workingDir": "/root/study"
   },
-  "sshKeyPath": "~/.ssh/my_server_key"
+  "sshKeyPath": "~/.ssh/server_connector"
 }

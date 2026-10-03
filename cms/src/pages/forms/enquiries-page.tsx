@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Download, Eye, Trash2 } from 'lucide-react'
+import { ArrowLeft, Download, Eye, RefreshCw, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { toast } from 'sonner'
@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useAuth } from '@/context/auth-context'
 import { getErrorMessage } from '@/lib/api'
 import { formService } from '@/services/form.service'
+import { formWebhookService } from '@/services/form-webhook.service'
 import type { Enquiry } from '@/types/form'
 import { TEMPLATE_TYPE_LABELS } from '@/types/form-email'
 
@@ -46,6 +47,20 @@ export function EnquiriesPage() {
     queryKey: ['forms', id, 'enquiries', params],
     queryFn: () => formService.enquiries(id, params),
     placeholderData: keepPreviousData,
+    refetchInterval: (q) =>
+      viewing && q.state.data?.data.some((e) => e.id === viewing.id && e.webhooks.some((w) => w.status === 'pending')) ? 4000 : false,
+  })
+
+  const viewed = viewing && (data?.data.find((e) => e.id === viewing.id) ?? viewing)
+
+  const resend = useMutation({
+    mutationFn: ({ enquiryId, webhookId }: { enquiryId: number; webhookId?: number }) =>
+      formWebhookService.resend(enquiryId, webhookId),
+    onSuccess: ({ queued }) => {
+      toast.success(`${queued} webhook${queued === 1 ? '' : 's'} triggered`)
+      qc.invalidateQueries({ queryKey: ['forms', id, 'enquiries'] })
+    },
+    onError: (error) => toast.error(getErrorMessage(error)),
   })
 
   const remove = useMutation({
@@ -198,14 +213,14 @@ export function EnquiriesPage() {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Enquiry Details</DialogTitle>
-            <DialogDescription>Submitted {viewing && new Date(viewing.created_at).toLocaleString()}</DialogDescription>
+            <DialogDescription>Submitted {viewed && new Date(viewed.created_at).toLocaleString()}</DialogDescription>
           </DialogHeader>
-          {viewing && (
+          {viewed && (
             <dl className="max-h-[60vh] divide-y overflow-y-auto rounded-md border text-sm">
               {[
-                ['Name', viewing.name] as const,
-                ['Phone', viewing.phone] as const,
-                ...Object.entries(viewing.details).map(([key, value]) => [key.replace(/_/g, ' '), value] as const),
+                ['Name', viewed.name] as const,
+                ['Phone', viewed.phone] as const,
+                ...Object.entries(viewed.details).map(([key, value]) => [key.replace(/_/g, ' '), value] as const),
               ].map(([label, value]) => (
                 <div key={label} className="grid grid-cols-3 gap-2 px-3 py-2">
                   <dt className="font-medium capitalize">{label}</dt>
@@ -216,11 +231,11 @@ export function EnquiriesPage() {
               ))}
             </dl>
           )}
-          {viewing && viewing.emails.length > 0 && (
+          {viewed && viewed.emails.length > 0 && (
             <div className="space-y-2">
               <p className="text-sm font-medium">Emails</p>
               <ul className="divide-y rounded-md border text-sm">
-                {viewing.emails.map((m) => (
+                {viewed.emails.map((m) => (
                   <li key={m.id} className="space-y-0.5 px-3 py-2">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-medium">{TEMPLATE_TYPE_LABELS[m.type]}</span>
@@ -233,6 +248,77 @@ export function EnquiriesPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+          {viewed && (viewed.webhooks.length > 0 || can('update')) && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium">Webhooks</p>
+                {can('update') && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={resend.isPending}
+                    onClick={() => resend.mutate({ enquiryId: viewed.id })}
+                  >
+                    <RefreshCw /> Trigger Enabled
+                  </Button>
+                )}
+              </div>
+              {viewed.webhooks.length > 0 ? (
+                <ul className="max-h-[30vh] divide-y overflow-y-auto rounded-md border text-sm">
+                  {viewed.webhooks.map((w) => (
+                    <li key={w.id} className="space-y-0.5 px-3 py-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-medium">{w.webhook_name}</span>
+                        <div className="flex items-center gap-1">
+                          <Badge
+                            variant={w.status === 'success' ? 'default' : w.status === 'failed' ? 'destructive' : 'secondary'}
+                            className="capitalize"
+                          >
+                            {w.status_code ? `${w.status} · ${w.status_code}` : w.status}
+                          </Badge>
+                          {can('update') && w.webhook_id && w.status !== 'pending' && (
+                            <Button
+                              size="icon-sm"
+                              variant="ghost"
+                              title="Resend"
+                              disabled={resend.isPending}
+                              onClick={() => resend.mutate({ enquiryId: viewed.id, webhookId: w.webhook_id! })}
+                            >
+                              <RefreshCw />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                      <p className="break-all text-muted-foreground">
+                        {w.method} {w.url}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {w.attempts} attempt{w.attempts === 1 ? '' : 's'} · {new Date(w.updated_at).toLocaleString()}
+                      </p>
+                      {w.error && <p className="break-words text-destructive">{w.error}</p>}
+                      {(w.request_body || w.response) && (
+                        <details className="text-xs">
+                          <summary className="cursor-pointer text-muted-foreground">Request / response</summary>
+                          {w.request_body && (
+                            <pre className="mt-1 max-h-40 overflow-auto rounded bg-muted p-2 whitespace-pre-wrap break-all">
+                              {w.request_body}
+                            </pre>
+                          )}
+                          {w.response && (
+                            <pre className="mt-1 max-h-40 overflow-auto rounded bg-muted p-2 whitespace-pre-wrap break-all">
+                              {w.response}
+                            </pre>
+                          )}
+                        </details>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">No webhook calls yet</p>
+              )}
             </div>
           )}
           <DialogFooter>

@@ -18,4 +18,8 @@ api.interceptors.response.use(
 )
 
 export const getErrorMessage = (error: unknown) =>
-  axios.isAxiosError(error) ? error.response?.data?.message ?? error.message : 'Something went wrong'
+  axios.isAxiosError(error)
+    ? error.response?.data?.message ?? error.message
+    : error instanceof Error
+      ? error.message
+      : 'Something went wrong'

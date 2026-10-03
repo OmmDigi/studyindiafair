@@ -12,7 +12,7 @@ import {
   type TestTemplateInput,
 } from "./constant.js";
 
-type FormRow = { id: number; name: string; form_id: string; enquiry_count: number };
+export type FormRow = { id: number; name: string; form_id: string; enquiry_count: number };
 
 type TemplateRow = {
   id: number;
@@ -30,7 +30,7 @@ type TemplateRow = {
   updated_at: Date;
 };
 
-type EnquiryRow = {
+export type EnquiryRow = {
   id: number;
   name: string;
   phone: string;
@@ -42,7 +42,7 @@ type Template = Pick<TemplateRow, "type" | "to_emails" | "recipient_field" | "cc
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-async function getForm(formId: number) {
+export async function getForm(formId: number) {
   const { rows } = await query<FormRow>(
     `SELECT f.id, f.name, f.form_id,
       (SELECT COUNT(*)::int FROM form_enquiries e WHERE e.form_id = f.form_id) AS enquiry_count
@@ -53,16 +53,16 @@ async function getForm(formId: number) {
   return rows[0];
 }
 
-async function latestEnquiry(form: FormRow) {
+export async function latestEnquiry(form: FormRow) {
   const { rows } = await query<EnquiryRow>(
     "SELECT id, name, phone, details, created_at FROM form_enquiries WHERE form_id = $1 ORDER BY created_at DESC, id DESC LIMIT 1",
     [form.form_id]
   );
-  if (!rows[0]) throw new AppError(422, "Submit at least one enquiry for this form before setting up emails");
+  if (!rows[0]) throw new AppError(422, "Submit at least one enquiry for this form first so its fields can be used as variables");
   return rows[0];
 }
 
-async function variableNames(form: FormRow) {
+export async function variableNames(form: FormRow) {
   const { rows } = await query<{ key: string }>(
     "SELECT DISTINCT jsonb_object_keys(details) AS key FROM form_enquiries WHERE form_id = $1 ORDER BY key",
     [form.form_id]
@@ -70,10 +70,10 @@ async function variableNames(form: FormRow) {
   return [...new Set([...BASE_VARIABLES, ...rows.map((r) => r.key)])];
 }
 
-const toText = (value: unknown) =>
+export const toText = (value: unknown) =>
   value === null || value === undefined ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
 
-function buildVariables(form: Pick<FormRow, "name" | "form_id">, enquiry: EnquiryRow) {
+export function buildVariables(form: Pick<FormRow, "name" | "form_id">, enquiry: EnquiryRow) {
   const vars: Record<string, string> = {};
   for (const [key, value] of Object.entries(enquiry.details)) vars[key] = toText(value);
   return {

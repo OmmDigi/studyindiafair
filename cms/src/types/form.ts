@@ -1,4 +1,5 @@
 import type { EnquiryEmailLog } from './form-email'
+import type { EnquiryWebhookLog } from './form-webhook'
 
 export type Form = {
   id: number
@@ -16,4 +17,5 @@ export type Enquiry = {
   details: Record<string, unknown>
   created_at: string
   emails: EnquiryEmailLog[]
+  webhooks: EnquiryWebhookLog[]
 }
