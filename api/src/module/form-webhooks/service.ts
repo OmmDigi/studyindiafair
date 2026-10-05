@@ -4,14 +4,18 @@ import { AppError } from "../../utils/AppError.js";
 import { SINGLE_VARIABLE, VARIABLE_PATTERN } from "../form-emails/constant.js";
 import {
   buildVariables,
+  eventVariables,
   getForm,
+  getFormEvent,
   latestEnquiry,
   toText,
   variableNames,
   type EnquiryRow,
+  type EventInfo,
   type FormRow,
 } from "../form-emails/service.js";
 import {
+  EVENT_SCHEDULES_VARIABLE,
   isHttpUrl,
   MAX_RESPONSE_CHARS,
   RETRY_DELAYS_MS,
@@ -45,10 +49,12 @@ const truncate = (text: string, max = MAX_RESPONSE_CHARS) => (text.length > max 
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function webhookVariables(form: Pick<FormRow, "name" | "form_id">, enquiry: EnquiryRow): Vars {
-  const { name, phone, form_name, form_id, submitted_at } = buildVariables(form, enquiry);
+function webhookVariables(form: Pick<FormRow, "name" | "form_id">, enquiry: EnquiryRow, event: EventInfo | null): Vars {
+  const { name, phone, form_name, form_id, submitted_at } = buildVariables(form, enquiry, null);
   return {
     ...enquiry.details,
+    ...eventVariables(event),
+    ...(event && { [EVENT_SCHEDULES_VARIABLE]: event.schedules }),
     name,
     phone,
     form_name,
@@ -150,9 +156,11 @@ export async function listForms() {
 export async function getSetup(formId: number) {
   const form = await getForm(formId);
   const enquiry = await latestEnquiry(form);
+  const event = await getFormEvent(form.form_id);
   const { rows } = await query<WebhookRow>("SELECT * FROM form_webhooks WHERE form_id = $1 ORDER BY id", [formId]);
-  const sample = Object.fromEntries(Object.entries(webhookVariables(form, enquiry)).map(([k, v]) => [k, toText(v)]));
-  return { form, variables: [...new Set([...(await variableNames(form)), ...WEBHOOK_VARIABLES])], sample, webhooks: rows };
+  const sample = Object.fromEntries(Object.entries(webhookVariables(form, enquiry, event)).map(([k, v]) => [k, toText(v)]));
+  const variables = [...(await variableNames(form, event)), ...WEBHOOK_VARIABLES, ...(event ? [EVENT_SCHEDULES_VARIABLE] : [])];
+  return { form, variables: [...new Set(variables)], sample, webhooks: rows };
 }
 
 const bodyFor = (input: SaveWebhookInput) => (input.method === "GET" || input.body === null ? null : JSON.stringify(input.body));
@@ -188,7 +196,7 @@ export async function sendTest(formId: number, input: TestWebhookInput) {
   const enquiry = await latestEnquiry(form);
   let request: Request;
   try {
-    request = buildRequest(input, webhookVariables(form, enquiry));
+    request = buildRequest(input, webhookVariables(form, enquiry, await getFormEvent(form.form_id)));
   } catch (err) {
     throw new AppError(422, (err as Error).message);
   }
@@ -209,7 +217,7 @@ async function queue(enquiryId: number, webhookId?: number) {
       : "SELECT * FROM form_webhooks WHERE form_id = $1 AND is_enabled = TRUE ORDER BY id",
     webhookId ? [enquiry.form_pk, webhookId] : [enquiry.form_pk]
   );
-  const vars = webhookVariables({ name: enquiry.form_name, form_id: enquiry.form_slug }, enquiry);
+  const vars = webhookVariables({ name: enquiry.form_name, form_id: enquiry.form_slug }, enquiry, await getFormEvent(enquiry.form_slug));
   const jobs: (() => Promise<void>)[] = [];
 
   for (const hook of hooks.rows) {

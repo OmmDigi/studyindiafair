@@ -38,6 +38,10 @@ export type EnquiryRow = {
   created_at: Date;
 };
 
+type EventSchedule = { location: string; date: string };
+
+export type EventInfo = { name: string; schedules: EventSchedule[] };
+
 type Template = Pick<TemplateRow, "type" | "to_emails" | "recipient_field" | "cc" | "bcc" | "reply_to" | "subject" | "body_html">;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -62,22 +66,45 @@ export async function latestEnquiry(form: FormRow) {
   return rows[0];
 }
 
-export async function variableNames(form: FormRow) {
+export async function getFormEvent(formSlug: string) {
+  const { rows } = await query<EventInfo>(
+    "SELECT p.name, e.schedules FROM upcoming_events e JOIN pages p ON p.id = e.page_id WHERE p.slug = $1",
+    [formSlug]
+  );
+  return rows[0] ?? null;
+}
+
+export function eventVariables(event: EventInfo | null) {
+  if (!event) return {};
+  const vars: Record<string, string> = {
+    event_name: event.name,
+    event_location: event.schedules.map((s) => s.location).filter(Boolean).join(", "),
+    event_dates: event.schedules.map((s) => s.date).filter(Boolean).join(", "),
+  };
+  event.schedules.forEach((s, i) => {
+    vars[`event_location_${i + 1}`] = s.location;
+    vars[`event_date_${i + 1}`] = s.date;
+  });
+  return vars;
+}
+
+export async function variableNames(form: FormRow, event: EventInfo | null) {
   const { rows } = await query<{ key: string }>(
     "SELECT DISTINCT jsonb_object_keys(details) AS key FROM form_enquiries WHERE form_id = $1 ORDER BY key",
     [form.form_id]
   );
-  return [...new Set([...BASE_VARIABLES, ...rows.map((r) => r.key)])];
+  return [...new Set([...BASE_VARIABLES, ...Object.keys(eventVariables(event)), ...rows.map((r) => r.key)])];
 }
 
 export const toText = (value: unknown) =>
   value === null || value === undefined ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
 
-export function buildVariables(form: Pick<FormRow, "name" | "form_id">, enquiry: EnquiryRow) {
+export function buildVariables(form: Pick<FormRow, "name" | "form_id">, enquiry: EnquiryRow, event: EventInfo | null) {
   const vars: Record<string, string> = {};
   for (const [key, value] of Object.entries(enquiry.details)) vars[key] = toText(value);
   return {
     ...vars,
+    ...eventVariables(event),
     name: enquiry.name,
     phone: enquiry.phone,
     form_name: form.name,
@@ -126,9 +153,10 @@ export async function listForms() {
 export async function getSetup(formId: number) {
   const form = await getForm(formId);
   const enquiry = await latestEnquiry(form);
+  const event = await getFormEvent(form.form_id);
   const { rows } = await query<TemplateRow>("SELECT * FROM form_email_templates WHERE form_id = $1", [formId]);
   const templates = Object.fromEntries(TEMPLATE_TYPES.map((type) => [type, rows.find((r) => r.type === type) ?? null]));
-  return { form, variables: await variableNames(form), sample: buildVariables(form, enquiry), templates };
+  return { form, variables: await variableNames(form, event), sample: buildVariables(form, enquiry, event), templates };
 }
 
 export async function save(formId: number, type: TemplateType, input: SaveTemplateInput, actorId: number) {
@@ -140,7 +168,7 @@ export async function save(formId: number, type: TemplateType, input: SaveTempla
     if (type === "admin" && !input.to_emails.length) throw new AppError(422, "Add at least one admin email");
     if (type === "student" && !input.recipient_field) throw new AppError(422, "Select the field holding the student email");
   }
-  if (input.recipient_field && !(await variableNames(form)).includes(input.recipient_field)) {
+  if (input.recipient_field && !(await variableNames(form, await getFormEvent(form.form_id))).includes(input.recipient_field)) {
     throw new AppError(422, "Recipient field is not an enquiry variable");
   }
   const { rows } = await query<TemplateRow>(
@@ -173,7 +201,8 @@ export async function save(formId: number, type: TemplateType, input: SaveTempla
 export async function sendTest(formId: number, type: TemplateType, input: TestTemplateInput) {
   const form = await getForm(formId);
   const enquiry = await latestEnquiry(form);
-  const mail = render({ ...input, type, body_html: editorToHtml(input.body) }, buildVariables(form, enquiry));
+  const vars = buildVariables(form, enquiry, await getFormEvent(form.form_id));
+  const mail = render({ ...input, type, body_html: editorToHtml(input.body) }, vars);
   try {
     await sendMail(input.test_to, `[TEST] ${mail.subject}`, mail.html, { replyTo: mail.replyTo });
   } catch (err) {
@@ -201,7 +230,7 @@ export async function dispatchEnquiryEmails(enquiryId: number) {
     "SELECT * FROM form_email_templates WHERE form_id = $1 AND is_enabled = TRUE ORDER BY type",
     [enquiry.form_pk]
   );
-  const vars = buildVariables({ name: enquiry.form_name, form_id: enquiry.form_slug }, enquiry);
+  const vars = buildVariables({ name: enquiry.form_name, form_id: enquiry.form_slug }, enquiry, await getFormEvent(enquiry.form_slug));
 
   for (const template of templates.rows) {
     const mail = render(template, vars);

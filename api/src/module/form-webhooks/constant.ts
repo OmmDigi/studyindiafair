@@ -5,6 +5,7 @@ export const METHODS = ["GET", "POST", "PUT", "PATCH"] as const;
 export type Method = (typeof METHODS)[number];
 
 export const WEBHOOK_VARIABLES = ["enquiry_id", "submitted_at_iso"] as const;
+export const EVENT_SCHEDULES_VARIABLE = "event_schedules";
 export const TIMEOUT_MS = 10_000;
 export const RETRY_DELAYS_MS = [5_000, 30_000, 120_000];
 export const MAX_RESPONSE_CHARS = 2_000;
