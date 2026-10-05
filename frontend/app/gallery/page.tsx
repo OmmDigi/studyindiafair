@@ -3,6 +3,20 @@
 import React, { useState, useEffect } from "react";
 import { useGalleryCategories, useGallery } from "@/hooks/api/useGallery";
 import CustomImage from "@/components/CustomImage"; // Assuming there's a custom image component based on open files
+import GalleryLightbox, {
+  LightboxItem,
+} from "@/components/gallery/GalleryLightbox";
+import { Play } from "lucide-react";
+
+const getImageUrl = (item: any) =>
+  item.image_path
+    ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${item.image_path}`
+    : "/images/placeholder.jpg";
+
+const isVideo = (item: any) => item.media_type === "video" && item.youtube_id;
+
+const getCaption = (item: any) =>
+  item.alt_text && item.alt_text !== "null" ? item.alt_text : undefined;
 
 export default function GalleryPage() {
   const { data: categoriesData, isLoading: isCategoriesLoading } =
@@ -30,6 +44,24 @@ export default function GalleryPage() {
   const galleryItems = Array.isArray(galleryData)
     ? galleryData
     : galleryData?.data || [];
+
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const lightboxItems: LightboxItem[] = galleryItems.map((item: any) =>
+    isVideo(item)
+      ? {
+          type: "video",
+          src: item.youtube_id,
+          thumb: `https://img.youtube.com/vi/${item.youtube_id}/hqdefault.jpg`,
+          caption: getCaption(item),
+        }
+      : {
+          type: "image",
+          src: getImageUrl(item),
+          thumb: getImageUrl(item),
+          caption: getCaption(item),
+        }
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -74,7 +106,10 @@ export default function GalleryPage() {
               return (
                 <button
                   key={category.id || catId}
-                  onClick={() => setActiveCategory(catId)}
+                  onClick={() => {
+                    setActiveCategory(catId);
+                    setLightboxIndex(null);
+                  }}
                   className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 shadow-sm ${
                     isActive
                       ? "bg-orange-500 text-white shadow-orange-500/30"
@@ -101,43 +136,38 @@ export default function GalleryPage() {
         ) : galleryItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {galleryItems.map((item: any, idx: number) => (
-              <div
+              <button
+                type="button"
                 key={item.id || idx}
-                className="group relative aspect-square overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 bg-white"
+                onClick={() => setLightboxIndex(idx)}
+                className="group relative aspect-square overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 bg-white cursor-pointer text-left"
               >
-                {item.media_type === "video" && item.youtube_id ? (
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${item.youtube_id}?rel=0`}
-                    title={item.alt_text || "Gallery Video"}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                ) : (
-                  <>
-                    <img
-                      src={
-                        item.image_path
-                          ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${item.image_path}`
-                          : "/images/placeholder.jpg"
-                      }
-                      alt={
-                        item.alt_text || item.category_name || "Gallery Image"
-                      }
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                    />
+                <img
+                  src={lightboxItems[idx].thumb}
+                  alt={
+                    item.alt_text || item.category_name || "Gallery Image"
+                  }
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                />
 
-                    {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none">
-                      {item.alt_text && item.alt_text !== "null" && (
-                        <h3 className="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                          {item.alt_text}
-                        </h3>
-                      )}
-                    </div>
-                  </>
+                {/* Play icon for videos */}
+                {isVideo(item) && (
+                  <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span className="w-16 h-16 rounded-full bg-orange-500/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <Play className="w-7 h-7 text-white fill-white ml-1" />
+                    </span>
+                  </span>
                 )}
-              </div>
+
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none">
+                  {getCaption(item) && (
+                    <h3 className="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      {getCaption(item)}
+                    </h3>
+                  )}
+                </div>
+              </button>
             ))}
           </div>
         ) : (
@@ -164,6 +194,15 @@ export default function GalleryPage() {
           </div>
         )}
       </div>
+
+      {lightboxIndex !== null && lightboxItems.length > 0 && (
+        <GalleryLightbox
+          items={lightboxItems}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onChange={setLightboxIndex}
+        />
+      )}
     </div>
   );
 }
