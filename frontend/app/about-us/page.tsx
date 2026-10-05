@@ -57,6 +57,51 @@ export default function AboutPage() {
         </div>
       </div>
 
+      {/* About SAPE & Study in India Fair */}
+      <div className="container mx-auto px-4 md:max-w-7xl py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gradient-to-br from-orange-50 to-white border border-orange-100 rounded-lg p-6 shadow-sm hover:shadow-lg transition-shadow">
+            <Image
+              src="/images/about/sape_india_logo.png"
+              alt="SAPE"
+              width={120}
+              height={44}
+              className="h-12 w-auto object-contain"
+            />
+            <div className="w-10 h-1 bg-orange-500 mt-4 mb-4"></div>
+            <p className="text-gray-600 font-medium leading-relaxed">
+              SAPE is a leading education fair organiser with a proven track
+              record of successfully bridging the gap between students and
+              educational institutions with a strong presence across Asia,
+              Africa and beyond. Over two decades, SAPE has been at the
+              forefront of creating platforms that connect students, parents,
+              and education providers, helping institutions expand their global
+              reach while guiding students towards the right academic
+              opportunities.
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-lg p-6 shadow-sm hover:shadow-lg transition-shadow">
+            <Image
+              src="/images/common/Study-in-India-fair-logo.png"
+              alt="Study in India Education Fair"
+              width={120}
+              height={80}
+              className="h-12 w-auto object-contain"
+            />
+            <div className="w-10 h-1 bg-orange-500 mt-4 mb-4"></div>
+            <p className="text-gray-600 font-medium leading-relaxed">
+              SAPE Study in India Fair is not just about a fair; it is about
+              the future, and today it has become nourishment for young minds
+              hungry for opportunity. Through consistent innovation and
+              commitment, it continues to shape the future of educational
+              outreach and remains a trusted name in education fair
+              organisation.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto  md:max-w-full pb-2">
         {/* Specialisation Section */}
         <div className="mb-2  mx-auto md:max-w-7xl">

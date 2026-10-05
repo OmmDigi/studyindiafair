@@ -1,5 +1,5 @@
-# Notice
-- Do not touch ./frontend folder.
+<!-- # Notice
+- Do not touch ./frontend folder. -->
 
 ## Techonology
 - For CMS Use Vite React. For Backend Use Node Js with Postgresql Database. Use Raw Pg Library For Postgressql database connection with node js.
