@@ -1,22 +1,36 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useGalleryCategories, useGallery } from "@/hooks/api/useGallery";
-import CustomImage from "@/components/CustomImage"; // Assuming there's a custom image component based on open files
 import GalleryLightbox, {
   LightboxItem,
 } from "@/components/gallery/GalleryLightbox";
-import { Play } from "lucide-react";
+import { Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { buildVariantSrcSet } from "@/lib/imageVariants";
+
+const PAGE_SIZE = 12;
 
 const getImageUrl = (item: any) =>
   item.image_path
     ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${item.image_path}`
     : "/images/placeholder.jpg";
 
-const isVideo = (item: any) => item.media_type === "video" && item.youtube_id;
+const isVideo = (item: any) =>
+  (item.media_type === "youtube" || item.media_type === "video") &&
+  item.youtube_id;
 
 const getCaption = (item: any) =>
   item.alt_text && item.alt_text !== "null" ? item.alt_text : undefined;
+
+// 1 … 4 5 6 … 10 — always the first, last and the neighbours of the current page.
+const getPageNumbers = (page: number, total: number): (number | "…")[] => {
+  const pages: (number | "…")[] = [];
+  for (let p = 1; p <= total; p++) {
+    if (p === 1 || p === total || Math.abs(p - page) <= 1) pages.push(p);
+    else if (pages[pages.length - 1] !== "…") pages.push("…");
+  }
+  return pages;
+};
 
 export default function GalleryPage() {
   const { data: categoriesData, isLoading: isCategoriesLoading } =
@@ -28,6 +42,8 @@ export default function GalleryPage() {
     : categoriesData?.data || [];
 
   const [activeCategory, setActiveCategory] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const gridTopRef = useRef<HTMLDivElement>(null);
 
   // Set the first category as active by default once loaded
   useEffect(() => {
@@ -36,14 +52,28 @@ export default function GalleryPage() {
     }
   }, [categories, activeCategory]);
 
-  const { data: galleryData, isLoading: isGalleryLoading } = useGallery({
-    category: activeCategory,
-  });
+  const {
+    data: galleryData,
+    isLoading: isGalleryLoading,
+    isPlaceholderData,
+  } = useGallery(
+    { category: activeCategory, page, limit: PAGE_SIZE },
+    // Wait for the default category, otherwise an unfiltered page is fetched first.
+    { enabled: !!activeCategory },
+  );
 
   // Extract gallery array safely
   const galleryItems = Array.isArray(galleryData)
     ? galleryData
     : galleryData?.data || [];
+  const totalPages: number = galleryData?.total_pages || 1;
+
+  const goToPage = (next: number) => {
+    if (next < 1 || next > totalPages || next === page) return;
+    setPage(next);
+    setLightboxIndex(null);
+    gridTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -60,7 +90,7 @@ export default function GalleryPage() {
           src: getImageUrl(item),
           thumb: getImageUrl(item),
           caption: getCaption(item),
-        }
+        },
   );
 
   return (
@@ -108,6 +138,7 @@ export default function GalleryPage() {
                   key={category.id || catId}
                   onClick={() => {
                     setActiveCategory(catId);
+                    setPage(1);
                     setLightboxIndex(null);
                   }}
                   className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 shadow-sm ${
@@ -124,7 +155,8 @@ export default function GalleryPage() {
         )}
 
         {/* Gallery Grid */}
-        {isGalleryLoading ? (
+        <div ref={gridTopRef} className="scroll-mt-24" />
+        {isGalleryLoading || !activeCategory ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <div
@@ -134,42 +166,102 @@ export default function GalleryPage() {
             ))}
           </div>
         ) : galleryItems.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {galleryItems.map((item: any, idx: number) => (
-              <button
-                type="button"
-                key={item.id || idx}
-                onClick={() => setLightboxIndex(idx)}
-                className="group relative aspect-square overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 bg-white cursor-pointer text-left"
-              >
-                <img
-                  src={lightboxItems[idx].thumb}
-                  alt={
-                    item.alt_text || item.category_name || "Gallery Image"
-                  }
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                />
+          <>
+            <div
+              className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 transition-opacity duration-300 ${
+                isPlaceholderData ? "opacity-50 pointer-events-none" : ""
+              }`}
+            >
+              {galleryItems.map((item: any, idx: number) => (
+                <button
+                  type="button"
+                  key={item.id || idx}
+                  onClick={() => setLightboxIndex(idx)}
+                  className="group relative aspect-square overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 bg-white cursor-pointer text-left"
+                >
+                  <img
+                    src={lightboxItems[idx].thumb}
+                    srcSet={
+                      isVideo(item)
+                        ? undefined
+                        : (buildVariantSrcSet(lightboxItems[idx].thumb) ??
+                          undefined)
+                    }
+                    sizes="(min-width: 1024px) 320px, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    loading="lazy"
+                    decoding="async"
+                    alt={item.alt_text || item.category_name || "Gallery Image"}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                  />
 
-                {/* Play icon for videos */}
-                {isVideo(item) && (
-                  <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="w-16 h-16 rounded-full bg-orange-500/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <Play className="w-7 h-7 text-white fill-white ml-1" />
+                  {/* Play icon for videos */}
+                  {isVideo(item) && (
+                    <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="w-16 h-16 rounded-full bg-orange-500/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Play className="w-7 h-7 text-white fill-white ml-1" />
+                      </span>
                     </span>
-                  </span>
-                )}
-
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none">
-                  {getCaption(item) && (
-                    <h3 className="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      {getCaption(item)}
-                    </h3>
                   )}
-                </div>
-              </button>
-            ))}
-          </div>
+
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 pointer-events-none">
+                    {getCaption(item) && (
+                      <h3 className="text-white font-bold text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        {getCaption(item)}
+                      </h3>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <nav
+                aria-label="Gallery pagination"
+                className="flex flex-wrap items-center justify-center gap-2 mt-12"
+              >
+                <button
+                  type="button"
+                  onClick={() => goToPage(page - 1)}
+                  disabled={page === 1}
+                  aria-label="Previous page"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                {getPageNumbers(page, totalPages).map((p, i) =>
+                  p === "…" ? (
+                    <span key={`gap-${i}`} className="px-2 text-gray-400">
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      key={p}
+                      onClick={() => goToPage(p)}
+                      aria-current={p === page ? "page" : undefined}
+                      className={`w-10 h-10 rounded-full text-sm font-medium transition-all ${
+                        p === page
+                          ? "bg-orange-500 text-white shadow-sm shadow-orange-500/30"
+                          : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ),
+                )}
+                <button
+                  type="button"
+                  onClick={() => goToPage(page + 1)}
+                  disabled={page === totalPages}
+                  aria-label="Next page"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </nav>
+            )}
+          </>
         ) : (
           <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
             <svg

@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { get } from '../../utils/fetcher';
 
 export const useGalleryCategories = (options?: UseQueryOptions<any, Error, any>) => {
@@ -9,7 +9,7 @@ export const useGalleryCategories = (options?: UseQueryOptions<any, Error, any>)
   });
 };
 
-export const useGallery = (params?: { category?: string; page?: number; limit?: number }, options?: UseQueryOptions<any, Error, any>) => {
+export const useGallery = (params?: { category?: string; page?: number; limit?: number }, options?: Omit<UseQueryOptions<any, Error, any>, 'queryKey' | 'queryFn'>) => {
   return useQuery({
     queryKey: ['gallery', params],
     queryFn: () => {
@@ -20,6 +20,8 @@ export const useGallery = (params?: { category?: string; page?: number; limit?: 
       const queryString = queryParams.toString();
       return get(`/gallery/public${queryString ? `?${queryString}` : ''}`);
     },
+    // Keep the current page on screen while the next one loads instead of flashing skeletons.
+    placeholderData: keepPreviousData,
     ...options,
   });
 };

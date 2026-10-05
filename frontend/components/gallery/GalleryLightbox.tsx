@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useCallback } from "react";
 import { X, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { buildVariantSrcSet } from "@/lib/imageVariants";
 
 export interface LightboxItem {
   type: "image" | "video";
@@ -127,6 +128,8 @@ export default function GalleryLightbox({
           <img
             key={current.src}
             src={current.src}
+            srcSet={buildVariantSrcSet(current.src) ?? undefined}
+            sizes="100vw"
             alt={current.caption || "Gallery Image"}
             className="max-w-full max-h-full object-contain rounded-lg select-none"
             onClick={(e) => e.stopPropagation()}
@@ -186,6 +189,14 @@ export default function GalleryLightbox({
             >
               <img
                 src={item.thumb}
+                srcSet={
+                  item.type === "image"
+                    ? buildVariantSrcSet(item.thumb) ?? undefined
+                    : undefined
+                }
+                sizes="80px"
+                loading="lazy"
+                decoding="async"
                 alt=""
                 className="w-full h-full object-cover"
                 draggable={false}

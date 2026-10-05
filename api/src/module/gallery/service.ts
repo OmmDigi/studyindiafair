@@ -58,7 +58,8 @@ export async function listPublic({ category, page, limit }: PublicListQuery) {
     ),
     query<{ total: number }>(`SELECT COUNT(*)::int AS total ${from}`, params),
   ]);
-  return { data: rows, page, limit, total: count.rows[0].total };
+  const total = count.rows[0].total;
+  return { data: rows, page, limit, total, total_pages: Math.ceil(total / limit) };
 }
 
 export async function getById(id: number) {

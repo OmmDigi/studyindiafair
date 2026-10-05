@@ -43,7 +43,7 @@ export const listGallerySchema = z.object({
 export const publicListSchema = z.object({
   category: z.string().trim().toLowerCase().max(120).optional(),
   page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(24),
+  limit: z.coerce.number().int().min(1).max(48).default(12),
 });
 
 export const reorderSchema = z.object({
