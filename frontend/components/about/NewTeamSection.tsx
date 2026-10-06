@@ -29,14 +29,14 @@ export default function NewTeamSection() {
             <div className="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+          <div className="flex flex-wrap justify-center gap-1 md:gap-2">
             {displayMembers.map((member: any, idx: number) => (
               <div
                 key={idx}
                 className="flex flex-col items-center cursor-pointer group"
                 onClick={() => setSelectedMember(member)}
               >
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-transparent group-hover:border-orange-500 transition-all shadow-md mb-3 bg-gray-100">
+                <div className="w-25 h-35 md:w-34 md:h-50 rounded-sm overflow-hidden border-2 border-transparent  transition-all shadow-md mb-3 bg-gray-100">
                   <img
                     src={
                       member.image_path
@@ -44,7 +44,7 @@ export default function NewTeamSection() {
                         : "/images/placeholder.jpg"
                     }
                     alt={member.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                   />
                 </div>
                 <h5 className="font-bold text-sm text-center text-[#0B2046] group-hover:text-orange-500 transition-colors line-clamp-1 max-w-[100px]">
@@ -84,7 +84,7 @@ export default function NewTeamSection() {
             </button>
 
             <div className="p-8 flex flex-col items-center text-center">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-orange-500 shadow-lg mb-6">
+              <div className="w-32 h-45 rounded-sm overflow-hidden   shadow-lg mb-6">
                 <img
                   src={
                     selectedMember.image_path

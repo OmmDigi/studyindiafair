@@ -200,13 +200,15 @@ export default function EventDetailsPage() {
   return (
     <div className="min-h-screen bg-white font-sans text-gray-800">
       {/* Hero Banner Section */}
-      <div className="relative w-full h-[350px] md:h-[450px]">
+      <div className="relative w-full h-[400px] md:h-[450px]">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-right"
           style={{ backgroundImage: `url('${heroImage}')` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-transparent w-full md:w-4/5"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-white/70 to-transparent w-full md:from-white md:via-white/70 md:to-transparent w-full md:w-4/5">
+            {" "}
+          </div>
         </div>
 
         {/* Banner Content */}
@@ -405,8 +407,8 @@ export default function EventDetailsPage() {
       {event?.past_edition?.is_active &&
         event.past_edition.cards &&
         event.past_edition.cards.length > 0 && (
-          <div className="container mx-auto px-4 lg:px-8 max-w-7xl mt-12 mb-12">
-            <section className="bg-[#fef9f4] rounded-2xl p-6 md:p-10 border border-[#f5eadb]">
+          <div className="container mx-auto px-0 lg:px-8 max-w-7xl mt-12 mb-12">
+            <section className="bg-[#fef9f4] rounded-sm p-6 md:p-10 border border-[#f5eadb]">
               <h2 className="text-4xl font-bold text-[#002B5B] mb-3">
                 {event.past_edition.heading || "Past Edition at a Glance"}
               </h2>
@@ -473,11 +475,21 @@ export default function EventDetailsPage() {
                         <div className="text-[3.5rem] font-bold text-[#002B5B] leading-none mb-2">
                           {(() => {
                             const val = String(card.value || "");
-                            const match = val.match(/^([^0-9.-]*)([\d.,]+)(.*)$/);
+                            const match = val.match(
+                              /^([^0-9.-]*)([\d.,]+)(.*)$/,
+                            );
                             if (match) {
-                              const num = parseFloat(match[2].replace(/,/g, ''));
+                              const num = parseFloat(
+                                match[2].replace(/,/g, ""),
+                              );
                               if (!isNaN(num)) {
-                                return <Counter end={num} prefix={match[1]} suffix={match[3]} />;
+                                return (
+                                  <Counter
+                                    end={num}
+                                    prefix={match[1]}
+                                    suffix={match[3]}
+                                  />
+                                );
                               }
                             }
                             return card.value;
@@ -506,8 +518,8 @@ export default function EventDetailsPage() {
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-              <AcademicCapIcon className="w-8 h-8" />
+            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
+              <AcademicCapIcon className="w-14 h-14" />
             </div>
             <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
               Meet top Indian universities
@@ -519,8 +531,8 @@ export default function EventDetailsPage() {
           </div>
 
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-              <UserGroupIcon className="w-8 h-8" />
+            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
+              <UserGroupIcon className="w-14 h-14" />
             </div>
             <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
               Get personalized guidance
@@ -531,8 +543,8 @@ export default function EventDetailsPage() {
           </div>
 
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-              <DocumentTextIcon className="w-8 h-8" />
+            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
+              <DocumentTextIcon className="w-14 h-14" />
             </div>
             <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
               Explore a wide range of programs
@@ -543,8 +555,8 @@ export default function EventDetailsPage() {
           </div>
 
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-              <StarIcon className="w-8 h-8" />
+            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
+              <StarIcon className="w-14 h-14" />
             </div>
             <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
               Learn about scholarships
@@ -555,8 +567,8 @@ export default function EventDetailsPage() {
           </div>
 
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-4">
-              <HandRaisedIcon className="w-8 h-8" />
+            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
+              <HandRaisedIcon className="w-14 h-14" />
             </div>
             <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
               Interact directly

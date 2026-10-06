@@ -3,10 +3,10 @@ import Link from "next/link";
 import React, { useState } from "react";
 import Modal from "../why-india/modal/Modal";
 import EducationSystemModal from "../why-india/modal/EducationSystemModal";
-import WorldClassEducationModal from "../why-india/modal/WorldClassEducationModal";
 import PlethoraOfCoursesModal from "../why-india/modal/PlethoraOfCoursesModal";
 import CostOfStudyingModal from "../why-india/modal/CostOfStudyingModal";
 import TopGlobalCEOsModal from "../why-india/modal/TopGlobalCEOsModal";
+import WorldClassEducationModal from "../why-india/modal/WorldClassEducationModal";
 
 const features = [
   {
@@ -203,9 +203,9 @@ export default function WhyIndia() {
                       setActiveModal("top-global-ceos");
                     }
                   }}
-                  className="bg-white rounded-sm p-1 shadow-[0_4px_15px_rgb(0,0,0,0.05)] flex flex-col items-center justify-between hover:shadow-lg hover:-translate-y-1 transition-all group relative overflow-hidden aspect-square w-full max-w-[120px] sm:max-w-[140px] md:max-w-[160px] mx-auto"
+                  className="bg-white rounded-sm p-1 shadow-[0_4px_15px_rgb(0,0,0,0.05)] flex flex-col items-center justify-between hover:shadow-lg hover:-translate-y-0 transition-all group relative overflow-hidden aspect-square w-full max-w-[120px] sm:max-w-[140px] md:max-w-[160px] mx-auto"
                 >
-                  <div className="transform group-hover:scale-110 transition-transform duration-300 w-full h-full flex items-center justify-center">
+                  <div className="transform group-hover:scale-112 transition-transform duration-300 w-full h-full flex items-center justify-center">
                     {feature.icon}
                   </div>
                   <h4 className="text-[9px] md:text-[10px] font-bold text-secondary text-center leading-tight mb-4 px-1">
@@ -213,7 +213,7 @@ export default function WhyIndia() {
                   </h4>
 
                   {/* Arrow Icon Indicator */}
-                  <div className="absolute bottom-2 right-2 text-orange-500 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                  <div className="absolute bottom-0 right-0 text-orange-500 opacity-80 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
                     <svg
                       width="20"
                       height="20"

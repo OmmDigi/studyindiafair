@@ -1,38 +1,144 @@
 import React from "react";
 
+const factsLeft = [
+  {
+    icon: "/images/why-india/IndiaAtAGlance/l1.jpeg",
+    label: "Capital",
+    value: "New Delhi",
+    subValue: "",
+  },
+  {
+    icon: "/images/why-india/IndiaAtAGlance/l2.jpeg",
+    label: "Population",
+    value: "1.4+ Billion",
+    subValue: "(World's largest)",
+    highlight: true,
+  },
+  {
+    icon: "/images/why-india/IndiaAtAGlance/l3.jpeg",
+    label: "GDP (Nominal)",
+    value: "USD 3.7 Trillion",
+    subValue: "(World's 5th largest)",
+    highlight: true,
+  },
+  {
+    icon: "/images/why-india/IndiaAtAGlance/l4.jpeg",
+    label: "Largest Economy",
+    value: "5th",
+    subValue: "in the World",
+    highlight: true,
+  },
+  {
+    icon: "/images/why-india/IndiaAtAGlance/l5.jpeg",
+    label: "Official Language",
+    value: "22",
+    subValue: "Official Languages",
+    highlight: true,
+  },
+];
+
+const factsRight = [
+  {
+    icon: "/images/why-india/IndiaAtAGlance/r1.jpeg",
+    value: "1,000+",
+    desc: "Universities & Higher\nEducation Institutions",
+  },
+  {
+    icon: "/images/why-india/IndiaAtAGlance/r2.jpeg",
+    value: "50+",
+    desc: "Globally Ranked Universities\n(QS World Rankings 2026)",
+  },
+  {
+    icon: "/images/why-india/IndiaAtAGlance/r3.jpeg",
+    value: "4th",
+    desc: "in IT & Engineering Talent\n(Global Talent Competitiveness Index)",
+  },
+  {
+    icon: "/images/why-india/IndiaAtAGlance/r4.jpeg",
+    value: "3rd",
+    desc: "Largest Startup Ecosystem\n(Global Startup Ecosystem Index)",
+  },
+];
+
 export default function IndiaAtAGlance() {
   return (
-    <section className="py-12 md:py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
-          {/* Text Content */}
-          <div className="w-full lg:w-2/3">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-6">
-              India At A Glance
+    <section className="py-2 md:py-3 bg-gradient-to-br from-blue-50/60 via-white to-orange-50/40 relative">
+      <div className="container mx-auto px-4 md:max-w-9xl">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-4">
+          {/* Left Column */}
+          <div className="w-full lg:w-[32%] flex flex-col gap-1">
+            <h2 className="text-4xl md:text-[50px] font-bold text-[#0B2046] mb-6 text-center lg:text-left leading-tight tracking-tight">
+              India at a <span className="text-[#FF6A28]">Glance</span>
             </h2>
-            <p className="text-gray-600 leading-relaxed text-sm md:text-base text-justify md:text-left">
-              A diverse country with a variety of people and culture, India attracts thousands of students from across the globe, thus providing opportunities for a multicultural interaction. Interacting with people from different cultures teaches tolerance, acceptance of diversity and helps to build close cultural connections, which consequently aids in the promoting teamwork and confidence. India’s world-class education system, which is regulated and monitored by the government, further makes the country a popular destination for foreign students pursuing higher education. Most of the students who go to India prefer engineering & IT, followed by management and medical.
-            </p>
+            {factsLeft.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-5 py-1 px-3 bg-white rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-50/50"
+              >
+                <div className="w-8 flex justify-center flex-shrink-0">
+                  <img
+                    src={item.icon}
+                    className="max-w-[54px] max-h-[54px] object-contain"
+                    alt=""
+                  />
+                </div>
+                <div className="w-32 flex-shrink-0">
+                  <span className="text-[13px] text-[#0B2046] font-medium">
+                    {item.label}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <div
+                    className={`text-[15px] ${item.highlight ? "text-[#FF6A28] font-bold" : "text-[#0B2046] font-bold"}`}
+                  >
+                    {item.value}
+                  </div>
+                  {item.subValue && (
+                    <div className="text-[11px] text-gray-500 mt-0.5 leading-tight">
+                      {item.subValue}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-          
-          {/* Image */}
-          <div className="hidden lg:block w-full lg:w-1/3 text-center">
-            <img 
-              src="/images/why-india/india-at-a-glance.png" 
-              alt="India At A Glance" 
-              className="w-full max-w-[280px] mx-auto h-auto animate-[bounce_3s_infinite]" 
-              style={{ animation: 'float 3s ease-in-out infinite' }}
+
+          {/* Center Image (Map) */}
+          <div className="w-full lg:w-[36%] flex justify-center py-8 lg:py-0 mt-2 lg:mt-3">
+            <img
+              src="/images/why-india/IndiaAtAGlance\m1.png"
+              className="w-full max-w-[340px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-700"
+              alt="Map of India"
             />
+          </div>
+
+          {/* Right Column */}
+          <div className="w-full lg:w-[32%] flex flex-col gap-1 mt-2 lg:mt-3">
+            {factsRight.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-5 bg-white rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-50/50 p-2"
+              >
+                <div className="w-10 flex justify-center flex-shrink-0">
+                  <img
+                    src={item.icon}
+                    className="max-w-[56px] max-h-[56px] object-contain"
+                    alt=""
+                  />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <span className="text-[#FF6A28] font-bold text-[22px] leading-none mb-1.5">
+                    {item.value}
+                  </span>
+                  <span className="text-[13px] text-[#0B2046] font-medium whitespace-pre-line leading-snug">
+                    {item.desc}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-      <style>{`
-        @keyframes float {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-          100% { transform: translateY(0px); }
-        }
-      `}</style>
     </section>
   );
 }

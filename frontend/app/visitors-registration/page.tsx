@@ -13,7 +13,9 @@ export default function VisitorsRegistrationPage() {
       {/* Background Image covering full width */}
       <div
         className="absolute inset-0 bg-cover bg-right"
-        style={{ backgroundImage: `url('/images/home/VisitorsRegistrationPage.jpeg')` }}
+        style={{
+          backgroundImage: `url('/images/home/VisitorsRegistrationPage.jpeg')`,
+        }}
       >
         {/* Gradient overlay creating the creamy area on the left */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#F9FBFC] via-[#F9FBFC]/95 to-transparent w-full md:w-[70%] lg:w-[60%]"></div>
@@ -123,16 +125,21 @@ export default function VisitorsRegistrationPage() {
               Choose Your Country
             </h2>
             {isLoading ? (
-               <div className="flex gap-4 flex-wrap">
-                 {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-12 w-32 bg-gray-200 animate-pulse rounded-lg"></div>)}
-               </div>
+              <div className="flex gap-4 flex-wrap">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="h-12 w-32 bg-gray-200 animate-pulse rounded-lg"
+                  ></div>
+                ))}
+              </div>
             ) : (
               <div className="flex flex-wrap gap-4">
                 {displayEvents.map((event: any) => (
                   <Link
                     key={event.id || event.slug}
                     href={`/upcoming_expo/${event.slug || ""}`}
-                    className="px-6 py-3 border-2 border-[#003399] text-[#003399] rounded-lg hover:bg-[#003399] hover:text-white transition-all bg-white font-medium text-center shadow-sm hover:shadow-md min-w-[140px]"
+                    className="px-6 py-3 border-1 border-secondary text-[#003399] rounded-sm hover:bg-secondary hover:text-white transition-all bg-white font-medium text-center shadow-sm hover:shadow-md min-w-[140px] uppercase"
                   >
                     {event.name || event.country || event.title}
                   </Link>

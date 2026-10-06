@@ -3,15 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import NewTeamSection from "@/components/about/NewTeamSection";
 import Counter from "@/components/Counter";
-import OurAssociates from "@/components/home/OurAssociates";
-import OurAlliance from "@/components/home/OurAlliance";
+
+import AboutOurAssociates from "@/components/about/AboutOurAssociates";
 
 export default function AboutPage() {
   return (
     <main className="bg-white min-h-screen font-sans">
       {/* Hero Section */}
-      <OurAssociates />
-      <OurAlliance />
+      <AboutOurAssociates />
 
       <div
         className="relative py-5 bg-cover bg-center bg-no-repeat"
@@ -65,8 +64,8 @@ export default function AboutPage() {
               src="/images/about/sape_india_logo.png"
               alt="SAPE"
               width={120}
-              height={44}
-              className="h-12 w-auto object-contain"
+              height={80}
+              className="h-8 w-auto object-contain"
             />
             <div className="w-10 h-1 bg-orange-500 mt-4 mb-4"></div>
             <p className="text-gray-600 font-medium leading-relaxed">
@@ -91,12 +90,11 @@ export default function AboutPage() {
             />
             <div className="w-10 h-1 bg-orange-500 mt-4 mb-4"></div>
             <p className="text-gray-600 font-medium leading-relaxed">
-              SAPE Study in India Fair is not just about a fair; it is about
-              the future, and today it has become nourishment for young minds
-              hungry for opportunity. Through consistent innovation and
-              commitment, it continues to shape the future of educational
-              outreach and remains a trusted name in education fair
-              organisation.
+              SAPE Study in India Fair is not just about a fair; it is about the
+              future, and today it has become nourishment for young minds hungry
+              for opportunity. Through consistent innovation and commitment, it
+              continues to shape the future of educational outreach and remains
+              a trusted name in education fair organisation.
             </p>
           </div>
         </div>
@@ -104,7 +102,7 @@ export default function AboutPage() {
 
       <div className="container mx-auto  md:max-w-full pb-2">
         {/* Specialisation Section */}
-        <div className="mb-2  mx-auto md:max-w-7xl">
+        <div className="mb-2 px-4 md:px-0  mx-auto md:max-w-7xl">
           <div className="mb-5">
             <h2 className="text-4xl md:text-5xl font-bold text-[#0B2046]">
               Our <span className="text-orange-500">Specialisation</span>
@@ -255,7 +253,7 @@ export default function AboutPage() {
             />
           </div>
 
-          <div className="relative z-10 md:pl-10 w-full max-w-xl">
+          <div className="relative z-10 md:pl-10 w-full max-w-xl px-5 md:px-0">
             <div className="mb-6">
               <h2 className="text-4xl md:text-5xl font-bold text-[#0B2046] leading-tight">
                 Global Influence <br />
