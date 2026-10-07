@@ -117,7 +117,7 @@ export default function EducationSystemModal({
                       <div className="elementor-widget-container">
                         <img
                           decoding="async"
-                          src="https://studyindiafair.com/wp-content/uploads/elementor/thumbs/EDUCATION-SYSTEM-IN-INDIA-rdmqds7g0zezody7mnik7tken6bvcvahyc0992kwp4.png"
+                          src="/images/home/EducationSystemModal.jpeg"
                           title="EDUCATION-SYSTEM-IN-INDIA"
                           alt="EDUCATION-SYSTEM-IN-INDIA"
                           loading="lazy"

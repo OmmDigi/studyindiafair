@@ -14,12 +14,17 @@ import {
   ClockIcon,
   LockClosedIcon,
   ArrowRightIcon,
-  AcademicCapIcon,
-  UserGroupIcon,
-  DocumentTextIcon,
-  StarIcon,
-  HandRaisedIcon,
 } from "@heroicons/react/24/outline";
+import {
+  GraduationCap,
+  BookOpen,
+  HandCoins,
+  MessageCircleQuestion,
+  FileSearch,
+  Users,
+  Star,
+  Signpost
+} from "lucide-react";
 
 // Helper function to determine default country code based on slug
 const getCountryCode = (slug: string): string => {
@@ -404,10 +409,105 @@ export default function EventDetailsPage() {
           </section>
         </div>
       </div>
+
+      {/* Why Should You Attend */}
+      <section className="w-full py-12 bg-[#fff7f0]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <div className="w-12 h-1 bg-[#f15a24] mx-auto mb-4"></div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#003399]">
+              Why you should attend?
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12">
+            {/* Item 1 */}
+            <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200">
+              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <GraduationCap className="w-10 h-10" strokeWidth={1.5} />
+              </div>
+              <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
+                Meet top Indian<br />Universities<br />under one roof
+              </p>
+            </div>
+
+            {/* Item 2 */}
+            <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200">
+              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <BookOpen className="w-10 h-10" strokeWidth={1.5} />
+              </div>
+              <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
+                Explore 300+<br />UG & PG programs
+              </p>
+            </div>
+
+            {/* Item 3 */}
+            <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200">
+              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <HandCoins className="w-10 h-10" strokeWidth={1.5} />
+              </div>
+              <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
+                Avail up to<br />100% merit-based<br />scholarships
+              </p>
+            </div>
+
+            {/* Item 4 */}
+            <div className="flex flex-col items-center text-center px-4">
+              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <MessageCircleQuestion className="w-10 h-10" strokeWidth={1.5} />
+              </div>
+              <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
+                Get one-to-one<br />counselling from<br />admission experts
+              </p>
+            </div>
+
+            {/* Item 5 */}
+            <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200 mt-4 lg:mt-0">
+              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <FileSearch className="w-10 h-10" strokeWidth={1.5} />
+              </div>
+              <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
+                On-spot<br />admission guidance
+              </p>
+            </div>
+
+            {/* Item 6 */}
+            <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200 mt-4 lg:mt-0">
+              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <Users className="w-10 h-10" strokeWidth={1.5} />
+              </div>
+              <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
+                Interact with<br />faculty &<br />admission directors
+              </p>
+            </div>
+
+            {/* Item 7 */}
+            <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200 mt-4 lg:mt-0">
+              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <Star className="w-10 h-10" strokeWidth={1.5} />
+              </div>
+              <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
+                Learn about new-age<br />and future-ready<br />programs
+              </p>
+            </div>
+
+            {/* Item 8 */}
+            <div className="flex flex-col items-center text-center px-4 mt-4 lg:mt-0">
+              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <Signpost className="w-10 h-10" strokeWidth={1.5} />
+              </div>
+              <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
+                Make an informed<br />decision for<br />your future
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {event?.past_edition?.is_active &&
         event.past_edition.cards &&
         event.past_edition.cards.length > 0 && (
-          <div className="container mx-auto px-0 lg:px-8 max-w-7xl mt-12 mb-12">
+          <div className="container mx-auto px-0 lg:px-8 max-w-7xl mt-12">
             <section className="bg-[#fef9f4] rounded-sm p-6 md:p-10 border border-[#f5eadb]">
               <h2 className="text-4xl font-bold text-[#002B5B] mb-3">
                 {event.past_edition.heading || "Past Edition at a Glance"}
@@ -510,78 +610,8 @@ export default function EventDetailsPage() {
           </div>
         )}
 
-      {/* Why Should You Attend */}
-      <section className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-[#003B7A] mb-8 text-center md:text-left">
-          Why Should You Attend?
-        </h2>
-
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-          <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
-              <AcademicCapIcon className="w-14 h-14" />
-            </div>
-            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
-              Meet top Indian universities
-            </h3>
-            <p className="text-xs text-gray-500">
-              Explore a wide range of UG & PG programs from leading
-              institutions.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
-              <UserGroupIcon className="w-14 h-14" />
-            </div>
-            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
-              Get personalized guidance
-            </h3>
-            <p className="text-xs text-gray-500">
-              One-to-one counselling with university representatives.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
-              <DocumentTextIcon className="w-14 h-14" />
-            </div>
-            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
-              Explore a wide range of programs
-            </h3>
-            <p className="text-xs text-gray-500">
-              Discover programs that match your interests & career goals.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
-              <StarIcon className="w-14 h-14" />
-            </div>
-            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
-              Learn about scholarships
-            </h3>
-            <p className="text-xs text-gray-500">
-              Get complete information on eligibility and admission procedures.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full  text-orange-500 flex items-center justify-center mb-4">
-              <HandRaisedIcon className="w-14 h-14" />
-            </div>
-            <h3 className="font-semibold text-[#003B7A] text-sm mb-2">
-              Interact directly
-            </h3>
-            <p className="text-xs text-gray-500">
-              Ask questions and get answers from university delegates.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Upcoming Events Section */}
-      <UpcomingEvents />
+      {/* <UpcomingEvents /> */}
     </div>
   );
 }

@@ -53,6 +53,9 @@ export default function TopGlobalCEOsModal({
                     <p className="text-white">Many top global CEOs hold Indian degrees, highlighting the country’s strong academic foundation and global impact in leadership.</p>
                   </div>
                 </div>
+                <div className="w-full flex justify-center mb-8 px-4">
+                  <img src="/images/home/globalceo.jpeg" alt="Global CEOs with Indian Degree" className="w-full h-auto rounded-lg shadow-md max-w-5xl" />
+                </div>
               </div>
               
               <div className="elementor-element elementor-element-1d9b1fd e-flex e-con-boxed e-con e-parent e-lazyloaded" data-id="1d9b1fd" data-element_type="container" data-e-type="container">

@@ -27,7 +27,7 @@ export default function VisitorsRegistrationPage() {
           {/* Why Attend Section */}
           <div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#003399] mb-5">
-              Why <span className="text-[#E87A24]">Attend</span>
+              Why <span className="text-[#E87A24]">Attend ?</span>
             </h1>
 
             <ul className="space-y-4">

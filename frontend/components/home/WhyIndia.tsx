@@ -10,7 +10,7 @@ import WorldClassEducationModal from "../why-india/modal/WorldClassEducationModa
 
 const features = [
   {
-    title: "India at a Glance",
+    title: "India: Facts & Highlights",
     link: "/why-india/india-at-a-glance/",
     icon: (
       <svg
@@ -183,7 +183,7 @@ export default function WhyIndia() {
                   key={idx}
                   href={feature.link}
                   onClick={(e) => {
-                    if (feature.title === "India at a Glance") {
+                    if (feature.title === "India: Facts & Highlights") {
                       e.preventDefault();
                       setActiveModal("glance");
                     } else if (feature.title === "Education System in India") {

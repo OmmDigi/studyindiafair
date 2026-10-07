@@ -262,7 +262,7 @@ export default function Header() {
                     <li key={event.id || event.slug || event.name}>
                       <Link
                         href={`/upcoming_expo/${event.slug || ""}`}
-                        className="block px-10 py-2 text-sm text-gray-600 hover:text-red-600"
+                        className="block px-10 py-2 text-sm text-gray-600 hover:text-red-600 uppercase"
                         onClick={toggleSidebar}
                       >
                         {event.name}

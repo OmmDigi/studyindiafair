@@ -102,13 +102,13 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-auto lg:mt-64">
             <Link
               href="/visitors-registration"
-              className="w-full sm:w-auto px-4 py-2 md:py-4 md:px-8 bg-secondary hover:bg-white text-white hover:text-black rounded-full font-bold text-sm md:text-lg uppercase tracking-wide transition-all shadow-lg hover:shadow-red-600/30 hover:-translate-y-1 text-center"
+              className="w-full sm:w-auto px-4 py-2 md:py-4 md:px-8 bg-tertiary hover:bg-white text-white hover:text-black rounded-full font-bold text-sm md:text-lg uppercase tracking-wide transition-all shadow-lg hover:shadow-white/30 hover:-translate-y-0 text-center"
             >
               Visitors Registration
             </Link>
             <Link
               href="/exhibitors"
-              className="w-full sm:w-auto px-4 py-2 md:py-4 md:px-8 bg-secondary hover:bg-white text-white hover:text-black rounded-full font-bold text-sm md:text-lg uppercase tracking-wide transition-all shadow-lg hover:shadow-white/30 hover:-translate-y-1 text-center block"
+              className="w-full sm:w-auto px-4 py-2 md:py-4 md:px-8 bg-tertiary hover:bg-white text-white hover:text-black rounded-full font-bold text-sm md:text-lg uppercase tracking-wide transition-all shadow-lg hover:shadow-white/30 hover:-translate-y-0 text-center block"
             >
               Exhibitors Registration
             </Link>

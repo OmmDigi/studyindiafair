@@ -40,11 +40,9 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
           <img
             loading="lazy"
             decoding="async"
-            src="https://studyindiafair.com/wp-content/uploads/2025/10/india-at-glance-why-india-1.png"
+            src="/images/home/Highlights.jpeg"
             className="w-full h-auto block"
             alt="India at a Glance"
-            srcSet="https://studyindiafair.com/wp-content/uploads/2025/10/india-at-glance-why-india-1-1024x1024.png 1024w, https://studyindiafair.com/wp-content/uploads/2025/10/india-at-glance-why-india-1-300x300.png 300w, https://studyindiafair.com/wp-content/uploads/2025/10/india-at-glance-why-india-1-150x150.png 150w, https://studyindiafair.com/wp-content/uploads/2025/10/india-at-glance-why-india-1-768x768.png 768w, https://studyindiafair.com/wp-content/uploads/2025/10/india-at-glance-why-india-1.png 1420w"
-            sizes="(max-width: 1024px) 100vw, 1024px"
           />
         </div>
       </div>
