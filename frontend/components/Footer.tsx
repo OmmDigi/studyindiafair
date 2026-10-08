@@ -8,9 +8,9 @@ const Footer = () => {
   const { data: siteSettings } = useSiteSettings();
   console.log("siteSettings", siteSettings);
   return (
-    <footer className="bg-[#0B1E43] text-white pt-10 pb-4 relative mt-auto overflow-hidden">
-      <div className="container mx-auto px-4 md:max-w-7xl relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-1 mb-8 lg:mb-8">
+    <footer className="bg-secondary px-4 md:px-0 text-white pt-5 md:pt-10 pb-4 relative mt-auto overflow-hidden">
+      <div className="container mx-auto px-0 md:max-w-9xl relative z-10">
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-1 mb-2 lg:mb-2">
           {/* Column 1: Logo & Tagline */}
           <div className="flex flex-col items-center lg:items-start lg:w-1/6">
             <Link href="/" className="mb-2 bg-transparent">
@@ -291,9 +291,16 @@ const Footer = () => {
             </Link>
           </div>
         </div>
-
+        {/* Horizontal Image */}
+        <div className=" hidden md:flex w-full flex justify-end -mt-20">
+          <img
+            src="/images/hoeizontalimage.png"
+            alt="Horizontal Banner"
+            className="w-full h-auto max-w-2xl object-contain"
+          />
+        </div>
         {/* Footer Bottom Strip */}
-        <div className="pt-4 pb-2 flex flex-col md:flex-row justify-between items-center border-t border-white/20 relative z-10 text-[13px] text-gray-300">
+        <div className="pt-4 pb-2  flex flex-col md:flex-row justify-between items-center border-t border-white/20 relative z-10 text-[13px] text-gray-300">
           <p className="mb-2 md:mb-0">
             © 2026 Study in India Education Fair. All rights reserved.
           </p>
