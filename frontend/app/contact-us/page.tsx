@@ -1,21 +1,25 @@
 import React from "react";
+import ContactHero from "@/components/contact-us/ContactHero";
 import ContactFormSection from "@/components/contact-us/ContactFormSection";
 import MapSection from "@/components/contact-us/MapSection";
+import { generateSEO } from "@/components/SEO";
+
+export const metadata = generateSEO({
+  title: "Contact Us | Study in India Fair",
+  description:
+    "We'd love to hear from you. Get in touch with Study in India Fair for student admissions, institutional partnerships, and event support.",
+});
 
 export default function ContactUsPage() {
   return (
     <main className="min-h-screen bg-white">
-      {/* Page Header */}
-      <div className="bg-primary py-3 md:py-6 text-center border-b border-gray-100">
-        <h1 className="text-4xl md:text-5xl font-bold text-secondary">
-          Contact Us
-        </h1>
-        <p className="mt-4 text-tertiary-text max-w-2xl mx-auto px-4">
-          We'd love to hear from you. Get in touch with us for any inquiries or assistance.
-        </p>
-      </div>
+      {/* Hero Banner matching mockup */}
+      <ContactHero heroImage="/images/contact-us/1.jpeg" />
 
+      {/* Main Form & Contact Info Section */}
       <ContactFormSection />
+
+      {/* Find Our Office Map Section */}
       <MapSection />
     </main>
   );

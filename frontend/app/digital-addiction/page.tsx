@@ -1,29 +1,34 @@
 import React from "react";
-import DigitalAddictionContent from "@/components/digital-addiction/DigitalAddictionContent";
-import DigitalAddictionEffects from "@/components/digital-addiction/DigitalAddictionEffects";
-import DigitalAddictionSolutions from "@/components/digital-addiction/DigitalAddictionSolutions";
-import DigitalAddictionFinalAdvice from "@/components/digital-addiction/DigitalAddictionFinalAdvice";
-import DigitalAddictionParentsHelp from "@/components/digital-addiction/DigitalAddictionParentsHelp";
+import DigitalHero from "@/components/digital-addiction/DigitalHero";
+import NavigatingDigitalLife from "@/components/digital-addiction/NavigatingDigitalLife";
+import SignsOfDigitalAddiction from "@/components/digital-addiction/SignsOfDigitalAddiction";
+import SimpleWaysToControl from "@/components/digital-addiction/SimpleWaysToControl";
+import HowParentsCanHelp from "@/components/digital-addiction/HowParentsCanHelp";
+import { generateSEO } from "@/components/SEO";
+
+export const metadata = generateSEO({
+  title: "Digital Addiction | Study in India Fair",
+  description:
+    "GO DIGITAL or GO DARK? Technology is your tool. The balance is yours. Understand digital addiction signs, solutions, and guidance for parents and students.",
+});
 
 export default function DigitalAddictionPage() {
   return (
     <main className="min-h-screen bg-white">
-      {/* Page Header */}
-      <div className="bg-primary py-3 md:py-6 text-center border-b border-gray-100">
-        <h1 className="text-4xl md:text-5xl font-bold text-secondary">
-          Digital Addiction
-        </h1>
-        <p className="mt-4 text-tertiary-text max-w-2xl mx-auto px-4">
-          Understanding the impact of digital device overuse and how to identify
-          the signs of smartphone dependency.
-        </p>
-      </div>
+      {/* 1. Hero Section: GO DIGITAL or GO DARK? */}
+      <DigitalHero heroImage="/images/digital-addiction/1.jpeg" />
 
-      <DigitalAddictionContent />
-      <DigitalAddictionEffects />
-      <DigitalAddictionSolutions />
-      <DigitalAddictionFinalAdvice />
-      <DigitalAddictionParentsHelp />
+      {/* 2. Navigating Digital Life & Quote */}
+      <NavigatingDigitalLife quoteImage="/images/digital-addiction/2.jpeg" />
+
+      {/* 3. Signs of Digital Addiction (6 cards) */}
+      <SignsOfDigitalAddiction />
+
+      {/* 4. Simple Ways to Be in Control (5 cards) */}
+      <SimpleWaysToControl />
+
+      {/* 5. How Parents Can Help (4 items) */}
+      <HowParentsCanHelp />
     </main>
   );
 }

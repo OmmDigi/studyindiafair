@@ -4,16 +4,16 @@ import Image from "next/image";
 const HeroSection = () => {
   return (
     <section className="relative w-full h-[500px] md:h-[600px] bg-slate-50 flex items-center overflow-hidden">
-      {/* Background Image - Placeholder for students and India Gate */}
+      {/* Background Image - Students and India Gate */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop"
-          alt="Students Background"
+          src="/images/career-guidance/1.jpeg"
+          alt="Career Guidance Students"
           fill
-          className="object-cover opacity-30 object-top"
+          className="object-cover object-[75%_center] md:object-right lg:object-right"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent md:from-white md:via-white/70 md:to-transparent z-10" />
       </div>
 
       <div className="container mx-auto px-4 md:px-8 relative z-20">
