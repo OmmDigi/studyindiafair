@@ -5,6 +5,51 @@ interface TopGlobalCEOsModalProps {
   onClose: () => void;
 }
 
+const ceos = [
+  {
+    name: "Satya Nadella",
+    role: "CEO of Microsoft",
+    image: "/images/why-india/why-india-img1.png",
+    logo: "/images/why-india/Microsoft_logo.svg",
+  },
+  {
+    name: "Shantanu Narayen",
+    role: "CEO of Adobe Inc.",
+    image: "/images/why-india/why-india-img2.png",
+    logo: "/images/why-india/Adobe_Corporate_Logo.svg",
+  },
+  {
+    name: "Sundar Pichai",
+    role: "CEO of Google & Alphabet",
+    image: "/images/why-india/why-india-img3.png",
+    logo: "/images/why-india/google_logo.svg",
+  },
+  {
+    name: "Leena Nair",
+    role: "CEO of Chanel Group",
+    image: "/images/why-india/why-india-img4.png",
+    logo: "/images/why-india/g2452.svg",
+  },
+  {
+    name: "Ajaypal Singh Bagha",
+    role: "President of World Bank",
+    image: "/images/why-india/why-india-img5.png",
+    logo: "/images/why-india/world-bank.svg",
+  },
+  {
+    name: "Arvind Krishna",
+    role: "CEO of IBM",
+    image: "/images/why-india/why-india-img6.png",
+    logo: "/images/why-india/IBM_logo_in.svg",
+  },
+  {
+    name: "Kunal Shah",
+    role: "CEO of YouTube",
+    image: "/images/why-india/Kunal Shah.webp",
+    logo: "/images/why-india/youtube-logo-png-46016-1.png",
+  },
+];
+
 export default function TopGlobalCEOsModal({
   isOpen,
   onClose,
@@ -69,67 +114,36 @@ export default function TopGlobalCEOsModal({
                             <p className="text-gray-700 max-w-4xl mx-auto leading-relaxed">India’s education system has produced some of the world’s most influential business leaders — from the CEOs of Google and Microsoft to Mastercard and PepsiCo. Renowned for its strong foundation in analytical thinking, problem-solving, and leadership, Indian education combines academic excellence with real-world adaptability. It’s no surprise that nearly 30% of Fortune 500 CEOs have an Indian educational background — a testament to the country’s globally recognized learning standards and leadership-driven mindset.</p>
                           </div>
                           
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {/* CEO 1 */}
-                            <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1">
-                              <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/why-india-img1.png" alt="Satya Nadella" className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-gray-50" />
-                              <div>
-                                <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/Microsoft_logo.svg" alt="Microsoft" className="h-6 mx-auto mb-3" />
-                                <h5 className="font-bold text-lg mb-1 text-[#003399]">Satya Nadella</h5>
-                                <span className="text-gray-500 text-sm">CEO of Microsoft</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {ceos.map((ceo, index) => (
+                              <div
+                                key={index}
+                                className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1 flex flex-col items-center justify-between"
+                              >
+                                <img
+                                  decoding="async"
+                                  src={ceo.image}
+                                  alt={ceo.name}
+                                  className="w-32 h-32 rounded-full mx-auto mb-4 object-cover object-top border-4 border-gray-50 bg-gray-50"
+                                />
+                                <div className="w-full">
+                                  <div className="h-8 flex items-center justify-center mb-3">
+                                    <img
+                                      decoding="async"
+                                      src={ceo.logo}
+                                      alt={`${ceo.name} Logo`}
+                                      className="max-h-full max-w-[100px] object-contain"
+                                    />
+                                  </div>
+                                  <h5 className="font-bold text-lg mb-1 text-[#003399]">
+                                    {ceo.name}
+                                  </h5>
+                                  <span className="text-gray-500 text-sm">
+                                    {ceo.role}
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                            
-                            {/* CEO 2 */}
-                            <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1">
-                              <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/why-india-img2.png" alt="Shantanu Narayen" className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-gray-50" />
-                              <div>
-                                <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/Adobe_Corporate_Logo.svg" alt="Adobe" className="h-6 mx-auto mb-3" />
-                                <h5 className="font-bold text-lg mb-1 text-[#003399]">Shantanu Narayen</h5>
-                                <span className="text-gray-500 text-sm">CEO of Adobe Inc.</span>
-                              </div>
-                            </div>
-                            
-                            {/* CEO 3 */}
-                            <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1">
-                              <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/why-india-img3.png" alt="Sundar Pichai" className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-gray-50" />
-                              <div>
-                                <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/google_logo.svg" alt="Google" className="h-6 mx-auto mb-3" />
-                                <h5 className="font-bold text-lg mb-1 text-[#003399]">Sundar Pichai</h5>
-                                <span className="text-gray-500 text-sm">CEO of Google</span>
-                              </div>
-                            </div>
-                            
-                            {/* CEO 4 */}
-                            <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1">
-                              <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/why-india-img4.png" alt="Leena Nair" className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-gray-50" />
-                              <div>
-                                <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/g2452.svg" alt="Chanel" className="h-6 mx-auto mb-3" />
-                                <h5 className="font-bold text-lg mb-1 text-[#003399]">Leena Nair</h5>
-                                <span className="text-gray-500 text-sm">CEO of Chanel Group</span>
-                              </div>
-                            </div>
-                            
-                            {/* CEO 5 */}
-                            <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1">
-                              <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/why-india-img5.png" alt="Ajaypal Singh Banga" className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-gray-50" />
-                              <div>
-                                <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/world-bank.svg" alt="World Bank" className="h-6 mx-auto mb-3" />
-                                <h5 className="font-bold text-lg mb-1 text-[#003399]">Ajaypal Singh Banga</h5>
-                                <span className="text-gray-500 text-sm">President of World Bank</span>
-                              </div>
-                            </div>
-                            
-                            {/* CEO 6 */}
-                            <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1">
-                              <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/why-india-img6.png" alt="Arvind Krishna" className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-gray-50" />
-                              <div>
-                                <img decoding="async" src="https://studyindiafair.com/wp-content/uploads/2023/10/IBM_logo_in.svg" alt="IBM" className="h-6 mx-auto mb-3" />
-                                <h5 className="font-bold text-lg mb-1 text-[#003399]">Arvind Krishna</h5>
-                                <span className="text-gray-500 text-sm">CEO of IBM</span>
-                              </div>
-                            </div>
-                            
+                            ))}
                           </div>
                         </div>
                       </section>

@@ -7,18 +7,20 @@ import { useSiteSettings } from "@/hooks/api";
 export default function MapSection() {
   const { data: siteSettings } = useSiteSettings();
 
+  const EXACT_ADDRESS =
+    "P287 Darga road, Ground floor, Park Circus, near 4 no. bridge. Kolkata 700017";
+
   const addressItem = siteSettings?.addresses?.[0];
   const addressText =
-    addressItem?.address ||
-    addressItem?.label ||
-    "P287 Darga road, Ground floor, Park Circus, near 4 no. bridge, Kolkata 700017";
+    addressItem?.address || addressItem?.label || EXACT_ADDRESS;
 
-  const googleMapsDirectionsUrl =
-    addressItem?.map_link && addressItem.map_link.startsWith("http")
-      ? addressItem.map_link
-      : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressText)}`;
+  const googleMapsDirectionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    addressText || EXACT_ADDRESS,
+  )}`;
 
-  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(addressText)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(
+    addressText || EXACT_ADDRESS,
+  )}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
   return (
     <section className="relative w-full bg-[#f4f8fb] border-t border-slate-100 overflow-hidden">

@@ -8,8 +8,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Montserrat", sans-serif;
-  --font-heading: "Barlow Semi Condensed", sans-serif;
+  --font-sans: "Mulish", sans-serif;
+  --font-heading: "Mulish", sans-serif;
   --color-primary: #FFF9F5;
   /* h1 ,h2 ,h3 ,h4  */
   --color-secondary: #0b1d42;
@@ -25,12 +25,18 @@
   }
 }
 
+*,
+*::before,
+*::after,
+html,
+body,
+h1, h2, h3, h4, h5, h6,
+p, span, a, button, input, select, textarea {
+  font-family: "Mulish", sans-serif !important;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
+  font-family: "Mulish", sans-serif !important;
 }

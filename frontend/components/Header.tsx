@@ -58,8 +58,8 @@ export default function Header() {
                   alt="Study in India Fair Logo"
                   className={
                     !isHomePage || isScrolled
-                      ? "h-15 w-auto object-contain"
-                      : "h-20 w-auto object-contain brightness-0 invert"
+                      ? "h-15 md:h-15 w-auto object-contain"
+                      : "h-15 md:h-20 w-auto object-contain brightness-0 invert"
                   }
                   style={
                     isHomePage && !isScrolled
@@ -71,7 +71,7 @@ export default function Header() {
             </div>
 
             {/* Marquee/Announcement Section */}
-            <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 justify-center pointer-events-none h-16 overflow-hidden">
+            <div className="flex absolute left-1/2 -translate-x-1/2 justify-center pointer-events-none h-16 overflow-hidden">
               <style>{`
                 @keyframes scrollUp {
                   0% { transform: translateY(100%); }
@@ -93,7 +93,7 @@ export default function Header() {
                 .marquee-text-black .marquee-notice * { color: black !important; }
               `}</style>
               <div
-                className={`pointer-events-auto h-full overflow-hidden flex flex-col justify-center ${!isHomePage || isScrolled ? "bg-gray-50 border border-gray-100 rounded-lg px-4 text-sm text-center text-black marquee-text-black" : "bg-transparent px-4 text-sm text-center text-white marquee-text-white"}`}
+                className={`pointer-events-auto h-full overflow-hidden flex flex-col justify-center ${!isHomePage || isScrolled ? "bg-transparent  rounded-lg px-4 text-sm text-center text-black marquee-text-black" : "bg-transparent px-4 text-sm text-center text-white marquee-text-white"}`}
               >
                 <div className="animate-scroll-up marquee-notice flex flex-col items-center">
                   {siteSettings?.notice ? (

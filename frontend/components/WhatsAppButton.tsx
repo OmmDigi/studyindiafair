@@ -24,7 +24,7 @@ export default function WhatsAppButton() {
     <a
       href={`https://wa.me/${cleanNumber}`}
       target="_blank"
-      className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
+      className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-2 rounded-full shadow-lg hover:shadow-2xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

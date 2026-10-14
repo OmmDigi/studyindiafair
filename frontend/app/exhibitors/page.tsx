@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { X } from "lucide-react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useSubmitEnquiry } from "@/hooks/api/useForms";
@@ -11,6 +12,29 @@ export default function ExhibitorsPage() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [phone, setPhone] = useState<string>("");
+
+  const handleClose = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (typeof window !== "undefined" && window.history.length > 1) {
+          router.back();
+        } else {
+          router.push("/");
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [router]);
 
   const { mutate: submitEnquiry, isPending: isSubmitting } = useSubmitEnquiry(
     "exhibitors",
@@ -51,6 +75,17 @@ export default function ExhibitorsPage() {
         {/* Gradient overlay creating the creamy area on the left */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#F9FBFC] via-[#F9FBFC]/95 to-transparent w-full lg:w-[80%] xl:w-[70%]"></div>
       </div>
+
+      {/* Cross / Close Button */}
+      <Link
+        href="/"
+        onClick={handleClose}
+        aria-label="Close"
+        title="Close"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white text-gray-700 hover:text-red-600 shadow-md hover:shadow-xl border border-gray-200/80 backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 group"
+      >
+        <X className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:rotate-90" />
+      </Link>
 
       {/* Content Area */}
       <div className="relative z-10 w-full lg:w-fill py-12 px-4 sm:px-8 lg:px-16 flex flex-col justify-center min-h-screen">

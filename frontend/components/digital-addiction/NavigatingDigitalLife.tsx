@@ -13,8 +13,8 @@ export default function NavigatingDigitalLife({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
           {/* Left Text Box */}
           <div className="lg:col-span-7 flex flex-col justify-center">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0b1d42] tracking-tight mb-4 uppercase">
-              NAVIGATING DIGITAL LIFE
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0b1d42] tracking-tight mb-4 ">
+              Navigating Digital Life
             </h2>
             <div className="space-y-3.5 text-gray-700 text-sm sm:text-base leading-relaxed">
               <p>

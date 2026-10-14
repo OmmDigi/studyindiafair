@@ -120,7 +120,7 @@ export default function ContactFormSection({
                     <p className="text-[11px] sm:text-xs text-gray-600 leading-relaxed">
                       {siteSettings?.addresses?.[0]?.address ||
                         siteSettings?.addresses?.[0]?.label ||
-                        "P287 Darga road, Ground floor, Park Circus, near 4 no. bridge, Kolkata 700017"}
+                        "P287 Darga road, Ground floor, Park Circus, near 4 no. bridge. Kolkata 700017"}
                     </p>
                   </div>
                 </div>

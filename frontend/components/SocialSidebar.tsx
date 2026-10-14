@@ -1,10 +1,31 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSiteSettings } from "@/hooks/api/useSiteSettings";
 
 export default function SocialSidebar() {
   const { data: settings } = useSiteSettings();
+  const [side, setSide] = useState<"left" | "right">("left");
+  const [topPercent, setTopPercent] = useState<number>(50);
+  const currentTopRef = useRef<number>(50); // percentage
+  const isDraggingRef = useRef<boolean>(false);
+  const dragStartRef = useRef<{
+    startX: number;
+    startY: number;
+    initialTopPx: number;
+    deltaX: number;
+    deltaY: number;
+    moved: boolean;
+  }>({
+    startX: 0,
+    startY: 0,
+    initialTopPx: 0,
+    deltaX: 0,
+    deltaY: 0,
+    moved: false,
+  });
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const rAFRef = useRef<number | null>(null);
 
   if (!settings || !settings.social_links || settings.social_links.length === 0)
     return null;
@@ -21,22 +42,141 @@ export default function SocialSidebar() {
     return "#0B1E43";
   };
 
+  const updatePosition = () => {
+    if (!sidebarRef.current || !isDraggingRef.current) return;
+    const { deltaX, deltaY } = dragStartRef.current;
+    sidebarRef.current.style.transform = `translate3d(${deltaX}px, calc(-50% + ${deltaY}px), 0)`;
+    rAFRef.current = null;
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return; // Only left click
+    const target = e.currentTarget;
+    try {
+      target.setPointerCapture(e.pointerId);
+    } catch {}
+
+    const rect = target.getBoundingClientRect();
+    const initialTop = rect.top + rect.height / 2;
+
+    isDraggingRef.current = true;
+    dragStartRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      initialTopPx: initialTop,
+      deltaX: 0,
+      deltaY: 0,
+      moved: false,
+    };
+
+    if (sidebarRef.current) {
+      sidebarRef.current.style.transition = "none";
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current) return;
+    const deltaX = e.clientX - dragStartRef.current.startX;
+    const deltaY = e.clientY - dragStartRef.current.startY;
+
+    dragStartRef.current.deltaX = deltaX;
+    dragStartRef.current.deltaY = deltaY;
+
+    if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
+      dragStartRef.current.moved = true;
+    }
+
+    if (!rAFRef.current) {
+      rAFRef.current = requestAnimationFrame(updatePosition);
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    if (rAFRef.current) {
+      cancelAnimationFrame(rAFRef.current);
+      rAFRef.current = null;
+    }
+
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {}
+
+    const windowWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
+    const windowHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+    const threshold = Math.min(200, windowWidth * 0.2);
+
+    const { deltaX, deltaY, initialTopPx } = dragStartRef.current;
+
+    // Horizontal snap
+    let nextSide = side;
+    if (side === "left" && deltaX > threshold) {
+      nextSide = "right";
+    } else if (side === "right" && deltaX < -threshold) {
+      nextSide = "left";
+    }
+    setSide(nextSide);
+
+    // Vertical clamping
+    const newTopPx = initialTopPx + deltaY;
+    const clampedPx = Math.max(60, Math.min(windowHeight - 60, newTopPx));
+    const newPercent = (clampedPx / windowHeight) * 100;
+    currentTopRef.current = newPercent;
+    setTopPercent(newPercent);
+
+    if (sidebarRef.current) {
+      sidebarRef.current.style.transition = "all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)";
+      sidebarRef.current.style.transform = "translateY(-50%)";
+    }
+  };
+
   return (
-    <div className="fixed left-0 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-0 shadow-xl">
+    <div
+      ref={sidebarRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      className={`fixed z-50 flex flex-col gap-0 shadow-xl touch-none select-none cursor-grab active:cursor-grabbing ${
+        side === "left" ? "left-0" : "right-0"
+      }`}
+      style={{
+        top: `${topPercent}%`,
+        transform: "translateY(-50%)",
+        transition: "all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
+        borderRadius: side === "left" ? "0 8px 8px 0" : "8px 0 0 8px",
+        overflow: "hidden",
+        willChange: "transform, top",
+      }}
+    >
+      {/* Drag handle hint */}
+      <div
+        className="flex items-center justify-center py-1 bg-black/40 text-white/80 cursor-grab active:cursor-grabbing hover:bg-black/60 transition-colors"
+        title="Drag to reposition (left/right or up/down)"
+      >
+        <div className="w-3.5 h-1 bg-white/70 rounded-full" />
+      </div>
+
       {settings.social_links.map((link: any, index: number) => (
         <a
           key={index}
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-1 hover:w-10 transition-all duration-300 w-7 flex justify-center items-center  group border-b border-white/10 last:border-b-0"
+          onClick={(e) => {
+            if (dragStartRef.current.moved) {
+              e.preventDefault();
+            }
+          }}
+          className="p-1.5 md:p-1 md:hover:w-10 transition-all duration-300 w-8 md:w-7 flex justify-center items-center group border-b border-white/10 last:border-b-0"
           style={{ backgroundColor: getBrandColor(link.name) }}
           title={link.name}
         >
           <img
             src={`${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${link.icon_path}`}
             alt={link.name}
-            className="w-5 h-5 object-contain"
+            className="w-5 h-5 object-contain pointer-events-none"
             style={{ filter: "brightness(0) invert(1)" }}
           />
         </a>

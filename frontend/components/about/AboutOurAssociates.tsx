@@ -104,7 +104,7 @@ const AboutOurAssociates = () => {
                 {[...associates, ...associates].map((logo, index) => (
                   <div
                     key={index}
-                    className="w-20 h-20 md:w-40 md:h-20 flex-shrink-0 flex items-center justify-center p-0 md:p-0 bg-white rounded-sm shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
+                    className="w-30 h-20 md:w-50 md:h-30 flex-shrink-0 flex items-center justify-center p-0 md:p-0 bg-white rounded-sm shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img

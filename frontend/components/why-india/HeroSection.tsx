@@ -4,12 +4,25 @@ export default function HeroSection() {
   return (
     <section className="relative w-full h-[450px] md:h-[450px] flex items-center">
       <div className="absolute inset-0 z-0">
-        <img
-          src="/images/why-india/herosection/1.jpeg"
-          alt="Students"
-          className="w-full h-full object-cover object-top"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-white/70 to-transparent w-full md:w-[60%]"></div>
+        {/* Mobile Background */}
+        <div className="block md:hidden absolute inset-0">
+          <img
+            src="/images/why-india/herosection/whystudypage.jpeg"
+            alt="Students"
+            className="w-full h-full object-cover object-[center_top]"
+          />
+          <div className="absolute inset-0 bg-white/20" />
+        </div>
+
+        {/* Desktop / Tablet Background */}
+        <div className="hidden md:block absolute inset-0">
+          <img
+            src="/images/why-india/herosection/1.jpeg"
+            alt="Students"
+            className="w-full h-full object-cover object-top"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-white/70 to-transparent w-full md:w-[60%]"></div>
+        </div>
       </div>
 
       <div className="container mx-auto px-4 md:max-w-7xl relative z-10">

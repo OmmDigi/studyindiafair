@@ -15,16 +15,6 @@ import {
   LockClosedIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
-import {
-  GraduationCap,
-  BookOpen,
-  HandCoins,
-  MessageCircleQuestion,
-  FileSearch,
-  Users,
-  Star,
-  Signpost
-} from "lucide-react";
 
 // Helper function to determine default country code based on slug
 const getCountryCode = (slug: string): string => {
@@ -256,7 +246,15 @@ export default function EventDetailsPage() {
       <div className="container mx-auto px-4 lg:px-8 max-w-7xl mt-10 flex flex-col lg:flex-row gap-10">
         {/* Left Column - Registration Form */}
         <div className="lg:w-[35%] shrink-0">
-          <div className="bg-[#f0f6ff] rounded-xl p-5 md:p-6 shadow-sm">
+          <div
+            className="rounded-xl p-5 md:p-6 shadow-md border border-blue-100/60 relative overflow-hidden bg-white"
+            style={{
+              backgroundImage: "url('/images/upcoming/bookingbg.jpeg')",
+              backgroundSize: "100% 100%",
+              backgroundPosition: "center bottom",
+              backgroundRepeat: "no-repeat",
+            }}
+          >
             <h2 className="text-xl font-bold text-[#003B7A] mb-4">
               Visitor Registration
             </h2>
@@ -411,7 +409,7 @@ export default function EventDetailsPage() {
       </div>
 
       {/* Why Should You Attend */}
-      <section className="w-full py-12 bg-[#fff7f0]">
+      <section className="w-full py-12 bg-tertiary/70">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <div className="w-12 h-1 bg-[#f15a24] mx-auto mb-4"></div>
@@ -423,81 +421,140 @@ export default function EventDetailsPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12">
             {/* Item 1 */}
             <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200">
-              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                <GraduationCap className="w-10 h-10" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <img
+                  src="/images/upcoming/education.gif"
+                  alt="Meet top Indian Universities"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
-                Meet top Indian<br />Universities<br />under one roof
+                Meet top Indian
+                <br />
+                Universities
+                <br />
+                under one roof
               </p>
             </div>
 
             {/* Item 2 */}
             <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200">
-              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                <BookOpen className="w-10 h-10" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <img
+                  src="/images/upcoming/classroom-lesson.gif"
+                  alt="Explore 300+ UG & PG programs"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
-                Explore 300+<br />UG & PG programs
+                Explore 300+
+                <br />
+                UG & PG programs
               </p>
             </div>
 
             {/* Item 3 */}
             <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200">
-              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                <HandCoins className="w-10 h-10" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <img
+                  src="/images/upcoming/donation.gif"
+                  alt="Avail scholarships"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
-                Avail up to<br />100% merit-based<br />scholarships
+                Avail up to
+                <br />
+                100% merit-based
+                <br />
+                scholarships
               </p>
             </div>
 
             {/* Item 4 */}
             <div className="flex flex-col items-center text-center px-4">
-              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                <MessageCircleQuestion className="w-10 h-10" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <img
+                  src="/images/upcoming/mentorship.gif"
+                  alt="Get counselling"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
-                Get one-to-one<br />counselling from<br />admission experts
+                Get one-to-one
+                <br />
+                counselling from
+                <br />
+                admission experts
               </p>
             </div>
 
             {/* Item 5 */}
             <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200 mt-4 lg:mt-0">
-              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                <FileSearch className="w-10 h-10" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <img
+                  src="/images/upcoming/id.gif"
+                  alt="Admission guidance"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
-                On-spot<br />admission guidance
+                On-spot
+                <br />
+                admission guidance
               </p>
             </div>
 
             {/* Item 6 */}
             <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200 mt-4 lg:mt-0">
-              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                <Users className="w-10 h-10" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <img
+                  src="/images/upcoming/graduation-hat-diploma.gif"
+                  alt="Interact with faculty & admission directors"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
-                Interact with<br />faculty &<br />admission directors
+                Interact with
+                <br />
+                faculty &<br />
+                admission directors
               </p>
             </div>
 
             {/* Item 7 */}
             <div className="flex flex-col items-center text-center px-4 lg:border-r border-gray-200 mt-4 lg:mt-0">
-              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                <Star className="w-10 h-10" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <img
+                  src="/images/upcoming/artificial-intelligence.gif"
+                  alt="Learn about new-age programs"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
-                Learn about new-age<br />and future-ready<br />programs
+                Learn about new-age
+                <br />
+                and future-ready
+                <br />
+                programs
               </p>
             </div>
 
             {/* Item 8 */}
             <div className="flex flex-col items-center text-center px-4 mt-4 lg:mt-0">
-              <div className="w-20 h-20 rounded-full bg-[#fde9d7] text-[#003399] flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                <Signpost className="w-10 h-10" strokeWidth={1.5} />
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 transition-transform hover:scale-110">
+                <img
+                  src="/images/upcoming/decision-making.gif"
+                  alt="Make an informed decision"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="font-medium text-[#003399] text-sm md:text-base leading-snug">
-                Make an informed<br />decision for<br />your future
+                Make an informed
+                <br />
+                decision for
+                <br />
+                your future
               </p>
             </div>
           </div>

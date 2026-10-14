@@ -7,60 +7,79 @@ import {
   Settings,
   ChevronRight,
 } from "lucide-react";
-import Link from "next/link";
 
 const streams = [
   {
     title: "SCIENCE",
     icon: Atom,
     iconColor: "text-blue-500",
-    image:
-      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop",
+    image: "/images/career-guidance/sciance.jpeg",
     options: [
       "Engineering & Technology",
-      "Medical & Health Sciences",
-      "Data Science & AI",
-      "Aerospace & Drone Technology",
-      "Biotech & Life Sciences",
-      "Environmental Sciences",
+      "Medical & Healthcare",
+      "Pure & Applied Sciences",
+      "Computer Science & Information Technology",
+      "Biotechnology & Life Sciences",
+      "Agriculture & Allied Sciences",
+      "Pharmacy & Pharmaceutical Sciences",
+      "Nursing & Allied Health Sciences",
+      "Architecture & Planning",
+      "Environmental & Earth Sciences",
+      "Forensic Science",
+      "Aviation & Aerospace",
+      "Defence & Maritime Studies",
+      "Interdisciplinary & Emerging Technologies",
     ],
   },
   {
     title: "COMMERCE",
     icon: BarChart3,
     iconColor: "text-orange-500",
-    image:
-      "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2072&auto=format&fit=crop",
+    image: "/images/career-guidance/commerce.jpeg",
     options: [
-      "Business Analytics",
-      "Finance & Accounting",
-      "Digital Marketing",
-      "Entrepreneurship",
-      "FinTech & Blockchain",
-      "Global Business",
+      "Accounting & Finance",
+      "Banking & Insurance",
+      "Business Management & Administration",
+      "Economics & Econometrics",
+      "Commerce & Taxation",
+      "Marketing & Advertising",
+      "Human Resource Management",
+      "International Business & Trade",
+      "Entrepreneurship & Startups",
+      "Business Analytics & Data Science",
+      "Financial Markets & Investment Management",
+      "Company Secretaryship & Corporate Governance",
+      "Logistics & Supply Chain Management",
+      "E-Commerce & Digital Business",
     ],
   },
   {
     title: "HUMANITIES",
     icon: BookOpen,
     iconColor: "text-green-600",
-    image:
-      "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2112&auto=format&fit=crop",
+    image: "/images/career-guidance/humanity.jpeg",
     options: [
-      "Psychology",
-      "Design",
-      "Media & Communication",
-      "Liberal Arts",
-      "International Relations",
-      "Social Impact",
+      "Psychology & Behavioural Sciences",
+      "Sociology & Social Work",
+      "Political Science & International Relations",
+      "History & Archaeology",
+      "Geography & Geospatial Studies",
+      "Philosophy & Ethics",
+      "Languages & Literature",
+      "Journalism, Mass Communication & Media Studies",
+      "Law & Legal Studies",
+      "Education & Teaching",
+      "Fine Arts & Performing Arts",
+      "Design, Fashion & Creative Arts",
+      "Public Administration & Governance",
+      "Hotel Management, Tourism & Hospitality",
     ],
   },
   {
     title: "NEW-AGE PROGRAMS",
     icon: Settings,
     iconColor: "text-blue-600",
-    image:
-      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
+    image: "/images/career-guidance/newage.jpeg",
     options: [
       "Cybersecurity",
       "UI/UX Design & Development",
@@ -115,7 +134,7 @@ const ExploreCareerOptions = () => {
                     </h3>
                   </div>
 
-                  <ul className="space-y-3 mb-6 flex-grow">
+                  <ul className="space-y-3 flex-grow">
                     {stream.options.map((option, idx) => (
                       <li key={idx} className="flex items-start gap-2">
                         <ChevronRight
@@ -128,14 +147,6 @@ const ExploreCareerOptions = () => {
                       </li>
                     ))}
                   </ul>
-
-                  <Link
-                    href="#"
-                    className="inline-flex items-center text-[#f97316] font-medium hover:text-orange-600 transition-colors mt-auto text-sm"
-                  >
-                    Explore More
-                    <ChevronRight size={16} className="ml-1" />
-                  </Link>
                 </div>
               </div>
             );

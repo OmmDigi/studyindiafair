@@ -112,7 +112,7 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
             <div className="flex flex-col justify-around  bg-blue-50/50 border border-blue-100 rounded-sm p-3 text-center hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm text-blue-600">
+              <div className="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm text-orange-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="52"
@@ -170,7 +170,7 @@ export default function AboutPage() {
             </div>
 
             <div className="flex flex-col justify-around bg-blue-50/50 border border-blue-100 rounded-sm p-3 text-center hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-6 text-blue-600">
+              <div className="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-6 text-orange-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="32"
@@ -207,7 +207,7 @@ export default function AboutPage() {
             </div>
 
             <div className="flex flex-col justify-around bg-indigo-50/50 border border-indigo-100 rounded-sm p-3 text-center hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-6 text-indigo-600">
+              <div className="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-6 text-orange-500">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="32"
@@ -246,7 +246,7 @@ export default function AboutPage() {
           {/* Background Map Placeholder */}
           <div className="hidden md:flex absolute right-0 md:right-10 top-50 md:top-25  bottom-0 w-full lg:w-3/4 opacity-100 pointer-events-none z-0">
             <Image
-              src="/images/about/map.png"
+              src="/images/world.png"
               alt="Global Map"
               fill
               className="object-contain object-right"

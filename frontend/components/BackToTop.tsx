@@ -33,7 +33,7 @@ export default function BackToTop() {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-24 right-6 z-40 p-2 rounded-full shadow-lg bg-white backdrop-blur-sm border border-gray-200 hover:scale-110 hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+          className="fixed bottom-20 md:bottom-20 right-6 z-40 p-1 rounded-full shadow-lg bg-white backdrop-blur-sm border border-gray-200 hover:scale-110 hover:shadow-xl transition-all duration-300 flex items-center justify-center"
           aria-label="Back to top"
         >
           <Image
@@ -41,7 +41,7 @@ export default function BackToTop() {
             alt="Back to top"
             width={40}
             height={40}
-            className="w-10 h-10 object-contain"
+            className="w-8 h-8  md:w-6 md:h-6 object-contain"
           />
         </button>
       )}

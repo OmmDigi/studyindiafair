@@ -1,12 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 import { useUpcomingEvents } from "@/hooks/api";
 
 export default function VisitorsRegistrationPage() {
+  const router = useRouter();
   const { data: events, isLoading } = useUpcomingEvents();
   const displayEvents = Array.isArray(events) ? events : events?.data || [];
+
+  const handleClose = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (typeof window !== "undefined" && window.history.length > 1) {
+          router.back();
+        } else {
+          router.push("/");
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [router]);
 
   return (
     <div className="min-h-screen relative flex bg-[#F9FBFC] overflow-hidden">
@@ -20,6 +46,17 @@ export default function VisitorsRegistrationPage() {
         {/* Gradient overlay creating the creamy area on the left */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#F9FBFC] via-[#F9FBFC]/95 to-transparent w-full md:w-[70%] lg:w-[60%]"></div>
       </div>
+
+      {/* Cross / Close Button */}
+      <Link
+        href="/"
+        onClick={handleClose}
+        aria-label="Close"
+        title="Close"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white text-gray-700 hover:text-red-600 shadow-md hover:shadow-xl border border-gray-200/80 backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 group"
+      >
+        <X className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:rotate-90" />
+      </Link>
 
       {/* Left Content Area */}
       <div className="relative z-10 w-full md:w-[70%] lg:w-[60%] p-8 md:px-12 lg:px-24 flex flex-col justify-center min-h-screen">

@@ -3,17 +3,32 @@ import Image from "next/image";
 
 const HeroSection = () => {
   return (
-    <section className="relative w-full h-[500px] md:h-[600px] bg-slate-50 flex items-center overflow-hidden">
+    <section className="relative w-full h-[450px] md:h-[500px] bg-slate-20 flex items-center overflow-hidden">
       {/* Background Image - Students and India Gate */}
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/images/career-guidance/1.jpeg"
-          alt="Career Guidance Students"
-          fill
-          className="object-cover object-[75%_center] md:object-right lg:object-right"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent md:from-white md:via-white/70 md:to-transparent z-10" />
+        {/* Mobile Background */}
+        <div className="block md:hidden absolute inset-0">
+          <Image
+            src="/images/career-guidance/careerguide.jpeg"
+            alt="Career Guidance Students"
+            fill
+            className="object-cover object-[center_top]"
+            priority
+          />
+          <div className="absolute inset-0 bg-white/30" />
+        </div>
+
+        {/* Desktop / Tablet Background */}
+        <div className="hidden md:block absolute inset-0">
+          <Image
+            src="/images/career-guidance/1.jpeg"
+            alt="Career Guidance Students"
+            fill
+            className="object-cover object-right"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r   md:from-white/20 md:via-white/30 md:to-transparent" />
+        </div>
       </div>
 
       <div className="container mx-auto px-4 md:px-8 relative z-20">
@@ -23,15 +38,17 @@ const HeroSection = () => {
             <span className="block">the path seems clear.</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-700 font-medium mb-6">
-            But once school ends, one big question <br className="hidden md:block"/>takes centre stage:
+            But once school ends, one big question{" "}
+            <br className="hidden md:block" />
+            takes centre stage:
           </p>
-          <div className="text-6xl md:text-8xl font-black mb-6 flex items-baseline">
+          <div className="text-4xl md:text-6xl font-bold mb-6 flex items-baseline">
             <span className="text-[#1e3a8a]">WHAT</span>
             <span className="text-[#f97316] ml-2">NEXT?</span>
           </div>
-          <p className="text-gray-600 text-lg md:text-xl max-w-md">
+          <div className="text-secondary text-lg md:text-xl font-bold max-w-md">
             Explore. Discover. Get the right guidance for a brighter tomorrow.
-          </p>
+          </div>
         </div>
       </div>
     </section>

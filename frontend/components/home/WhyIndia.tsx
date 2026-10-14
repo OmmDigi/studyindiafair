@@ -169,7 +169,7 @@ export default function WhyIndia() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 aspect-square bg-orange-100/60 rounded-full blur-3xl -z-10"></div>
 
             <img
-              src="/images/home/imdiamap.png"
+              src="/images/india.png"
               alt="Why India Map"
               className="w-full max-w-md lg:max-w-lg h-auto object-contain drop-shadow-2xl hover:scale-[1.02] transition-transform duration-700"
             />
@@ -208,7 +208,7 @@ export default function WhyIndia() {
                   <div className="transform group-hover:scale-112 transition-transform duration-300 w-full h-full flex items-center justify-center">
                     {feature.icon}
                   </div>
-                  <h4 className="text-[9px] md:text-[10px] font-bold text-secondary text-center leading-tight mb-4 px-1">
+                  <h4 className="text-[12px] md:text-[14px] font-bold text-secondary text-center leading-tight mb-4 px-1">
                     {feature.title}
                   </h4>
 

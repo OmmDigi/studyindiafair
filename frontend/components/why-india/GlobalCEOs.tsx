@@ -16,7 +16,7 @@ const ceos = [
   },
   {
     name: "Sundar Pichai",
-    role: "CEO of Google",
+    role: "CEO of Google & Alphabet",
     image: "/images/why-india/why-india-img3.png",
     logo: "/images/why-india/google_logo.svg",
   },
@@ -37,6 +37,12 @@ const ceos = [
     role: "CEO of IBM",
     image: "/images/why-india/why-india-img6.png",
     logo: "/images/why-india/IBM_logo_in.svg",
+  },
+  {
+    name: "Kunal Shah",
+    role: "CEO of YouTube",
+    image: "/images/why-india/Kunal Shah.webp",
+    logo: "/images/why-india/youtube-logo-png-46016-1.png",
   },
 ];
 

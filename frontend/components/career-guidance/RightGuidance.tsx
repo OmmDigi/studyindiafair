@@ -1,38 +1,40 @@
 import React from "react";
-import { Search, Lightbulb, MapPin, Users, Building2, GraduationCap, CheckSquare, TrendingUp } from "lucide-react";
+import Image from "next/image";
 
 const guidanceSteps = [
   {
     title: "Research your path",
-    icon: Search,
+    image: "/images/career-guidance/RightGuidance/Research your path.jpeg",
   },
   {
-    title: "Understand your choices",
-    icon: Lightbulb,
+    title: "Understand your career choices",
+    image:
+      "/images/career-guidance/RightGuidance/Understand your career choices.jpeg",
   },
   {
-    title: "Map your career choice",
-    icon: MapPin,
+    title: "Take one on one career counselling",
+    image:
+      "/images/career-guidance/RightGuidance/Take one on one career counselling.jpeg",
   },
   {
-    title: "Take one to one counselling",
-    icon: Users,
+    title: "Get your college insights",
+    image:
+      "/images/career-guidance/RightGuidance/Get your college insights.jpeg",
   },
   {
-    title: "Get college insights",
-    icon: Building2,
+    title: "Research well to avail scholarships",
+    image:
+      "/images/career-guidance/RightGuidance/Research well to avail scholarships.jpeg",
   },
   {
-    title: "Avail scholarship facilities",
-    icon: GraduationCap,
+    title: "Make informed decisions",
+    image:
+      "/images/career-guidance/RightGuidance/Make informed decisions.jpeg",
   },
   {
-    title: "Make informed decision",
-    icon: CheckSquare,
-  },
-  {
-    title: "Move ahead with clarity & confidence",
-    icon: TrendingUp,
+    title: "Move forward with clarity & confidence",
+    image:
+      "/images/career-guidance/RightGuidance/Move forward with clarity & confidence.jpeg",
   },
 ];
 
@@ -54,18 +56,22 @@ const RightGuidance = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
           {guidanceSteps.map((step, index) => {
-            const Icon = step.icon;
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-shadow flex flex-col items-center justify-center text-center aspect-square"
+                className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col items-center justify-between text-center group hover:-translate-y-1"
               >
-                <div className="mb-4 text-[#1e3a8a]">
-                  <Icon size={32} strokeWidth={1.5} />
+                <div className="relative w-20 h-20 md:w-24 md:h-24 mb-3 rounded-full overflow-hidden shrink-0">
+                  <Image
+                    src={step.image}
+                    alt={step.title}
+                    fill
+                    className="object-contain group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
-                <h3 className="font-semibold text-xs md:text-sm text-[#1e3a8a] leading-tight">
+                <h3 className="font-semibold text-xs md:text-sm text-[#1e3a8a] leading-snug">
                   {step.title}
                 </h3>
               </div>

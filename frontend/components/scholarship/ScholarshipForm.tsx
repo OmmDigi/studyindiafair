@@ -34,11 +34,13 @@ export default function ScholarshipForm() {
         console.error(error);
         alert("Failed to submit. Please try again.");
       },
-    }
+    },
   );
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value, type } = e.target as HTMLInputElement;
     const checked = (e.target as HTMLInputElement).checked;
@@ -61,15 +63,17 @@ export default function ScholarshipForm() {
   };
 
   return (
-    <div 
-      className="rounded-2xl p-8 shadow-xl border border-gray-100 mb-16 max-w-4xl mx-auto relative z-20 -mt-24 md:-mt-32 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/images/scholarship/scholershipform.jpeg')" }}
+    <div
+      className="rounded-2xl px-6 shadow-xl border border-gray-100 mb-6 max-w-4xl mx-auto relative z-20 -mt-16 md:-mt-32 bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: "url('/images/scholarship/scholershipform.jpeg')",
+      }}
     >
       <h3 className="text-3xl font-bold text-[#001c44] mb-8 text-center">
         Scholarship Enquiry
       </h3>
       <form onSubmit={handleSubmit} className="space-y-6 text-black">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-semibold text-[#001c44] mb-2">
               Full Name <span className="text-red-500">*</span>
@@ -263,7 +267,8 @@ export default function ScholarshipForm() {
             className="mt-1 w-4 h-4 text-[#f15a24] border-gray-300 rounded focus:ring-[#f15a24]"
           />
           <label htmlFor="agree" className="text-sm text-gray-600">
-            I agree to be contacted about scholarship opportunities and other relevant updates.
+            I agree to be contacted about scholarship opportunities and other
+            relevant updates.
           </label>
         </div>
 
@@ -271,11 +276,18 @@ export default function ScholarshipForm() {
         <div className="flex justify-center md:justify-start">
           <div className="border border-gray-200 rounded p-2 flex items-center justify-between w-64 bg-gray-50">
             <div className="flex items-center gap-2">
-              <input type="checkbox" className="w-6 h-6 border-gray-300 rounded" />
+              <input
+                type="checkbox"
+                className="w-6 h-6 border-gray-300 rounded"
+              />
               <span className="text-sm">I'm not a robot</span>
             </div>
             <div className="flex flex-col items-center">
-              <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" className="w-8" />
+              <img
+                src="https://www.gstatic.com/recaptcha/api2/logo_48.png"
+                alt="reCAPTCHA"
+                className="w-8"
+              />
               <span className="text-[10px] text-gray-500">reCAPTCHA</span>
               <span className="text-[8px] text-gray-500">Privacy - Terms</span>
             </div>
@@ -296,4 +308,3 @@ export default function ScholarshipForm() {
     </div>
   );
 }
-
