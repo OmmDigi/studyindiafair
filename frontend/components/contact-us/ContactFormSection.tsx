@@ -206,7 +206,7 @@ export default function ContactFormSection({
                     <h3 className="text-sm sm:text-base font-bold text-[#0b1d42] mb-1.5">
                       Email Us
                     </h3>
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       {siteSettings?.emails?.length > 0 ? (
                         siteSettings.emails.map((item: any, idx: number) => {
                           const emailAddr = item.email || item.label || "";
@@ -214,25 +214,28 @@ export default function ContactFormSection({
                             <a
                               key={idx}
                               href={`mailto:${emailAddr}`}
-                              className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all block"
+                              className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all flex items-center gap-1.5"
                             >
-                              {emailAddr}
+                              <Mail className="w-3.5 h-3.5 text-[#ff6929] shrink-0" />
+                              <span>{emailAddr}</span>
                             </a>
                           );
                         })
                       ) : (
                         <a
                           href="mailto:info@studyindiafair.com"
-                          className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all block"
+                          className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all flex items-center gap-1.5"
                         >
-                          info@studyindiafair.com
+                          <Mail className="w-3.5 h-3.5 text-[#ff6929] shrink-0" />
+                          <span>info@studyindiafair.com</span>
                         </a>
                       )}
                       <a
                         href="mailto:info@sapeevents.com"
-                        className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all block"
+                        className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all flex items-center gap-1.5"
                       >
-                        info@sapeevents.com
+                        <Mail className="w-3.5 h-3.5 text-[#ff6929] shrink-0" />
+                        <span>info@sapeevents.com</span>
                       </a>
                     </div>
                   </div>
@@ -329,6 +332,19 @@ export default function ContactFormSection({
                         )}
                       </a>
                     ))}
+                    {/* Static Email Icon */}
+                    <a
+                      href="mailto:info@sapeevents.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => {
+                        window.location.href = "mailto:info@sapeevents.com";
+                      }}
+                      title="Email: info@sapeevents.com"
+                      className="w-8 h-8 rounded-full bg-slate-100 hover:bg-[#ea4335] flex items-center justify-center transition-all p-1.5 shadow-sm group cursor-pointer"
+                    >
+                      <Mail className="w-4 h-4 text-gray-700 group-hover:text-white transition-colors" />
+                    </a>
                   </div>
                 </div>
               )}

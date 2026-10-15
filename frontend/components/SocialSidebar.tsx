@@ -134,11 +134,7 @@ export default function SocialSidebar() {
   return (
     <div
       ref={sidebarRef}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
-      className={`fixed z-50 flex flex-col gap-0 shadow-xl touch-none select-none cursor-grab active:cursor-grabbing ${
+      className={`fixed z-50 flex flex-col gap-0 shadow-xl ${
         side === "left" ? "left-0" : "right-0"
       }`}
       style={{
@@ -150,12 +146,16 @@ export default function SocialSidebar() {
         willChange: "transform, top",
       }}
     >
-      {/* Drag handle hint */}
+      {/* Drag handle */}
       <div
-        className="flex items-center justify-center py-1 bg-black/40 text-white/80 cursor-grab active:cursor-grabbing hover:bg-black/60 transition-colors"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        className="flex items-center justify-center py-1.5 bg-black/60 text-white cursor-grab active:cursor-grabbing hover:bg-black/80 transition-colors touch-none select-none"
         title="Drag to reposition (left/right or up/down)"
       >
-        <div className="w-3.5 h-1 bg-white/70 rounded-full" />
+        <div className="w-4 h-1 bg-white/80 rounded-full" />
       </div>
 
       {settings.social_links.map((link: any, index: number) => (
@@ -164,11 +164,6 @@ export default function SocialSidebar() {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={(e) => {
-            if (dragStartRef.current.moved) {
-              e.preventDefault();
-            }
-          }}
           className="p-1.5 md:p-1 md:hover:w-10 transition-all duration-300 w-8 md:w-7 flex justify-center items-center group border-b border-white/10"
           style={{ backgroundColor: getBrandColor(link.name) }}
           title={link.name}
@@ -185,11 +180,6 @@ export default function SocialSidebar() {
       {/* Static Email Contact */}
       <a
         href="mailto:info@sapeevents.com"
-        onClick={(e) => {
-          if (dragStartRef.current.moved) {
-            e.preventDefault();
-          }
-        }}
         className="p-1.5 md:p-1 md:hover:w-10 transition-all duration-300 w-8 md:w-7 flex justify-center items-center group border-b border-white/10 last:border-b-0 bg-[#ea4335] hover:bg-[#d93025]"
         title="Email us at info@sapeevents.com"
       >
