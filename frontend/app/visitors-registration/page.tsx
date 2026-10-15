@@ -36,9 +36,18 @@ export default function VisitorsRegistrationPage() {
 
   return (
     <div className="min-h-screen relative flex bg-[#F9FBFC] overflow-hidden">
-      {/* Background Image covering full width */}
+      {/* Background Image: Mobile uses /images/visitor.jpeg, Desktop uses /images/home/VisitorsRegistrationPage.jpeg */}
       <div
-        className="absolute inset-0 bg-cover bg-right"
+        className="md:hidden absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url('/images/visitor.jpeg')`,
+        }}
+      >
+        <div className="absolute inset-0 bg-[#F9FBFC]/50"></div>
+      </div>
+
+      <div
+        className="hidden md:block absolute inset-0 bg-cover bg-right"
         style={{
           backgroundImage: `url('/images/home/VisitorsRegistrationPage.jpeg')`,
         }}

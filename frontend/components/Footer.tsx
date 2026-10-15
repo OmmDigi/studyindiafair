@@ -112,23 +112,28 @@ const Footer = () => {
             <h4 className="text-sm font-bold mb-4 text-white">Get in Touch</h4>
 
             {siteSettings?.emails?.length > 0 ? (
-              <div className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
-                <svg
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  className="text-white"
-                >
-                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                </svg>
-                <a
-                  href={`mailto:${siteSettings.emails[0].email}`}
-                  className="hover:text-white transition-colors"
-                >
-                  {siteSettings.emails[0].email}
-                </a>
-              </div>
+              siteSettings.emails.map((item: any, idx: number) => {
+                const mail = item.email || item.label || "";
+                return (
+                  <div key={idx} className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      className="text-white shrink-0"
+                    >
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    <a
+                      href={`mailto:${mail}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {mail}
+                    </a>
+                  </div>
+                );
+              })
             ) : (
               <div className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
                 <svg
@@ -136,7 +141,7 @@ const Footer = () => {
                   height="16"
                   fill="currentColor"
                   viewBox="0 0 24 24"
-                  className="text-white"
+                  className="text-white shrink-0"
                 >
                   <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                 </svg>
@@ -148,6 +153,25 @@ const Footer = () => {
                 </a>
               </div>
             )}
+
+            {/* Additional Static Email */}
+            <div className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
+              <svg
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                className="text-white shrink-0"
+              >
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+              </svg>
+              <a
+                href="mailto:info@sapeevents.com"
+                className="hover:text-white transition-colors"
+              >
+                info@sapeevents.com
+              </a>
+            </div>
 
             <div className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
               <svg

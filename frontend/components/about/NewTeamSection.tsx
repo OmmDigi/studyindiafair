@@ -36,7 +36,7 @@ export default function NewTeamSection() {
                 className="flex flex-col items-center cursor-pointer group"
                 onClick={() => setSelectedMember(member)}
               >
-                <div className="w-25 h-35 md:w-48 md:h-70 rounded-sm overflow-hidden border-2 border-transparent  transition-all shadow-md mb-3 bg-gray-100">
+                <div className="w-30 h-40 md:w-48 md:h-70 rounded-sm overflow-hidden border-2 border-transparent  transition-all shadow-md mb-3 bg-gray-100">
                   <img
                     src={
                       member.image_path

@@ -222,12 +222,18 @@ export default function ContactFormSection({
                         })
                       ) : (
                         <a
-                          href="mailto:demo@gmail.com"
+                          href="mailto:info@studyindiafair.com"
                           className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all block"
                         >
-                          demo@gmail.com
+                          info@studyindiafair.com
                         </a>
                       )}
+                      <a
+                        href="mailto:info@sapeevents.com"
+                        className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all block"
+                      >
+                        info@sapeevents.com
+                      </a>
                     </div>
                   </div>
                 </div>

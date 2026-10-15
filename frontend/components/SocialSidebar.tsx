@@ -169,7 +169,7 @@ export default function SocialSidebar() {
               e.preventDefault();
             }
           }}
-          className="p-1.5 md:p-1 md:hover:w-10 transition-all duration-300 w-8 md:w-7 flex justify-center items-center group border-b border-white/10 last:border-b-0"
+          className="p-1.5 md:p-1 md:hover:w-10 transition-all duration-300 w-8 md:w-7 flex justify-center items-center group border-b border-white/10"
           style={{ backgroundColor: getBrandColor(link.name) }}
           title={link.name}
         >
@@ -181,6 +181,32 @@ export default function SocialSidebar() {
           />
         </a>
       ))}
+
+      {/* Static Email Contact */}
+      <a
+        href="mailto:info@sapeevents.com"
+        onClick={(e) => {
+          if (dragStartRef.current.moved) {
+            e.preventDefault();
+          }
+        }}
+        className="p-1.5 md:p-1 md:hover:w-10 transition-all duration-300 w-8 md:w-7 flex justify-center items-center group border-b border-white/10 last:border-b-0 bg-[#ea4335] hover:bg-[#d93025]"
+        title="Email us at info@sapeevents.com"
+      >
+        <svg
+          className="w-4 h-4 md:w-4 md:h-4 text-white pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
+        </svg>
+      </a>
     </div>
   );
 }

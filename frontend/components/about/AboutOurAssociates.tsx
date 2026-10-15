@@ -3,27 +3,18 @@
 import React, { useEffect, useRef } from "react";
 
 const AboutOurAssociates = () => {
-  const associates = [
-    "associates7.png",
-    "associates6.png",
-    "associates5.png",
-    "associates4.png",
-    "associates3.png",
-    "associates2.png",
-    "associates1.png",
-    "p1.png",
-    "p2.png",
-    "p3.png",
-    "p4.png",
-    "p5.png",
-    "p6.png",
-    "p7.png",
-    "p8.png",
-    "p9.png",
-    "p10.png",
-    "p11.png",
-    "p12.png",
-    "p13.png",
+  const eventImages = [
+    "WhatsApp Image 2026-10-15 at 3.39.44 PM.jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.45 PM (1).jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.45 PM.jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.46 PM (1).jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.46 PM (2).jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.46 PM (3).jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.46 PM.jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.47 PM (1).jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.47 PM (2).jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.47 PM (3).jpeg",
+    "WhatsApp Image 2026-10-15 at 3.39.47 PM.jpeg",
   ];
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -100,17 +91,17 @@ const AboutOurAssociates = () => {
               className="flex overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              <div className="flex gap-2 w-max py-2">
-                {[...associates, ...associates].map((logo, index) => (
+              <div className="flex gap-3 w-max py-2">
+                {[...eventImages, ...eventImages].map((img, index) => (
                   <div
                     key={index}
-                    className="w-30 h-20 md:w-50 md:h-30 flex-shrink-0 flex items-center justify-center p-0 md:p-0 bg-white rounded-sm shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
+                    className="w-44 h-28 md:w-60 md:h-36 flex-shrink-0 flex items-center justify-center overflow-hidden bg-white rounded-md shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={`/images/home/${logo}`}
-                      alt={`Associate ${index + 1}`}
-                      className="max-w-full max-h-full object-contain transition-all duration-500"
+                      src={`/images/about/events/${img}`}
+                      alt={`Event ${index + 1}`}
+                      className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                       draggable="false"
                     />
                   </div>

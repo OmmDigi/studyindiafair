@@ -147,12 +147,10 @@ export default function EventDetailsPage() {
   };
 
   const apiLogos = event?.university_logos || [];
-  const baseLogos =
+  const logos =
     apiLogos.length > 0
       ? apiLogos
       : Array(12).fill({ path: "/images/common/Study-in-India-fair-logo.png" });
-
-  const logos = baseLogos.slice(0, 12); // Show up to 12 logos in grid
 
   if (isLoading) {
     return (
@@ -223,22 +221,22 @@ export default function EventDetailsPage() {
         </div>
 
         {/* Banner Content */}
-        <div className="container mx-auto px-4 lg:px-8 max-w-7xl h-full flex flex-col justify-center relative z-10">
+        <div className="container mx-auto px-4 lg:px-8 max-w-7xl h-full flex flex-col justify-start md:justify-center relative z-10">
           <div className="max-w-3xl mt-4">
-            <p className="text-sm md:text-base font-semibold tracking-wider uppercase text-gray-700 mb-1">
+            {/* <p className="text-sm md:text-base font-semibold tracking-wider uppercase text-gray-700 mb-1">
               STUDY IN INDIA EDUCATION FAIR
-            </p>
+            </p> */}
             <h1 className="text-6xl md:text-[5.5rem] leading-none   font-bold mb-3 uppercase text-[#002B5B]">
               {event.name}
             </h1>
-            <p className="text-lg md:text-xl font-medium tracking-wide uppercase text-[#004B87] mb-10">
+            {/* <p className="text-lg md:text-xl font-medium tracking-wide uppercase text-[#004B87] mb-10">
               DISCOVER YOUR HIGHER EDUCATION OPPORTUNITIES IN INDIA
-            </p>
+            </p> */}
 
             {/* Schedule Info (Inline) */}
             <div className="flex flex-wrap gap-2 md:gap-2 items-end text-sm md:text-base">
               <div className="flex items-center gap-3">
-                <CalendarDaysIcon className="w-10 h-10 text-[#f96d2b]" />
+                <CalendarDaysIcon className=" w-8 h-8 md:w-10 md:h-10 text-[#f96d2b]" />
                 <div className="leading-tight">
                   <div className="font-bold text-[#002B5B] whitespace-pre-wrap">
                     {displayDate}
@@ -246,7 +244,7 @@ export default function EventDetailsPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <MapPinIcon className="w-10 h-10 text-[#f96d2b]" />
+                <MapPinIcon className="w-8 h-8 md:w-10 md:h-10 text-[#f96d2b]" />
                 <div className="leading-tight">
                   <div className="font-bold text-[#002B5B] whitespace-pre-wrap">
                     {displayLocation}
@@ -389,8 +387,8 @@ export default function EventDetailsPage() {
                 className="flex overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
                 style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
-                <div className="flex gap-4 w-max py-2">
-                  {[...logos, ...logos, ...logos].map(
+                <div className="grid grid-rows-1 md:grid-rows-2 grid-flow-col gap-4 w-max py-2">
+                  {[...logos, ...logos, ...logos, ...logos].map(
                     (logoItem: any, index: number) => {
                       const imageSrc =
                         logoItem.path && !logoItem.path.startsWith("/images")
@@ -400,7 +398,7 @@ export default function EventDetailsPage() {
                       return (
                         <div
                           key={index}
-                          className="w-40 h-24 flex-shrink-0 bg-white border border-gray-200 rounded-md p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
+                          className="w-36 md:w-44 h-20 md:h-24 flex-shrink-0 bg-white border border-gray-200 rounded-md p-3 md:p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
                         >
                           <img
                             src={imageSrc}

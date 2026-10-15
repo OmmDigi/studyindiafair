@@ -83,10 +83,15 @@ export default function Header() {
                 .animate-scroll-up:hover {
                   animation-play-state: paused;
                 }
-                /* Hide any accordion borders or padding that EditorJsDescription might render */
-                .marquee-notice .border-t { border: none !important; }
+                /* Hide any borders or lines that EditorJsDescription or child elements might render */
+                .marquee-notice .border-t,
+                .marquee-notice .border-b,
+                .marquee-notice [class*="border"] { border: none !important; }
+                .marquee-notice hr { display: none !important; }
                 .marquee-notice .mt-2 { margin-top: 0 !important; }
-                .marquee-notice .py-4 { padding-top: 0 !important; padding-bottom: 0 !important; }
+                .marquee-notice .py-4,
+                .marquee-notice .py-1 { padding-top: 0 !important; padding-bottom: 0 !important; }
+                .marquee-notice button { display: none !important; }
                 
                 /* Force text color for EditorJsDescription contents */
                 .marquee-text-white .marquee-notice * { color: white !important; }
