@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useSubmitEnquiry, useSiteSettings } from "@/hooks/api";
 import { useRouter } from "next/navigation";
+import Counter from "@/components/Counter";
 
 interface ContactFormSectionProps {
   customIcons?: {
@@ -261,7 +262,7 @@ export default function ContactFormSection({
                   </div>
                   <div>
                     <div className="text-2xl sm:text-3xl font-extrabold text-[#0b1d42] leading-none">
-                      750,000+
+                      <Counter end={750000} suffix="+" />
                     </div>
                     <p className="text-xs sm:text-sm font-medium text-gray-600 mt-1">
                       Students
@@ -284,7 +285,7 @@ export default function ContactFormSection({
                   </div>
                   <div>
                     <div className="text-2xl sm:text-3xl font-extrabold text-[#0b1d42] leading-none">
-                      650+
+                      <Counter end={650} suffix="+" />
                     </div>
                     <p className="text-xs sm:text-sm font-medium text-gray-600 mt-1">
                       Partner Institutions

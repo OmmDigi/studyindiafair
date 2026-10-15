@@ -43,10 +43,16 @@ const ceos = [
     logo: "/images/why-india/IBM_logo_in.svg",
   },
   {
-    name: "Kunal Shah",
+    name: "Neal Mohan",
     role: "CEO of YouTube",
-    image: "/images/why-india/Kunal Shah.webp",
+    image: "/images/why-india/twg-content-original-images-neal-mohan-2x.png",
     logo: "/images/why-india/youtube-logo-png-46016-1.png",
+  },
+  {
+    name: "Kunal Shah",
+    role: "Global Head of WhatsApp",
+    image: "/images/why-india/Kunal Shah.webp",
+    logo: "/images/why-india/WhatsApp_Logo_green.svg.webp",
   },
 ];
 
@@ -86,34 +92,90 @@ export default function TopGlobalCEOsModal({
         </button>
         <div className="w-full h-full overflow-y-auto custom-scrollbar p-2">
           <section className="common-section p-0">
-            <div data-elementor-type="wp-page" data-elementor-id="2703" className="elementor elementor-2703">
-              <div className="elementor-element elementor-element-75bfa90 e-con-full e-flex e-con e-parent e-lazyloaded" data-id="75bfa90" data-element_type="container" data-e-type="container">
-                <div className="elementor-element elementor-element-a7c87f6 elementor-widget elementor-widget-heading" data-id="a7c87f6" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+            <div
+              data-elementor-type="wp-page"
+              data-elementor-id="2703"
+              className="elementor elementor-2703"
+            >
+              <div
+                className="elementor-element elementor-element-75bfa90 e-con-full e-flex e-con e-parent e-lazyloaded"
+                data-id="75bfa90"
+                data-element_type="container"
+                data-e-type="container"
+              >
+                <div
+                  className="elementor-element elementor-element-a7c87f6 elementor-widget elementor-widget-heading"
+                  data-id="a7c87f6"
+                  data-element_type="widget"
+                  data-e-type="widget"
+                  data-widget_type="heading.default"
+                >
                   <div className="elementor-widget-container">
-                    <h1 className="elementor-heading-title elementor-size-default bg-[#003399] p-4 text-white rounded text-2xl font-bold mb-4">Top Global CEO's With Indian Degree</h1>
+                    <h1 className="elementor-heading-title elementor-size-default bg-[#003399] p-4 text-white rounded text-2xl font-bold mb-4">
+                      Top Global CEO's With Indian Degree
+                    </h1>
                   </div>
                 </div>
-                <div className="elementor-element elementor-element-9bfa8bb elementor-widget__width-initial elementor-widget elementor-widget-text-editor mb-8 bg-[#003399] p-4 rounded" data-id="9bfa8bb" data-element_type="widget" data-e-type="widget" data-widget_type="text-editor.default">
+                <div
+                  className="elementor-element elementor-element-9bfa8bb elementor-widget__width-initial elementor-widget elementor-widget-text-editor mb-8 bg-[#003399] p-4 rounded"
+                  data-id="9bfa8bb"
+                  data-element_type="widget"
+                  data-e-type="widget"
+                  data-widget_type="text-editor.default"
+                >
                   <div className="elementor-widget-container">
-                    <p className="text-white">Many top global CEOs hold Indian degrees, highlighting the country’s strong academic foundation and global impact in leadership.</p>
+                    <p className="text-white">
+                      Many top global CEOs hold Indian degrees, highlighting the
+                      country’s strong academic foundation and global impact in
+                      leadership.
+                    </p>
                   </div>
                 </div>
                 <div className="w-full flex justify-center mb-8 px-4">
-                  <img src="/images/home/globalceo.jpeg" alt="Global CEOs with Indian Degree" className="w-full h-auto rounded-lg shadow-md max-w-5xl" />
+                  <img
+                    src="/images/home/globalceo.jpeg"
+                    alt="Global CEOs with Indian Degree"
+                    className="w-full h-auto rounded-lg shadow-md max-w-5xl"
+                  />
                 </div>
               </div>
-              
-              <div className="elementor-element elementor-element-1d9b1fd e-flex e-con-boxed e-con e-parent e-lazyloaded" data-id="1d9b1fd" data-element_type="container" data-e-type="container">
+
+              <div
+                className="elementor-element elementor-element-1d9b1fd e-flex e-con-boxed e-con e-parent e-lazyloaded"
+                data-id="1d9b1fd"
+                data-element_type="container"
+                data-e-type="container"
+              >
                 <div className="e-con-inner">
-                  <div className="elementor-element elementor-element-df6604d elementor-widget elementor-widget-html" data-id="df6604d" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
+                  <div
+                    className="elementor-element elementor-element-df6604d elementor-widget elementor-widget-html"
+                    data-id="df6604d"
+                    data-element_type="widget"
+                    data-e-type="widget"
+                    data-widget_type="html.default"
+                  >
                     <div className="elementor-widget-container">
                       <section className="why-india p-4">
                         <div className="container mx-auto">
                           <div className="text-center mb-10">
-                            <h2 className="text-3xl font-bold text-secondary mb-6">Top Global CEO’s With Indian Degree</h2>
-                            <p className="text-gray-700 max-w-4xl mx-auto leading-relaxed">India’s education system has produced some of the world’s most influential business leaders — from the CEOs of Google and Microsoft to Mastercard and PepsiCo. Renowned for its strong foundation in analytical thinking, problem-solving, and leadership, Indian education combines academic excellence with real-world adaptability. It’s no surprise that nearly 30% of Fortune 500 CEOs have an Indian educational background — a testament to the country’s globally recognized learning standards and leadership-driven mindset.</p>
+                            <h2 className="text-3xl font-bold text-secondary mb-6">
+                              Top Global CEO’s With Indian Degree
+                            </h2>
+                            <p className="text-gray-700 max-w-4xl mx-auto leading-relaxed">
+                              India’s education system has produced some of the
+                              world’s most influential business leaders — from
+                              the CEOs of Google and Microsoft to Mastercard and
+                              PepsiCo. Renowned for its strong foundation in
+                              analytical thinking, problem-solving, and
+                              leadership, Indian education combines academic
+                              excellence with real-world adaptability. It’s no
+                              surprise that nearly 30% of Fortune 500 CEOs have
+                              an Indian educational background — a testament to
+                              the country’s globally recognized learning
+                              standards and leadership-driven mindset.
+                            </p>
                           </div>
-                          
+
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {ceos.map((ceo, index) => (
                               <div

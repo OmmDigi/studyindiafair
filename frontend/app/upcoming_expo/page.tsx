@@ -37,7 +37,7 @@ export default function UpcomingExpoPage() {
                 key={event.id || idx}
                 className="bg-white rounded-sm shadow-sm hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden flex flex-col group relative"
               >
-                <div className="h-56 w-full relative overflow-hidden">
+                <div className="w-full aspect-square relative overflow-hidden">
                   <img
                     src={
                       event.images?.[0]?.path

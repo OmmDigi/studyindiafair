@@ -39,10 +39,16 @@ const ceos = [
     logo: "/images/why-india/IBM_logo_in.svg",
   },
   {
-    name: "Kunal Shah",
+    name: "Neal Mohan",
     role: "CEO of YouTube",
-    image: "/images/why-india/Kunal Shah.webp",
+    image: "/images/why-india/twg-content-original-images-neal-mohan-2x.png",
     logo: "/images/why-india/youtube-logo-png-46016-1.png",
+  },
+  {
+    name: "Kunal Shah",
+    role: "Global Head of WhatsApp",
+    image: "/images/why-india/Kunal Shah.webp",
+    logo: "/images/why-india/WhatsApp_Logo_green.svg.webp",
   },
 ];
 
@@ -156,7 +162,7 @@ export default function GlobalCEOs() {
                     </div>
 
                     {/* Right side image cutout */}
-                    <div className="absolute right-0 bottom-0 w-[45%] h-[110%] flex items-end justify-end pointer-events-none transition-transform duration-300 group-hover:scale-105 origin-bottom">
+                    <div className="absolute right-0 bottom-0 w-[45%] h-full flex items-end justify-end pointer-events-none transition-transform duration-300 group-hover:scale-105 origin-bottom">
                       <img
                         src={ceo.image}
                         alt={ceo.name}

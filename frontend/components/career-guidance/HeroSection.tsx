@@ -46,7 +46,7 @@ const HeroSection = () => {
             <span className="text-[#1e3a8a]">WHAT</span>
             <span className="text-[#f97316] ml-2">NEXT?</span>
           </div>
-          <div className="text-secondary text-lg md:text-xl font-bold max-w-md">
+          <div className=" hidden md:block text-secondary text-lg md:text-xl font-bold max-w-md">
             Explore. Discover. Get the right guidance for a brighter tomorrow.
           </div>
         </div>

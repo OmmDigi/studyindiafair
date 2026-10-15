@@ -11,8 +11,6 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  console.log("events", events);
-
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
       const scrollAmount = 400;
@@ -126,9 +124,9 @@ const UpcomingEvents = ({ hideHeader = false }: { hideHeader?: boolean }) => {
                 onClick={() =>
                   router.push(`/upcoming_expo/${event.slug || ""}`)
                 }
-                className="min-w-[300px] w-[300px] md:min-w-[320px] md:w-[320px] bg-white rounded-sm shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex-shrink-0 snap-start flex flex-col relative group cursor-pointer"
+                className="min-w-[300px] w-[300px] md:min-w-[300px] md:w-[300px] bg-white rounded-sm shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex-shrink-0 snap-start flex flex-col relative group cursor-pointer"
               >
-                <div className="h-48 md:h-56 w-full relative overflow-hidden">
+                <div className="w-full aspect-square relative overflow-hidden">
                   <img
                     src={
                       event.images?.[0]?.path

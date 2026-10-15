@@ -55,6 +55,7 @@ export default function EventDetailsPage() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  console.log("event", event);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -188,20 +189,35 @@ export default function EventDetailsPage() {
           .filter(Boolean)
           .join(", ")
       : "Venue TBD";
-  const heroImage = event.images?.[0]?.path
+  const desktopBannerImage = event.banner_images?.[0]?.path
+    ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${event.banner_images[0].path}`
+    : event.images?.[0]?.path
+      ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${event.images[0].path}`
+      : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000";
+
+  const mobileHeroImage = event.images?.[0]?.path
     ? `${process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL || ""}${event.images[0].path}`
-    : "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000";
+    : desktopBannerImage;
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-800">
       {/* Hero Banner Section */}
       <div className="relative w-full h-[400px] md:h-[450px]">
-        {/* Background Image */}
+        {/* Background Image: Mobile uses event.images, Desktop (md+) uses event.banner_images */}
         <div
-          className="absolute inset-0 bg-cover bg-right"
-          style={{ backgroundImage: `url('${heroImage}')` }}
+          className="md:hidden absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('${mobileHeroImage}')` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-white/70 to-transparent w-full md:from-white md:via-white/70 md:to-transparent w-full md:w-4/5">
+          <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/80 to-transparent w-full">
+            {" "}
+          </div>
+        </div>
+
+        <div
+          className="hidden md:block absolute inset-0 bg-cover bg-right"
+          style={{ backgroundImage: `url('${desktopBannerImage}')` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r md:from-white md:via-white/70 md:to-transparent w-full md:w-4/5">
             {" "}
           </div>
         </div>
@@ -409,7 +425,7 @@ export default function EventDetailsPage() {
       </div>
 
       {/* Why Should You Attend */}
-      <section className="w-full py-12 bg-tertiary/70">
+      <section className="w-full py-12 bg-tertiary">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <div className="w-12 h-1 bg-[#f15a24] mx-auto mb-4"></div>

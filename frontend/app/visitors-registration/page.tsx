@@ -162,21 +162,21 @@ export default function VisitorsRegistrationPage() {
               Choose Your Country
             </h2>
             {isLoading ? (
-              <div className="flex gap-4 flex-wrap">
-                {[1, 2, 3, 4, 5].map((i) => (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div
                     key={i}
-                    className="h-12 w-32 bg-gray-200 animate-pulse rounded-lg"
+                    className="h-12 w-full bg-gray-200 animate-pulse rounded-sm"
                   ></div>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-wrap gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {displayEvents.map((event: any) => (
                   <Link
                     key={event.id || event.slug}
                     href={`/upcoming_expo/${event.slug || ""}`}
-                    className="px-6 py-3 border-1 border-secondary text-[#003399] rounded-sm hover:bg-secondary hover:text-white transition-all bg-white font-medium text-center shadow-sm hover:shadow-md min-w-[140px] uppercase"
+                    className="w-full px-4 py-3 border border-secondary text-[#003399] rounded-sm hover:bg-secondary hover:text-white transition-all bg-white font-medium text-center shadow-sm hover:shadow-md uppercase flex items-center justify-center text-sm md:text-base leading-snug"
                   >
                     {event.name || event.country || event.title}
                   </Link>
