@@ -90,13 +90,16 @@ export const reorderSchema = z.object({
     .refine((ids) => new Set(ids).size === ids.length, "Duplicate ids"),
 });
 
+const imageList = z
+  .array(image)
+  .max(10)
+  .refine((list) => new Set(list.map((i) => i.path)).size === list.length, "Duplicate images");
+
 const fields = {
   name: z.string().trim().min(2).max(120),
   slug,
-  images: z
-    .array(image)
-    .max(30)
-    .refine((list) => new Set(list.map((i) => i.path)).size === list.length, "Duplicate images"),
+  images: imageList,
+  banner_images: imageList,
   schedules: z.array(schedule).min(1, "Add at least one location and date").max(50),
   is_active: z.boolean(),
 };
@@ -104,6 +107,7 @@ const fields = {
 export const createEventSchema = z.object({
   ...fields,
   images: fields.images.default([]),
+  banner_images: fields.banner_images.default([]),
   is_active: fields.is_active.default(true),
 });
 

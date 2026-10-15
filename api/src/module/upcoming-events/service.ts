@@ -22,6 +22,7 @@ type Row = {
   name: string;
   slug: string;
   images: EventImage[];
+  banner_images: EventImage[];
   schedules: EventSchedule[];
   university_logos: EventLogo[];
   past_edition: PastEdition | null;
@@ -31,7 +32,7 @@ type Row = {
   updated_at: Date;
 };
 
-const SELECT = `SELECT e.id, e.page_id, p.name, p.slug, e.images, e.schedules, e.university_logos, e.past_edition, e.position, e.is_active, e.created_at, e.updated_at
+const SELECT = `SELECT e.id, e.page_id, p.name, p.slug, e.images, e.banner_images, e.schedules, e.university_logos, e.past_edition, e.position, e.is_active, e.created_at, e.updated_at
   FROM upcoming_events e JOIN pages p ON p.id = e.page_id`;
 const ORDER = "ORDER BY e.position ASC, e.id ASC";
 
@@ -88,15 +89,15 @@ export async function list({ search, is_active }: ListEventsQuery) {
 
 export async function listPublic() {
   const { rows } = await query<Row>(`${SELECT} WHERE e.is_active = TRUE ${ORDER}`);
-  return rows.map(({ id, name, slug, images, schedules }) => ({ id, name, slug, images, schedules }));
+  return rows.map(({ id, name, slug, images, banner_images, schedules }) => ({ id, name, slug, images, banner_images, schedules }));
 }
 
 export async function getPublic(slug: string) {
   const { rows } = await query<Row>(`${SELECT} WHERE p.slug = $1 AND e.is_active = TRUE`, [slug]);
   if (!rows[0]) throw new AppError(404, "Event not found");
-  const { id, name, images, schedules, university_logos, past_edition } = rows[0];
+  const { id, name, images, banner_images, schedules, university_logos, past_edition } = rows[0];
   const pastEdition = past_edition?.is_active ? past_edition : null;
-  return { id, name, slug, images, schedules, university_logos, past_edition: pastEdition };
+  return { id, name, slug, images, banner_images, schedules, university_logos, past_edition: pastEdition };
 }
 
 export async function getById(id: number) {
@@ -114,9 +115,16 @@ export async function create(input: CreateEventInput, actorId: number) {
         [input.name, slug, actorId]
       );
       const { rows } = await client.query<{ id: number }>(
-        `INSERT INTO upcoming_events (page_id, images, schedules, position, is_active, created_by, updated_by)
-         VALUES ($1, $2, $3, (SELECT COALESCE(MAX(position), 0) + 1 FROM upcoming_events), $4, $5, $5) RETURNING id`,
-        [page.rows[0].id, JSON.stringify(input.images), JSON.stringify(input.schedules), input.is_active, actorId]
+        `INSERT INTO upcoming_events (page_id, images, banner_images, schedules, position, is_active, created_by, updated_by)
+         VALUES ($1, $2, $3, $4, (SELECT COALESCE(MAX(position), 0) + 1 FROM upcoming_events), $5, $6, $6) RETURNING id`,
+        [
+          page.rows[0].id,
+          JSON.stringify(input.images),
+          JSON.stringify(input.banner_images),
+          JSON.stringify(input.schedules),
+          input.is_active,
+          actorId,
+        ]
       );
       return rows[0].id;
     })
@@ -130,6 +138,7 @@ export async function update(id: number, input: UpdateEventInput, actorId: numbe
     throw new AppError(403, "Only admins can change the slug");
   }
   const images = input.images ?? current.images;
+  const bannerImages = input.banner_images ?? current.banner_images;
   await run(() =>
     withTransaction(async (client) => {
       if (input.name !== undefined || input.slug !== undefined) {
@@ -141,12 +150,21 @@ export async function update(id: number, input: UpdateEventInput, actorId: numbe
         ]);
       }
       await client.query(
-        "UPDATE upcoming_events SET images = $2, schedules = $3, is_active = $4, updated_by = $5, updated_at = NOW() WHERE id = $1",
-        [id, JSON.stringify(images), JSON.stringify(input.schedules ?? current.schedules), input.is_active ?? current.is_active, actorId]
+        "UPDATE upcoming_events SET images = $2, banner_images = $3, schedules = $4, is_active = $5, updated_by = $6, updated_at = NOW() WHERE id = $1",
+        [
+          id,
+          JSON.stringify(images),
+          JSON.stringify(bannerImages),
+          JSON.stringify(input.schedules ?? current.schedules),
+          input.is_active ?? current.is_active,
+          actorId,
+        ]
       );
     })
   );
-  await Promise.all(removedImages(current.images, images).map(deleteUpload));
+  await Promise.all(
+    [...removedImages(current.images, images), ...removedImages(current.banner_images, bannerImages)].map(deleteUpload)
+  );
   return getById(id);
 }
 
@@ -196,7 +214,7 @@ export async function remove(id: number) {
     throw err;
   }
   await Promise.all([
-    ...current.images.map((i) => deleteUpload(i.path)),
+    ...[...current.images, ...current.banner_images].map((i) => deleteUpload(i.path)),
     deleteUpload(seo.rows[0]?.og_image_path),
     deleteUnusedLogos(current.university_logos.map((l) => l.path)),
     ...pastEditionUploads(current.past_edition).map(deleteUpload),

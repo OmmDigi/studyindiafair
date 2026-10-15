@@ -10,6 +10,7 @@ export type UpcomingEventPayload = {
   name: string
   slug?: string
   images: EventImage[]
+  banner_images: EventImage[]
   schedules: EventSchedule[]
   is_active: boolean
 }

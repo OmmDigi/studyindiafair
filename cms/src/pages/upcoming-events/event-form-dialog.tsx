@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ImagePlus, Loader2, Plus, Trash2, X } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { Plus, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -12,14 +12,13 @@ import { Switch } from '@/components/ui/switch'
 import { useAuth } from '@/context/auth-context'
 import { usePendingUploads } from '@/hooks/use-upload'
 import { getErrorMessage } from '@/lib/api'
-import { fileUrl, uploadFile } from '@/lib/upload'
 import { upcomingEventService } from '@/services/upcoming-event.service'
-import type { UpcomingEvent } from '@/types/upcoming-event'
+import type { EventImage, UpcomingEvent } from '@/types/upcoming-event'
+import { EventImagesField, MAX_IMAGES } from './event-images-field'
 
-const UPLOAD_FOLDER = 'upcoming-events'
-const ACCEPT = ['image/jpeg', 'image/png', 'image/webp']
-const MAX_SIZE_MB = 5
-const MAX_IMAGES = 30
+const imageList = z
+  .array(z.object({ path: z.string(), alt_text: z.string().max(250) }))
+  .max(MAX_IMAGES, `Up to ${MAX_IMAGES} images allowed`)
 
 const schema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(120),
@@ -28,19 +27,29 @@ const schema = z.object({
     .trim()
     .max(120)
     .regex(/^([a-z0-9]+(-[a-z0-9]+)*)?$/, 'Only lowercase letters, numbers and hyphens'),
-  images: z.array(z.object({ path: z.string(), alt_text: z.string().max(250) })).max(MAX_IMAGES),
+  images: imageList,
+  banner_images: imageList,
   schedules: z
     .array(
       z.object({
         location: z.string().trim().min(1, 'Location is required').max(200),
         date: z.string().trim().min(1, 'Date is required').max(120),
-      })
+      }),
     )
     .min(1, 'Add at least one location and date'),
   is_active: z.boolean(),
 })
 
-type FormValues = z.infer<typeof schema>
+export type FormValues = z.infer<typeof schema>
+
+const toField = (i: EventImage) => ({
+  path: i.path,
+  alt_text: i.alt_text ?? '',
+})
+const toPayload = (i: { path: string; alt_text: string }) => ({
+  path: i.path,
+  alt_text: i.alt_text.trim() || null,
+})
 
 type Props = {
   open: boolean
@@ -50,7 +59,6 @@ type Props = {
 }
 
 export function EventFormDialog({ open, event, onOpenChange, onSaved }: Props) {
-  const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(0)
   const pending = usePendingUploads()
   const { isAdmin } = useAuth()
@@ -66,40 +74,28 @@ export function EventFormDialog({ open, event, onOpenChange, onSaved }: Props) {
       ? {
           name: event.name,
           slug: event.slug,
-          images: event.images.map((i) => ({ path: i.path, alt_text: i.alt_text ?? '' })),
+          images: event.images.map(toField),
+          banner_images: (event.banner_images ?? []).map(toField),
           schedules: event.schedules,
           is_active: event.is_active,
         }
-      : { name: '', slug: '', images: [], schedules: [{ location: '', date: '' }], is_active: true },
+      : {
+          name: '',
+          slug: '',
+          images: [],
+          banner_images: [],
+          schedules: [{ location: '', date: '' }],
+          is_active: true,
+        },
   })
 
-  const images = useFieldArray({ control, name: 'images' })
   const schedules = useFieldArray({ control, name: 'schedules' })
-
-  const addImages = async (files: FileList | null) => {
-    const list = Array.from(files ?? [])
-    if (inputRef.current) inputRef.current.value = ''
-    if (!list.length) return
-    const room = MAX_IMAGES - images.fields.length
-    if (list.length > room) toast.error(`Only ${MAX_IMAGES} images allowed`)
-    const valid = list.slice(0, Math.max(room, 0)).filter((file) => {
-      if (!ACCEPT.includes(file.type)) toast.error(`${file.name}: unsupported type`)
-      else if (file.size > MAX_SIZE_MB * 1024 * 1024) toast.error(`${file.name}: larger than ${MAX_SIZE_MB}MB`)
-      else return true
-      return false
-    })
-    setUploading((n) => n + valid.length)
-    for (const file of valid) {
-      try {
-        const result = await uploadFile(file, UPLOAD_FOLDER)
-        pending.track(result.url)
-        images.append({ path: result.url, alt_text: '' })
-      } catch (error) {
-        toast.error(`${file.name}: ${getErrorMessage(error)}`)
-      } finally {
-        setUploading((n) => n - 1)
-      }
-    }
+  const imageFieldProps = {
+    control,
+    register,
+    errors,
+    onTrack: pending.track,
+    onUploadingChange: (delta: number) => setUploading((n) => n + delta),
   }
 
   const handleOpenChange = (next: boolean) => {
@@ -111,13 +107,17 @@ export function EventFormDialog({ open, event, onOpenChange, onSaved }: Props) {
     const payload = {
       ...values,
       slug: values.slug || undefined,
-      images: values.images.map((i) => ({ path: i.path, alt_text: i.alt_text.trim() || null })),
+      images: values.images.map(toPayload),
+      banner_images: values.banner_images.map(toPayload),
     }
     try {
       const saved = event
-        ? await upcomingEventService.update(event.id, { ...payload, slug: payload.slug ?? event.slug })
+        ? await upcomingEventService.update(event.id, {
+            ...payload,
+            slug: payload.slug ?? event.slug,
+          })
         : await upcomingEventService.create(payload)
-      pending.commit(saved.images.map((i) => i.path))
+      pending.commit([...saved.images, ...saved.banner_images].map((i) => i.path))
       toast.success(event ? 'Event updated' : 'Event created')
       onSaved()
       onOpenChange(false)
@@ -157,70 +157,37 @@ export function EventFormDialog({ open, event, onOpenChange, onSaved }: Props) {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>Images</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                disabled={images.fields.length >= MAX_IMAGES}
-                onClick={() => inputRef.current?.click()}
-              >
-                <ImagePlus /> Add Images
-              </Button>
-            </div>
-            <input
-              ref={inputRef}
-              type="file"
-              hidden
-              multiple
-              accept={ACCEPT.join(',')}
-              onChange={(e) => addImages(e.target.files)}
-            />
-            {images.fields.length || uploading ? (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {images.fields.map((field, i) => (
-                  <div key={field.id} className="space-y-1">
-                    <div className="relative aspect-square">
-                      <img src={fileUrl(field.path)!} alt="" className="size-full rounded-md border object-cover" />
-                      <Button
-                        type="button"
-                        size="icon-xs"
-                        variant="secondary"
-                        className="absolute -top-2 -right-2"
-                        title="Remove image"
-                        onClick={() => images.remove(i)}
-                      >
-                        <X />
-                      </Button>
-                    </div>
-                    <Input placeholder="Alt text" maxLength={250} {...register(`images.${i}.alt_text`)} />
-                  </div>
-                ))}
-                {Array.from({ length: uploading }, (_, i) => (
-                  <div
-                    key={`uploading-${i}`}
-                    className="flex aspect-square items-center justify-center rounded-md border border-dashed text-muted-foreground"
-                  >
-                    <Loader2 className="size-5 animate-spin" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                {ACCEPT.map((t) => t.split('/')[1].toUpperCase()).join(', ')}, max {MAX_SIZE_MB}MB each, up to{' '}
-                {MAX_IMAGES} images
-              </p>
-            )}
-          </div>
+          <EventImagesField
+            name="images"
+            label="Square Images (1:1)"
+            hint="Recommended 1000 × 1000 px, used on mobile"
+            aspect={1}
+            outputWidth={1200}
+            gridClassName="grid-cols-2 sm:grid-cols-5"
+            {...imageFieldProps}
+          />
+
+          <EventImagesField
+            name="banner_images"
+            label="Banner Images (12:5)"
+            hint="Recommended 1200 × 500 px, used on large screens"
+            aspect={12 / 5}
+            outputWidth={1920}
+            gridClassName="grid-cols-1 sm:grid-cols-2"
+            {...imageFieldProps}
+          />
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label>
                 Locations & Dates <span className="text-destructive">*</span>
               </Label>
-              <Button type="button" size="sm" variant="outline" onClick={() => schedules.append({ location: '', date: '' })}>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => schedules.append({ location: '', date: '' })}
+              >
                 <Plus /> Add Row
               </Button>
             </div>
@@ -258,7 +225,9 @@ export function EventFormDialog({ open, event, onOpenChange, onSaved }: Props) {
             <Controller
               control={control}
               name="is_active"
-              render={({ field }) => <Switch id="event-active" checked={field.value} onCheckedChange={field.onChange} />}
+              render={({ field }) => (
+                <Switch id="event-active" checked={field.value} onCheckedChange={field.onChange} />
+              )}
             />
           </div>
 
