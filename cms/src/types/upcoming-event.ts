@@ -36,6 +36,7 @@ export type UpcomingEvent = {
   name: string
   slug: string
   images: EventImage[]
+  banner_images: EventImage[]
   schedules: EventSchedule[]
   university_logos: EventLogo[]
   past_edition: PastEdition | null
