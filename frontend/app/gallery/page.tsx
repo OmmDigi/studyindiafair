@@ -96,26 +96,14 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Hero Section */}
-      <div
-        className="relative w-full py-3 md:py-6 bg-secondary flex items-center justify-center text-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=2000')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-secondary/80 backdrop-blur-sm"></div>
-        <div className="relative z-10 container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 uppercase tracking-widest drop-shadow-md">
-            Our Gallery
-          </h1>
-          <p className="text-lg text-gray-200 max-w-2xl mx-auto">
-            A glimpse into our past education fairs, connecting students with
-            their dream universities across the globe.
-          </p>
-        </div>
+      <div className="relative w-full overflow-hidden">
+        <img
+          src="/images/gallery/gallary.jpeg"
+          alt="Gallery Banner"
+          className="w-full h-auto object-cover max-h-[350px] md:max-h-[420px] lg:max-h-[480px]"
+        />
       </div>
+
 
       <div className="container mx-auto px-4 max-w-7xl mt-12">
         {/* Categories Tabs */}

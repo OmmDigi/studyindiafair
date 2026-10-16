@@ -110,7 +110,7 @@ const features = [
     ),
   },
   {
-    title: "Top Global CEOs with ...",
+    title: "Indian Classroom to Global ...",
     link: "/why-india/top-global-ceos-with-indian-degree/",
     icon: (
       <svg

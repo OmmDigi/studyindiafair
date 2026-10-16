@@ -3,6 +3,7 @@
 import { useTeamMembers } from "@/hooks/api";
 import React, { useState } from "react";
 import Image from "next/image";
+import EditorJsDescription from "@/components/EditorJsDescription";
 
 export default function NewTeamSection() {
   const { data: teamData, isLoading } = useTeamMembers();
@@ -61,11 +62,18 @@ export default function NewTeamSection() {
 
       {/* Modal */}
       {selectedMember && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
-          <div className="bg-white rounded-sm w-full max-w-md overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity"
+          onClick={() => setSelectedMember(null)}
+        >
+          <div 
+            className="bg-white rounded-md w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setSelectedMember(null)}
               className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-red-100 hover:text-red-600 text-gray-600 rounded-full transition-colors z-10"
+              aria-label="Close modal"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -83,8 +91,8 @@ export default function NewTeamSection() {
               </svg>
             </button>
 
-            <div className="p-8 flex flex-col items-center text-center">
-              <div className="w-32 h-45 rounded-sm overflow-hidden   shadow-lg mb-6">
+            <div className="p-6 md:p-8 overflow-y-auto flex flex-col items-center">
+              <div className="w-32 h-44 rounded-sm overflow-hidden shadow-lg mb-4 shrink-0">
                 <img
                   src={
                     selectedMember.image_path
@@ -95,19 +103,25 @@ export default function NewTeamSection() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <h3 className="text-2xl font-bold text-[#0B2046] mb-1">
+              <h3 className="text-2xl font-bold text-[#0B2046] mb-1 text-center">
                 {selectedMember.name}
               </h3>
-              <p className="text-orange-500 font-semibold mb-6">
+              <p className="text-orange-500 font-semibold mb-4 text-center">
                 {selectedMember.designation}
               </p>
 
-              <div className="w-full h-px bg-gray-100 mb-6"></div>
+              <div className="w-full h-px bg-gray-200 mb-6"></div>
 
-              <p className="text-gray-600 leading-relaxed text-sm">
-                {selectedMember.bio ||
-                  "SAPE is managed by a team of qualified professionals having expertise in various fields. The members of the core team hold the experience in conceptualization of project, management of project and successful execution of the same."}
-              </p>
+              <div className="w-full text-left">
+                {selectedMember.details ? (
+                  <EditorJsDescription data={selectedMember.details} />
+                ) : (
+                  <p className="text-gray-600 leading-relaxed text-sm text-center">
+                    {selectedMember.bio ||
+                      "SAPE is managed by a team of qualified professionals having expertise in various fields. The members of the core team hold the experience in conceptualization of project, management of project and successful execution of the same."}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

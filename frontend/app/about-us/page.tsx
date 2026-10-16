@@ -86,7 +86,7 @@ export default function AboutPage() {
               alt="Study in India Education Fair"
               width={120}
               height={80}
-              className="h-12 w-auto object-contain"
+              className="h-16 w-auto object-contain"
             />
             <div className="w-10 h-1 bg-orange-500 mt-4 mb-4"></div>
             <p className="text-gray-600 font-medium leading-relaxed">

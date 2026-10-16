@@ -173,32 +173,58 @@ const Footer = () => {
               </a>
             </div>
 
-            <div className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
-              <svg
-                width="16"
-                height="16"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                className="text-white"
-              >
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-              </svg>
-              {siteSettings?.phones?.length > 0 ? (
-                <a
-                  href={`tel:${siteSettings.phones[0].number.startsWith("+") ? "" : "+91"}${siteSettings.phones[0].number}`}
-                  className="hover:text-white transition-colors"
+            {siteSettings?.phones?.length > 0 ? (
+              siteSettings.phones.map((item: any, idx: number) => {
+                const rawNum = item.number || item.label || "";
+                const telLink = rawNum.startsWith("+")
+                  ? rawNum
+                  : `+91${rawNum.replace(/\D/g, "")}`;
+                const displayNum = rawNum.startsWith("+")
+                  ? rawNum
+                  : `+91 ${rawNum}`;
+
+                return (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-3 text-[13px] text-gray-300 mb-2"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      className="text-white shrink-0"
+                    >
+                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                    </svg>
+                    <a
+                      href={`tel:${telLink}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {displayNum}
+                    </a>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  className="text-white shrink-0"
                 >
-                  {siteSettings.phones[0].number}
-                </a>
-              ) : (
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                </svg>
                 <a
                   href="tel:+913340065678"
                   className="hover:text-white transition-colors"
                 >
                   +91 33 4006 5678
                 </a>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="flex items-start gap-3 text-[13px] text-gray-300">
               <div className="mt-0.5 text-white">

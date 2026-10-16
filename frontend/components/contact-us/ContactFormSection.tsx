@@ -227,16 +227,9 @@ export default function ContactFormSection({
                           className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all flex items-center gap-1.5"
                         >
                           <Mail className="w-3.5 h-3.5 text-[#ff6929] shrink-0" />
-                          <span>info@studyindiafair.com</span>
+                          <span>info@sapeevents.com</span>
                         </a>
                       )}
-                      <a
-                        href="mailto:info@sapeevents.com"
-                        className="text-xs text-gray-700 font-medium hover:text-[#ff6929] transition-colors break-all flex items-center gap-1.5"
-                      >
-                        <Mail className="w-3.5 h-3.5 text-[#ff6929] shrink-0" />
-                        <span>info@sapeevents.com</span>
-                      </a>
                     </div>
                   </div>
                 </div>
