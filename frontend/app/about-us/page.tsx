@@ -365,7 +365,7 @@ export default function AboutPage() {
       </div>
 
       {/* Team Section */}
-      <div className="bg-white pb-16">
+      <div className="bg-white">
         <NewTeamSection />
       </div>
     </main>

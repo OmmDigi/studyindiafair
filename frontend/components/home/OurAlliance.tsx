@@ -150,7 +150,7 @@ const OurAlliance = () => {
           {/* Header Section */}
           <div className="w-full lg:w-3/3 mx-auto text-center md:text-start z-10 px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-secondary">
-              Our Alliance
+              Our Alliances
             </h2>
           </div>
 

@@ -14,9 +14,15 @@ export default function NewTeamSection() {
     : teamData?.data || [];
 
   return (
-    <section className="py-2 bg-white relative">
+    <section
+      className="py-6 relative bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage:
+          "url('/images/about/WhatsApp Image 2026-10-16 at 3.11.16 PM.jpeg')",
+      }}
+    >
       <div className="container mx-auto px-4 md:max-w-7xl">
-        <div className="mb-10">
+        <div className="mb-0">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0B2046]">
             Our Team
           </h2>
@@ -62,11 +68,11 @@ export default function NewTeamSection() {
 
       {/* Modal */}
       {selectedMember && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity"
           onClick={() => setSelectedMember(null)}
         >
-          <div 
+          <div
             className="bg-white rounded-md w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
