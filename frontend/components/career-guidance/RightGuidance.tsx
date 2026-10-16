@@ -28,8 +28,7 @@ const guidanceSteps = [
   },
   {
     title: "Make informed decisions",
-    image:
-      "/images/career-guidance/RightGuidance/Make informed decisions.jpeg",
+    image: "/images/career-guidance/RightGuidance/Make informed decisions.jpeg",
   },
   {
     title: "Move forward with clarity & confidence",
@@ -40,7 +39,7 @@ const guidanceSteps = [
 
 const RightGuidance = () => {
   return (
-    <section className="py-16 bg-[#f0f7ff]">
+    <section className="py-8 bg-[#f0f7ff]">
       <div className="container mx-auto px-4 md:px-8">
         <div className="mb-12">
           <div className="flex flex-col mb-2">
