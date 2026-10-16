@@ -115,7 +115,10 @@ const Footer = () => {
               siteSettings.emails.map((item: any, idx: number) => {
                 const mail = item.email || item.label || "";
                 return (
-                  <div key={idx} className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
+                  <div
+                    key={idx}
+                    className="flex items-center gap-3 text-[13px] text-gray-300 mb-2"
+                  >
                     <svg
                       width="16"
                       height="16"
@@ -149,13 +152,13 @@ const Footer = () => {
                   href="mailto:info@studyindiafair.com"
                   className="hover:text-white transition-colors"
                 >
-                  info@studyindiafair.com
+                  info@sapeevents.com
                 </a>
               </div>
             )}
 
             {/* Additional Static Email */}
-            <div className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
+            {/* <div className="flex items-center gap-3 text-[13px] text-gray-300 mb-2">
               <svg
                 width="16"
                 height="16"
@@ -171,7 +174,7 @@ const Footer = () => {
               >
                 info@sapeevents.com
               </a>
-            </div>
+            </div> */}
 
             {siteSettings?.phones?.length > 0 ? (
               siteSettings.phones.map((item: any, idx: number) => {
