@@ -32,8 +32,7 @@ const guidanceSteps = [
   },
   {
     title: "Move forward with clarity & confidence",
-    image:
-      "/images/career-guidance/RightGuidance/Move forward with clarity & confidence.jpeg",
+    image: "/images/career-guidance/RightGuidance/Move forward.jpeg",
   },
 ];
 
