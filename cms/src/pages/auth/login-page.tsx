@@ -30,7 +30,7 @@ export function LoginPage() {
     try {
       await login(values.email, values.password);
       // navigate('/', { replace: true })
-      window.location.href = "/"
+      window.location.href = import.meta.env.BASE_URL;
     } catch (error) {
       toast.error(getErrorMessage(error));
     }

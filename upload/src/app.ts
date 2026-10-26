@@ -48,13 +48,13 @@ app.use(
   express.static(path.join(__dirname, `../${PUBLIC_FOLDER_NAME}`))
 );
 
-app.get("/", (req, res) => {
+app.get("/uploads", (_, res) => {
   res.send("Ok Upload Server Is Working");
 });
 
-app.use("/api/v1/upload", uploadRoutes);
-app.use("/api/v1/view", viewRoute);
-app.use("/api/v1/manage", manageRoutes);
+app.use("/uploads/api/v1/upload", uploadRoutes);
+app.use("/uploads/api/v1/view", viewRoute);
+app.use("/uploads/api/v1/manage", manageRoutes);
 
 app.use(globalErrorController);
 

@@ -1,6 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { PUBLIC_PATHS } from '@/lib/api'
+import { isPublicPath } from '@/lib/api'
 import { authService } from '@/services/auth.service'
 import type { Action, User } from '@/types/auth'
 
@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ['me'],
     queryFn: authService.me,
     retry: false,
-    enabled: !PUBLIC_PATHS.includes(window.location.pathname),
+    enabled: !isPublicPath(),
   })
 
   const user = data ?? null

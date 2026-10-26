@@ -12,9 +12,9 @@ services:
     depends_on:
       - study_india_fair_api_1
       - study_india_fair_upload_1
+    restart: always
     networks:
       - study_india_fair_network
-      - shared_network
 
   study_india_fair_cms:
     build: ./cms
@@ -27,9 +27,9 @@ services:
     depends_on:
       - study_india_fair_api_1
       - study_india_fair_upload_1
+    restart: always
     networks:
       - study_india_fair_network
-      - shared_network
 
   study_india_fair_api_1:
     build: ./api
@@ -49,9 +49,9 @@ services:
       - study_india_fair_redis_1
     volumes:
       - ./logs/api-logs:/app/logs
+    restart: always
     networks:
       - study_india_fair_network
-      - shared_network
 
   study_india_fair_upload_1:
     build: ./upload
@@ -68,9 +68,9 @@ services:
       - ./uploaded-files/private:/app/private
     depends_on:
       - study_india_fair_database_1
+    restart: always
     networks:
       - study_india_fair_network
-      - shared_network
 
   study_india_fair_redis_1:
     image: redis:7.4-alpine
@@ -104,7 +104,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
-    restart: unless-stopped
+    restart: always
     # Only study_india_fair_network : shared_network is external, and an unauthenticated
     # redis has no business being reachable from other stacks on this host.
     # The api is the sole client and it sits on study_india_fair_network too.
@@ -123,14 +123,44 @@ services:
       - ./backup_tmp:/backup_tmp
     ports:
       - "5433:5432"
+    restart: always
+    networks:
+      - study_india_fair_network
+
+  # COMMENT OUT BECAUSE i am uploading this in a vps where nginx is the default server
+  nginx_1:
+    image: nginx:latest
+    container_name: nginx_1
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - certs:/etc/letsencrypt
+      - www:/var/www/certbot
+    depends_on:
+      - study_india_fair_frontend
+      - study_india_fair_api_1
+      - study_india_fair_upload_1
+      - study_india_fair_database_1
+    restart: always
+    networks:
+      - study_india_fair_network
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certs:/etc/letsencrypt
+      - www:/var/www/certbot
     networks:
       - study_india_fair_network
 
 volumes:
   study_india_fair_pg_data:
+  certs:
+  www:
 
 networks:
   study_india_fair_network:
     driver: bridge
-  shared_network:
-    external: true
