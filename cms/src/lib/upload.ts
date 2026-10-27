@@ -12,7 +12,7 @@ export type UploadedFile = {
 
 const uploadApi = axios.create({ baseURL: `${UPLOAD_URL}/api/v1` })
 
-export const fileUrl = (path?: string | null) => (path ? `${UPLOAD_URL}${path}` : null)
+export const fileUrl = (path?: string | null) => (path ? `${UPLOAD_URL.replace("/uploads", "")}${path}` : null)
 
 export async function uploadFile(file: File, folder: string, onProgress?: (percent: number) => void) {
   const form = new FormData()
