@@ -194,10 +194,7 @@ export default function EventDetailsPage() {
         setAgreed(false);
         setCaptchaToken(null);
         setErrors({});
-        if (
-          recaptchaWidgetId.current !== null &&
-          (window as any).grecaptcha
-        ) {
+        if (recaptchaWidgetId.current !== null && (window as any).grecaptcha) {
           (window as any).grecaptcha.reset(recaptchaWidgetId.current);
         }
         router.push("/thank-you");
@@ -268,8 +265,7 @@ export default function EventDetailsPage() {
     const fieldErrors = validateFields();
 
     if (!agreed) {
-      fieldErrors.agree =
-        "Please check the agreement box before submitting.";
+      fieldErrors.agree = "Please check the agreement box before submitting.";
     }
 
     if (!captchaToken) {
@@ -444,7 +440,9 @@ export default function EventDetailsPage() {
                   }}
                   placeholder="Full Name*"
                   className={`w-full bg-white border ${
-                    errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    errors.name
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                   } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1`}
                 />
                 {errors.name && (
@@ -471,7 +469,9 @@ export default function EventDetailsPage() {
                   }}
                   placeholder="Email Address*"
                   className={`w-full bg-white border ${
-                    errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    errors.email
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                   } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1`}
                 />
                 {errors.email && (
@@ -492,7 +492,8 @@ export default function EventDetailsPage() {
                   }
                   .react-phone-wrapper .react-tel-input .form-control:focus {
                     border-color: ${errors.phone ? "#ef4444" : "#3b82f6"};
-                    box-shadow: 0 0 0 1px ${errors.phone ? "#ef4444" : "#3b82f6"};
+                    box-shadow: 0 0 0 1px
+                      ${errors.phone ? "#ef4444" : "#3b82f6"};
                   }
                 `}</style>
                 <PhoneInput
@@ -538,7 +539,9 @@ export default function EventDetailsPage() {
                     }}
                     placeholder="City*"
                     className={`w-full bg-white border ${
-                      errors.city ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      errors.city
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                        : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                     } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1`}
                   />
                   {errors.city && (
@@ -563,7 +566,9 @@ export default function EventDetailsPage() {
                       }
                     }}
                     className={`w-full bg-white border ${
-                      errors.course ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      errors.course
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                        : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                     } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 ${
                       course ? "text-gray-900" : "text-gray-500"
                     }`}
@@ -573,6 +578,7 @@ export default function EventDetailsPage() {
                     </option>
                     <option value="ug">Undergraduate</option>
                     <option value="pg">Postgraduate</option>
+                    <option value="ot">Others</option>
                   </select>
                   {errors.course && (
                     <p className="text-red-500 text-xs mt-1 font-medium">
@@ -595,7 +601,8 @@ export default function EventDetailsPage() {
                     htmlFor="agree-notifications"
                     className="cursor-pointer select-none leading-snug"
                   >
-                    I agree to receive notifications from Sapeevents through call, email, SMS &amp; WhatsApp.
+                    I agree to receive notifications from Sapeevents through
+                    call, email, SMS &amp; WhatsApp.
                   </label>
                 </div>
                 {errors.agree && (
