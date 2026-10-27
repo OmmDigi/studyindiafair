@@ -1,14 +1,24 @@
 import React from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import NewTeamSection from "@/components/about/NewTeamSection";
 import Counter from "@/components/Counter";
-
 import AboutOurAssociates from "@/components/about/AboutOurAssociates";
+import { generateDynamicMetadata } from "@/lib/seo";
+import { SeoSchema } from "@/components/SeoSchema";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateDynamicMetadata("about-us", {
+    title: "About Us | Study in India Fair",
+    description: "Learn more about Study in India Fair and SAPE Events & Media.",
+  });
+}
 
 export default function AboutPage() {
   return (
     <main className="bg-white min-h-screen font-sans">
+      <SeoSchema slug="about-us" />
       {/* Hero Section */}
       <AboutOurAssociates />
 

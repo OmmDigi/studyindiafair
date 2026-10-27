@@ -1,20 +1,24 @@
-import React from "react";
+import type { Metadata } from "next";
 import DigitalHero from "@/components/digital-addiction/DigitalHero";
 import NavigatingDigitalLife from "@/components/digital-addiction/NavigatingDigitalLife";
 import SignsOfDigitalAddiction from "@/components/digital-addiction/SignsOfDigitalAddiction";
 import SimpleWaysToControl from "@/components/digital-addiction/SimpleWaysToControl";
 import HowParentsCanHelp from "@/components/digital-addiction/HowParentsCanHelp";
-import { generateSEO } from "@/components/SEO";
+import { generateDynamicMetadata } from "@/lib/seo";
+import { SeoSchema } from "@/components/SeoSchema";
 
-export const metadata = generateSEO({
-  title: "Digital Addiction | Study in India Fair",
-  description:
-    "GO DIGITAL or GO DARK? Technology is your tool. The balance is yours. Understand digital addiction signs, solutions, and guidance for parents and students.",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return generateDynamicMetadata("digital-addiction", {
+    title: "Digital Addiction | Study in India Fair",
+    description:
+      "GO DIGITAL or GO DARK? Technology is your tool. The balance is yours. Understand digital addiction signs, solutions, and guidance for parents and students.",
+  });
+}
 
 export default function DigitalAddictionPage() {
   return (
     <main className="min-h-screen bg-white">
+      <SeoSchema slug="digital-addiction" />
       {/* 1. Hero Section: GO DIGITAL or GO DARK? */}
       <DigitalHero heroImage="/images/digital-addiction/1.jpeg" />
 

@@ -7,6 +7,7 @@ import GalleryLightbox, {
 } from "@/components/gallery/GalleryLightbox";
 import { Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { buildVariantSrcSet } from "@/lib/imageVariants";
+import { ClientSeo } from "@/components/ClientSeo";
 
 const PAGE_SIZE = 12;
 
@@ -95,6 +96,7 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
+      <ClientSeo slug="gallery" />
       {/* Hero Section */}
       <div className="relative w-full overflow-hidden">
         <img

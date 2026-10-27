@@ -61,3 +61,7 @@ export function generateSEO({
 export default function SEO() {
   return null;
 }
+
+export { generateDynamicMetadata, getPageSeo } from '@/lib/seo';
+export type { SeoData } from '@/lib/seo';
+

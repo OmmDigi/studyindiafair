@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import ScholarshipContent from "@/components/scholarship/ScholarshipContent";
+import { generateDynamicMetadata } from "@/lib/seo";
+import { SeoSchema } from "@/components/SeoSchema";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateDynamicMetadata("scholarship", {
+    title: "Scholarship | Study in India Fair",
+    description: "Scholarships for a brighter tomorrow. Apply for Study in India Fair scholarships.",
+  });
+}
 
 export default function ScholarshipPage() {
   return (
     <main className="min-h-screen bg-[#f8f9fa] relative">
+      <SeoSchema slug="scholarship" />
       {/* Hero Section */}
       <div className="relative bg-[#001c44] overflow-hidden pt-4 pb-8 lg:pb-16 min-h-[420px] md:min-h-0 flex items-center">
         {/* Background Image Container */}

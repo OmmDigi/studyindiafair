@@ -104,6 +104,22 @@ const Footer = () => {
                   Contact
                 </Link>
               </li>
+              {/* <li>
+                <Link
+                  href="/privacy-policy"
+                  className="hover:text-white transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms-conditions"
+                  className="hover:text-white transition-colors"
+                >
+                  Terms &amp; Conditions
+                </Link>
+              </li> */}
             </ul>
           </div>
 
@@ -386,21 +402,21 @@ const Footer = () => {
           <p className="mb-2 md:mb-0">
             © 2026 Study in India Education Fair. All rights reserved.
           </p>
-          {/* <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <Link
               href="/privacy-policy"
               className="hover:text-white transition-colors"
             >
               Privacy Policy
             </Link>
-            <span>|</span>
+            <span className="text-gray-500">|</span>
             <Link
               href="/terms-conditions"
               className="hover:text-white transition-colors"
             >
-              Terms & Conditions
+              Terms &amp; Conditions
             </Link>
-          </div> */}
+          </div>
         </div>
       </div>
 

@@ -3,12 +3,14 @@
 import { useUpcomingEvents } from "@/hooks/api";
 import Link from "next/link";
 import React from "react";
+import { ClientSeo } from "@/components/ClientSeo";
 
 export default function UpcomingExpoPage() {
   const { data: events, isLoading } = useUpcomingEvents();
 
   return (
     <div className="min-h-screen bg-[#FDF8F3] py-16 px-4 sm:px-6 lg:px-8">
+      <ClientSeo slug="upcoming-expo" />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16 pt-8">
           <h1 className="text-4xl md:text-5xl font-bold text-secondary mb-4 uppercase tracking-wide">

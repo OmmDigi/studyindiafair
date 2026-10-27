@@ -15,6 +15,7 @@ import {
   LockClosedIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import { ClientSeo } from "@/components/ClientSeo";
 
 // Helper function to determine default country code based on slug
 const getCountryCode = (slug: string): string => {
@@ -51,11 +52,74 @@ const getCountryCode = (slug: string): string => {
 export default function EventDetailsPage() {
   const { slug } = useParams();
   const { data: event, isLoading } = useUpcomingEvent(slug as string);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [course, setCourse] = useState<string>("");
+  const [agreed, setAgreed] = useState<boolean>(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
+  const recaptchaWidgetId = useRef<number | null>(null);
   console.log("event", event);
+
+  const siteKey =
+    process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
+    "6Lf-QwMuAAAAACKbLwhlWrYWg3BT_8kTybXefkRV";
+
+  useEffect(() => {
+    // Load reCAPTCHA v2 script dynamically if not already loaded
+    if (typeof window === "undefined") return;
+
+    const renderCaptcha = () => {
+      if (
+        (window as any).grecaptcha &&
+        (window as any).grecaptcha.render &&
+        recaptchaContainerRef.current &&
+        recaptchaWidgetId.current === null
+      ) {
+        try {
+          recaptchaWidgetId.current = (window as any).grecaptcha.render(
+            recaptchaContainerRef.current,
+            {
+              sitekey: siteKey,
+              callback: (token: string) => {
+                setCaptchaToken(token);
+                setErrors((prev) => {
+                  const updated = { ...prev };
+                  delete updated.captcha;
+                  return updated;
+                });
+              },
+              "expired-callback": () => {
+                setCaptchaToken(null);
+              },
+            },
+          );
+        } catch (err) {
+          console.error("Error rendering reCAPTCHA:", err);
+        }
+      }
+    };
+
+    if (!(window as any).grecaptcha) {
+      const script = document.createElement("script");
+      script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        (window as any).grecaptcha.ready(renderCaptcha);
+      };
+      document.body.appendChild(script);
+    } else {
+      (window as any).grecaptcha.ready(renderCaptcha);
+    }
+  }, [siteKey]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -122,7 +186,20 @@ export default function EventDetailsPage() {
     {
       onSuccess: () => {
         if (formRef.current) formRef.current.reset();
+        setName("");
+        setEmail("");
         setPhone("");
+        setCity("");
+        setCourse("");
+        setAgreed(false);
+        setCaptchaToken(null);
+        setErrors({});
+        if (
+          recaptchaWidgetId.current !== null &&
+          (window as any).grecaptcha
+        ) {
+          (window as any).grecaptcha.reset(recaptchaWidgetId.current);
+        }
         router.push("/thank-you");
       },
       onError: (error: any) => {
@@ -132,16 +209,86 @@ export default function EventDetailsPage() {
     },
   );
 
+  const validateFields = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Full Name is required";
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email Address is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.trim())) {
+        newErrors.email = "Please enter a valid email address";
+      }
+    }
+
+    if (!phone.trim() || phone.trim().length < 6) {
+      newErrors.phone = "Valid Mobile Number is required";
+    }
+
+    if (!city.trim()) {
+      newErrors.city = "City is required";
+    }
+
+    if (!course.trim()) {
+      newErrors.course = "Please select a course of interest";
+    }
+
+    return newErrors;
+  };
+
+  const handleAgreeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = e.target.checked;
+
+    if (isChecked) {
+      // Validate all required input fields before allowing checkbox check
+      const currentErrors = validateFields();
+      if (Object.keys(currentErrors).length > 0) {
+        setErrors(currentErrors);
+        setAgreed(false);
+        return;
+      }
+      setErrors((prev) => {
+        const updated = { ...prev };
+        delete updated.agree;
+        return updated;
+      });
+      setAgreed(true);
+    } else {
+      setAgreed(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+
+    const fieldErrors = validateFields();
+
+    if (!agreed) {
+      fieldErrors.agree =
+        "Please check the agreement box before submitting.";
+    }
+
+    if (!captchaToken) {
+      fieldErrors.captcha = "Please verify that you are not a robot.";
+    }
+
+    if (Object.keys(fieldErrors).length > 0) {
+      setErrors(fieldErrors);
+      return;
+    }
+
     const data = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      phone: phone,
-      city: formData.get("city"),
-      course: formData.get("course"),
-      agree: true, // Always agree based on the new design's implicit statement
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      city: city.trim(),
+      course: course.trim(),
+      agree: agreed,
+      recaptchaToken: captchaToken,
     };
     submitEnquiry(data);
   };
@@ -199,6 +346,7 @@ export default function EventDetailsPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-800">
+      <ClientSeo slug={slug} />
       {/* Hero Banner Section */}
       <div className="relative w-full h-[400px] md:h-[450px]">
         {/* Background Image: Mobile uses event.images, Desktop (md+) uses event.banner_images */}
@@ -273,24 +421,64 @@ export default function EventDetailsPage() {
               Visitor Registration
             </h2>
 
-            <form ref={formRef} onSubmit={handleSubmit} className="space-y-3">
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              noValidate
+              className="space-y-3"
+            >
               <div>
                 <input
                   type="text"
                   name="name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (errors.name) {
+                      setErrors((prev) => {
+                        const updated = { ...prev };
+                        delete updated.name;
+                        return updated;
+                      });
+                    }
+                  }}
                   placeholder="Full Name*"
-                  required
-                  className="w-full bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className={`w-full bg-white border ${
+                    errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1`}
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1 font-medium">
+                    {errors.name}
+                  </p>
+                )}
               </div>
+
               <div>
                 <input
                   type="email"
                   name="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) {
+                      setErrors((prev) => {
+                        const updated = { ...prev };
+                        delete updated.email;
+                        return updated;
+                      });
+                    }
+                  }}
                   placeholder="Email Address*"
-                  required
-                  className="w-full bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className={`w-full bg-white border ${
+                    errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1`}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1 font-medium">
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               <div className="react-phone-wrapper w-full bg-white">
@@ -299,24 +487,37 @@ export default function EventDetailsPage() {
                     width: 100%;
                     height: 40px;
                     border-radius: 0.375rem;
-                    border: 1px solid #e5e7eb;
+                    border: 1px solid ${errors.phone ? "#ef4444" : "#e5e7eb"};
                     font-size: 0.875rem;
                   }
                   .react-phone-wrapper .react-tel-input .form-control:focus {
-                    border-color: #3b82f6;
-                    box-shadow: 0 0 0 1px #3b82f6;
+                    border-color: ${errors.phone ? "#ef4444" : "#3b82f6"};
+                    box-shadow: 0 0 0 1px ${errors.phone ? "#ef4444" : "#3b82f6"};
                   }
                 `}</style>
                 <PhoneInput
                   country={getCountryCode(slug as string)}
                   value={phone}
-                  onChange={setPhone}
+                  onChange={(val) => {
+                    setPhone(val);
+                    if (errors.phone) {
+                      setErrors((prev) => {
+                        const updated = { ...prev };
+                        delete updated.phone;
+                        return updated;
+                      });
+                    }
+                  }}
                   inputProps={{
                     name: "phone",
-                    required: true,
                     placeholder: "Mobile Number*",
                   }}
                 />
+                {errors.phone && (
+                  <p className="text-red-500 text-xs mt-1 font-medium">
+                    {errors.phone}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
@@ -324,17 +525,48 @@ export default function EventDetailsPage() {
                   <input
                     type="text"
                     name="city"
+                    value={city}
+                    onChange={(e) => {
+                      setCity(e.target.value);
+                      if (errors.city) {
+                        setErrors((prev) => {
+                          const updated = { ...prev };
+                          delete updated.city;
+                          return updated;
+                        });
+                      }
+                    }}
                     placeholder="City*"
-                    required
-                    className="w-full bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className={`w-full bg-white border ${
+                      errors.city ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1`}
                   />
+                  {errors.city && (
+                    <p className="text-red-500 text-xs mt-1 font-medium">
+                      {errors.city}
+                    </p>
+                  )}
                 </div>
+
                 <div className="w-full sm:w-1/2">
                   <select
                     name="course"
-                    required
-                    defaultValue=""
-                    className="w-full bg-white border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-gray-500"
+                    value={course}
+                    onChange={(e) => {
+                      setCourse(e.target.value);
+                      if (errors.course) {
+                        setErrors((prev) => {
+                          const updated = { ...prev };
+                          delete updated.course;
+                          return updated;
+                        });
+                      }
+                    }}
+                    className={`w-full bg-white border ${
+                      errors.course ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    } rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 ${
+                      course ? "text-gray-900" : "text-gray-500"
+                    }`}
                   >
                     <option value="" disabled>
                       Course of Interest*
@@ -342,13 +574,56 @@ export default function EventDetailsPage() {
                     <option value="ug">Undergraduate</option>
                     <option value="pg">Postgraduate</option>
                   </select>
+                  {errors.course && (
+                    <p className="text-red-500 text-xs mt-1 font-medium">
+                      {errors.course}
+                    </p>
+                  )}
                 </div>
+              </div>
+
+              <div>
+                <div className="flex items-start gap-2 pt-1 text-xs text-gray-700">
+                  <input
+                    type="checkbox"
+                    id="agree-notifications"
+                    checked={agreed}
+                    onChange={handleAgreeChange}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="agree-notifications"
+                    className="cursor-pointer select-none leading-snug"
+                  >
+                    I agree to receive notifications from Sapeevents through call, email, SMS &amp; WhatsApp.
+                  </label>
+                </div>
+                {errors.agree && (
+                  <p className="text-red-500 text-xs mt-1 font-medium pl-6">
+                    {errors.agree}
+                  </p>
+                )}
+              </div>
+
+              {/* Google reCAPTCHA v2 Checkbox */}
+              <div>
+                <div className="pt-2 flex justify-center sm:justify-start overflow-hidden">
+                  <div
+                    ref={recaptchaContainerRef}
+                    className="min-h-[78px] flex items-center"
+                  ></div>
+                </div>
+                {errors.captcha && (
+                  <p className="text-red-500 text-xs mt-1 font-medium">
+                    {errors.captcha}
+                  </p>
+                )}
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[#f96d2b] hover:bg-[#e05b1c] text-white font-bold py-2.5 px-4 rounded-md transition-colors flex items-center justify-center gap-2 mt-1 text-sm disabled:opacity-70"
+                className="w-full bg-[#f96d2b] hover:bg-[#e05b1c] text-white font-bold py-2.5 px-4 rounded-md transition-colors flex items-center justify-center gap-2 mt-1 text-sm disabled:opacity-70 shadow-sm"
               >
                 {isSubmitting ? "Submitting..." : "Register Now"}
                 <ArrowRightIcon className="w-4 h-4" />
