@@ -613,7 +613,7 @@ export default function EventDetailsPage() {
               </div>
 
               {/* Google reCAPTCHA v2 Checkbox */}
-              <div>
+              {/* <div>
                 <div className="pt-2 flex justify-center sm:justify-start overflow-hidden">
                   <div
                     ref={recaptchaContainerRef}
@@ -625,7 +625,7 @@ export default function EventDetailsPage() {
                     {errors.captcha}
                   </p>
                 )}
-              </div>
+              </div> */}
 
               <button
                 type="submit"
