@@ -58,68 +58,69 @@ export default function EventDetailsPage() {
   const [city, setCity] = useState<string>("");
   const [course, setCourse] = useState<string>("");
   const [agreed, setAgreed] = useState<boolean>(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
-  const recaptchaWidgetId = useRef<number | null>(null);
+  // const recaptchaContainerRef = useRef<HTMLDivElement>(null);
+  // const recaptchaWidgetId = useRef<number | null>(null);
   console.log("event", event);
 
-  const siteKey =
-    process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
-    "6Lf-QwMuAAAAACKbLwhlWrYWg3BT_8kTybXefkRV";
-
-  useEffect(() => {
-    // Load reCAPTCHA v2 script dynamically if not already loaded
-    if (typeof window === "undefined") return;
-
-    const renderCaptcha = () => {
-      if (
-        (window as any).grecaptcha &&
-        (window as any).grecaptcha.render &&
-        recaptchaContainerRef.current &&
-        recaptchaWidgetId.current === null
-      ) {
-        try {
-          recaptchaWidgetId.current = (window as any).grecaptcha.render(
-            recaptchaContainerRef.current,
-            {
-              sitekey: siteKey,
-              callback: (token: string) => {
-                setCaptchaToken(token);
-                setErrors((prev) => {
-                  const updated = { ...prev };
-                  delete updated.captcha;
-                  return updated;
-                });
-              },
-              "expired-callback": () => {
-                setCaptchaToken(null);
-              },
-            },
-          );
-        } catch (err) {
-          console.error("Error rendering reCAPTCHA:", err);
-        }
-      }
-    };
-
-    if (!(window as any).grecaptcha) {
-      const script = document.createElement("script");
-      script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        (window as any).grecaptcha.ready(renderCaptcha);
-      };
-      document.body.appendChild(script);
-    } else {
-      (window as any).grecaptcha.ready(renderCaptcha);
-    }
-  }, [siteKey]);
+  // reCAPTCHA disabled for now (pending) — re-enable together with the JSX block below
+  // const siteKey =
+  //   process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
+  //   "6Lf-QwMuAAAAACKbLwhlWrYWg3BT_8kTybXefkRV";
+  //
+  // useEffect(() => {
+  //   // Load reCAPTCHA v2 script dynamically if not already loaded
+  //   if (typeof window === "undefined") return;
+  //
+  //   const renderCaptcha = () => {
+  //     if (
+  //       (window as any).grecaptcha &&
+  //       (window as any).grecaptcha.render &&
+  //       recaptchaContainerRef.current &&
+  //       recaptchaWidgetId.current === null
+  //     ) {
+  //       try {
+  //         recaptchaWidgetId.current = (window as any).grecaptcha.render(
+  //           recaptchaContainerRef.current,
+  //           {
+  //             sitekey: siteKey,
+  //             callback: (token: string) => {
+  //               setCaptchaToken(token);
+  //               setErrors((prev) => {
+  //                 const updated = { ...prev };
+  //                 delete updated.captcha;
+  //                 return updated;
+  //               });
+  //             },
+  //             "expired-callback": () => {
+  //               setCaptchaToken(null);
+  //             },
+  //           },
+  //         );
+  //       } catch (err) {
+  //         console.error("Error rendering reCAPTCHA:", err);
+  //       }
+  //     }
+  //   };
+  //
+  //   if (!(window as any).grecaptcha) {
+  //     const script = document.createElement("script");
+  //     script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
+  //     script.async = true;
+  //     script.defer = true;
+  //     script.onload = () => {
+  //       (window as any).grecaptcha.ready(renderCaptcha);
+  //     };
+  //     document.body.appendChild(script);
+  //   } else {
+  //     (window as any).grecaptcha.ready(renderCaptcha);
+  //   }
+  // }, [siteKey]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -192,11 +193,11 @@ export default function EventDetailsPage() {
         setCity("");
         setCourse("");
         setAgreed(false);
-        setCaptchaToken(null);
+        // setCaptchaToken(null);
         setErrors({});
-        if (recaptchaWidgetId.current !== null && (window as any).grecaptcha) {
-          (window as any).grecaptcha.reset(recaptchaWidgetId.current);
-        }
+        // if (recaptchaWidgetId.current !== null && (window as any).grecaptcha) {
+        //   (window as any).grecaptcha.reset(recaptchaWidgetId.current);
+        // }
         router.push("/thank-you");
       },
       onError: (error: any) => {
@@ -268,9 +269,9 @@ export default function EventDetailsPage() {
       fieldErrors.agree = "Please check the agreement box before submitting.";
     }
 
-    if (!captchaToken) {
-      fieldErrors.captcha = "Please verify that you are not a robot.";
-    }
+    // if (!captchaToken) {
+    //   fieldErrors.captcha = "Please verify that you are not a robot.";
+    // }
 
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
@@ -284,7 +285,7 @@ export default function EventDetailsPage() {
       city: city.trim(),
       course: course.trim(),
       agree: agreed,
-      recaptchaToken: captchaToken,
+      // recaptchaToken: captchaToken,
     };
     submitEnquiry(data);
   };
