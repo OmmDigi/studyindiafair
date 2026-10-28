@@ -602,7 +602,7 @@ export default function EventDetailsPage() {
                     htmlFor="agree-notifications"
                     className="cursor-pointer select-none leading-snug"
                   >
-                    I agree to receive notifications from Sapeevents through
+                    I agree to receive notifications from Studyindiafair through
                     call, email, SMS &amp; WhatsApp.
                   </label>
                 </div>
