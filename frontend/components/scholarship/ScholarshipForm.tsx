@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { useSubmitEnquiry } from "@/hooks/api";
@@ -21,13 +21,93 @@ export default function ScholarshipForm() {
   };
 
   const [formData, setFormData] = useState(initialFormState);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState<string>("");
+
+  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
+  const recaptchaWidgetId = useRef<number | null>(null);
+
   const router = useRouter();
+
+  const siteKey =
+    process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
+    "6LdDkAQuAAAAAFZ-Qugvn6BliDceKuX7PT4cj768";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let checkInterval: NodeJS.Timeout | null = null;
+
+    const renderCaptcha = () => {
+      if (
+        (window as any).grecaptcha &&
+        (window as any).grecaptcha.render &&
+        recaptchaContainerRef.current &&
+        recaptchaWidgetId.current === null
+      ) {
+        try {
+          if (recaptchaContainerRef.current) {
+            recaptchaContainerRef.current.innerHTML = "";
+          }
+          recaptchaWidgetId.current = (window as any).grecaptcha.render(
+            recaptchaContainerRef.current,
+            {
+              sitekey: siteKey,
+              callback: (token: string) => {
+                setCaptchaToken(token);
+                setCaptchaError("");
+              },
+              "expired-callback": () => {
+                setCaptchaToken(null);
+              },
+            },
+          );
+          if (checkInterval) clearInterval(checkInterval);
+        } catch (err) {
+          console.error("Error rendering reCAPTCHA:", err);
+        }
+      }
+    };
+
+    if (!(window as any).grecaptcha) {
+      const existingScript = document.querySelector(
+        'script[src*="recaptcha/api.js"]',
+      );
+      if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          (window as any).grecaptcha?.ready(renderCaptcha);
+        };
+        document.body.appendChild(script);
+      } else {
+        checkInterval = setInterval(() => {
+          if ((window as any).grecaptcha?.render) {
+            (window as any).grecaptcha.ready(renderCaptcha);
+          }
+        }, 300);
+      }
+    } else {
+      (window as any).grecaptcha.ready(renderCaptcha);
+    }
+
+    return () => {
+      if (checkInterval) clearInterval(checkInterval);
+    };
+  }, [siteKey]);
 
   const { mutate: submitEnquiry, isPending: isSubmitting } = useSubmitEnquiry(
     "scholarship",
     {
       onSuccess: () => {
         setFormData(initialFormState);
+        setCaptchaToken(null);
+        setCaptchaError("");
+        if (recaptchaWidgetId.current !== null && (window as any).grecaptcha) {
+          (window as any).grecaptcha.reset(recaptchaWidgetId.current);
+        }
         router.push("/thank-you");
       },
       onError: (error: any) => {
@@ -59,7 +139,16 @@ export default function ScholarshipForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    submitEnquiry(formData);
+
+    if (!captchaToken) {
+      setCaptchaError("Please verify that you are not a robot.");
+      return;
+    }
+
+    submitEnquiry({
+      ...formData,
+      recaptchaToken: captchaToken,
+    });
   };
 
   return (
@@ -272,26 +361,19 @@ export default function ScholarshipForm() {
           </label>
         </div>
 
-        {/* Dummy ReCAPTCHA for visual similarity */}
-        <div className="flex justify-center md:justify-start">
-          <div className="border border-gray-200 rounded p-2 flex items-center justify-between w-64 bg-gray-50">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="w-6 h-6 border-gray-300 rounded"
-              />
-              <span className="text-sm">I'm not a robot</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <img
-                src="https://www.gstatic.com/recaptcha/api2/logo_48.png"
-                alt="reCAPTCHA"
-                className="w-8"
-              />
-              <span className="text-[10px] text-gray-500">reCAPTCHA</span>
-              <span className="text-[8px] text-gray-500">Privacy - Terms</span>
-            </div>
+        {/* Google reCAPTCHA v2 Checkbox */}
+        <div>
+          <div className="flex justify-center md:justify-start overflow-hidden">
+            <div
+              ref={recaptchaContainerRef}
+              className="min-h-[78px] flex items-center"
+            ></div>
           </div>
+          {captchaError && (
+            <p className="text-red-500 text-xs mt-1 font-medium text-center md:text-left">
+              {captchaError}
+            </p>
+          )}
         </div>
 
         <div className="text-center mt-8 pb-4">

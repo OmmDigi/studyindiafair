@@ -12,6 +12,80 @@ export default function ExhibitorsPage() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [phone, setPhone] = useState<string>("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState<string>("");
+
+  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
+  const recaptchaWidgetId = useRef<number | null>(null);
+
+  const siteKey =
+    process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
+    "6LdDkAQuAAAAAFZ-Qugvn6BliDceKuX7PT4cj768";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let checkInterval: NodeJS.Timeout | null = null;
+
+    const renderCaptcha = () => {
+      if (
+        (window as any).grecaptcha &&
+        (window as any).grecaptcha.render &&
+        recaptchaContainerRef.current &&
+        recaptchaWidgetId.current === null
+      ) {
+        try {
+          if (recaptchaContainerRef.current) {
+            recaptchaContainerRef.current.innerHTML = "";
+          }
+          recaptchaWidgetId.current = (window as any).grecaptcha.render(
+            recaptchaContainerRef.current,
+            {
+              sitekey: siteKey,
+              callback: (token: string) => {
+                setCaptchaToken(token);
+                setCaptchaError("");
+              },
+              "expired-callback": () => {
+                setCaptchaToken(null);
+              },
+            },
+          );
+          if (checkInterval) clearInterval(checkInterval);
+        } catch (err) {
+          console.error("Error rendering reCAPTCHA:", err);
+        }
+      }
+    };
+
+    if (!(window as any).grecaptcha) {
+      const existingScript = document.querySelector(
+        'script[src*="recaptcha/api.js"]',
+      );
+      if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          (window as any).grecaptcha?.ready(renderCaptcha);
+        };
+        document.body.appendChild(script);
+      } else {
+        checkInterval = setInterval(() => {
+          if ((window as any).grecaptcha?.render) {
+            (window as any).grecaptcha.ready(renderCaptcha);
+          }
+        }, 300);
+      }
+    } else {
+      (window as any).grecaptcha.ready(renderCaptcha);
+    }
+
+    return () => {
+      if (checkInterval) clearInterval(checkInterval);
+    };
+  }, [siteKey]);
 
   const handleClose = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -42,6 +116,11 @@ export default function ExhibitorsPage() {
       onSuccess: () => {
         if (formRef.current) formRef.current.reset();
         setPhone("");
+        setCaptchaToken(null);
+        setCaptchaError("");
+        if (recaptchaWidgetId.current !== null && (window as any).grecaptcha) {
+          (window as any).grecaptcha.reset(recaptchaWidgetId.current);
+        }
         router.push("/thank-you");
       },
       onError: (error: any) => {
@@ -53,6 +132,12 @@ export default function ExhibitorsPage() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!captchaToken) {
+      setCaptchaError("Please verify that you are not a robot.");
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
     const data = {
       name: formData.get("name"),
@@ -61,6 +146,7 @@ export default function ExhibitorsPage() {
       institution: formData.get("institution"),
       website: formData.get("website"),
       agree: formData.get("agree") === "on",
+      recaptchaToken: captchaToken,
     };
     submitEnquiry(data);
   };
@@ -321,6 +407,21 @@ export default function ExhibitorsPage() {
                   I agree to receive notifications from Study In India Fairs
                   through call, email, SMS & WhatsApp.
                 </label>
+              </div>
+
+              {/* Google reCAPTCHA v2 Checkbox */}
+              <div>
+                <div className="pt-2 flex justify-start overflow-hidden">
+                  <div
+                    ref={recaptchaContainerRef}
+                    className="min-h-[78px] flex items-center"
+                  ></div>
+                </div>
+                {captchaError && (
+                  <p className="text-red-500 text-xs mt-1 font-medium">
+                    {captchaError}
+                  </p>
+                )}
               </div>
 
               <button
